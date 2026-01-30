@@ -272,6 +272,10 @@ func (pv *PgVector) QueryWithEmbedding(ctx context.Context, embedding []float32,
 	// Add metadata filter
 	if filter != nil && len(filter) > 0 {
 		for key, value := range filter {
+			// Validate key to prevent SQL injection
+			if !isValidMetadataKey(key) {
+				return nil, fmt.Errorf("invalid metadata key: %s (must be alphanumeric with underscores)", key)
+			}
 			query += fmt.Sprintf(" AND metadata->>'%s' = $%d", key, argIdx)
 			args = append(args, value)
 			argIdx++
@@ -383,6 +387,20 @@ func (pv *PgVector) Delete(ctx context.Context, ids []string) error {
 // Close closes the database connection
 func (pv *PgVector) Close() error {
 	return pv.db.Close()
+}
+
+// isValidMetadataKey validates that a metadata key is safe for SQL queries
+// Only allows alphanumeric characters and underscores to prevent SQL injection
+func isValidMetadataKey(key string) bool {
+	if len(key) == 0 || len(key) > 64 {
+		return false
+	}
+	for _, r := range key {
+		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '_') {
+			return false
+		}
+	}
+	return true
 }
 
 // GetDimension returns the embedding dimension

@@ -143,6 +143,7 @@ func (l *LocalSkills) loadSkillsFromDirectory() ([]*Skill, error) {
 }
 
 // loadScripts loads all scripts from a directory
+// Security: filepath.Walk does not follow symlinks by default, preventing path traversal attacks
 func (l *LocalSkills) loadScripts(scriptsDir string) (map[string]*Script, error) {
 	scripts := make(map[string]*Script)
 
@@ -185,6 +186,7 @@ func (l *LocalSkills) loadScripts(scriptsDir string) (map[string]*Script, error)
 }
 
 // loadReferences loads all reference documents from a directory
+// Security: filepath.Walk does not follow symlinks by default, preventing path traversal attacks
 func (l *LocalSkills) loadReferences(referencesDir string) (map[string]*Reference, error) {
 	references := make(map[string]*Reference)
 
