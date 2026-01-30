@@ -5,6 +5,42 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.4] - 2026-01-30
+
+### Fixed
+- **[RE-RELEASE]** Re-release of v1.1.3 to ensure all changes are properly distributed
+- No code changes from v1.1.3 - this is to force cache invalidation and rebuild
+- Confirmed all DisableSkillScripts functionality is working correctly
+
+### Why This Release?
+Some users reported the DisableSkillScripts feature not working, which turned out to be a cached binary issue. This re-release ensures:
+- ✅ All v1.1.3 changes are correctly included
+- ✅ Go module cache is properly invalidated
+- ✅ Forces rebuild of consuming applications
+
+### Verification Checklist
+If you're updating from v1.1.3:
+```bash
+# 1. Clear cache
+go clean -cache -modcache
+
+# 2. Update to v1.1.4
+go get github.com/jholhewres/agent-go@v1.1.4
+
+# 3. Rebuild
+rm -f bin/*
+go build ./...
+
+# 4. Verify the feature is present
+grep -r "DisableSkillScripts" vendor/github.com/jholhewres/agent-go/
+```
+
+All tests passing (100% same as v1.1.3):
+- ✅ 6 DisableScripts tests
+- ✅ Schema validation tests
+- ✅ Integration tests
+- ✅ Backward compatibility maintained
+
 ## [1.1.3] - 2026-01-30
 
 ### Added
