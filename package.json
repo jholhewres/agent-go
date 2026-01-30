@@ -1,0 +1,29 @@
+{
+  "name": "agent-go-docs",
+  "version": "2.0.0",
+  "description": "Documentation for AgentGo - High-performance multi-agent framework in Go with learning and skills",
+  "scripts": {
+    "docs:dev": "vitepress dev website",
+    "docs:build": "vitepress build website",
+    "docs:preview": "vitepress preview website"
+  },
+  "devDependencies": {
+    "vitepress": "^1.0.0"
+  },
+  "keywords": [
+    "agentgo",
+    "agent-go",
+    "multi-agent",
+    "ai",
+    "go",
+    "learning",
+    "skills",
+    "documentation"
+  ],
+  "author": "AgentGo Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jholhewres/agent-go"
+  }
+}
