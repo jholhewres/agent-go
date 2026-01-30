@@ -55,6 +55,13 @@ func (m *Machine) Learn(ctx context.Context, userID string, messages []types.Mes
 	// Extract memories from messages
 	memories := m.extractor.ExtractMemories(userID, messages)
 	for _, memory := range memories {
+		// Check context cancellation
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+		
 		if err := m.storage.SaveUserMemory(ctx, &memory); err != nil {
 			return fmt.Errorf("failed to save memory: %w", err)
 		}
@@ -63,6 +70,13 @@ func (m *Machine) Learn(ctx context.Context, userID string, messages []types.Mes
 	// Extract knowledge from messages
 	knowledge := m.extractor.ExtractKnowledge(messages)
 	for _, k := range knowledge {
+		// Check context cancellation
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		default:
+		}
+		
 		if err := m.storage.SaveKnowledge(ctx, &k); err != nil {
 			return fmt.Errorf("failed to save knowledge: %w", err)
 		}
