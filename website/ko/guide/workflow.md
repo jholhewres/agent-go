@@ -30,9 +30,9 @@ import (
     "fmt"
     "log"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/workflow"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -452,7 +452,7 @@ wf, _ := workflow.New(workflow.Config{
 프롬프트에 직접 삽입하지 않고 이미지, 오디오, 파일을 첨부할 수 있습니다:
 
 ```go
-// import "github.com/jholhewres/agent-go/pkg/agno/media"
+// import "github.com/jholhewres/agent-go/pkg/agentgo/media"
 attachments := []media.Attachment{
     {Type: "image", URL: "https://example.com/diagram.png"},
     {Type: "file",  ID:  "spec-v1", Name: "spec.pdf"},

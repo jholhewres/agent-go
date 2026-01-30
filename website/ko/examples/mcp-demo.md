@@ -57,9 +57,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/jholhewres/agent-go/pkg/agno/mcp/client"
-	"github.com/jholhewres/agent-go/pkg/agno/mcp/security"
-	mcptoolkit "github.com/jholhewres/agent-go/pkg/agno/mcp/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/mcp/client"
+	"github.com/jholhewres/agent-go/pkg/agentgo/mcp/security"
+	mcptoolkit "github.com/jholhewres/agent-go/pkg/agentgo/mcp/toolkit"
 )
 
 func main() {
@@ -285,8 +285,8 @@ MCP 툴킷을 얻으면 모든 Agno 에이전트와 함께 사용할 수 있습�
 
 ```go
 import (
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 // 모델 생성

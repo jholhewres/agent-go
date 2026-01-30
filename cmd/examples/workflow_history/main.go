@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/models/openai"
-	"github.com/jholhewres/agent-go/pkg/agno/workflow"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+	"github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 )
 
 // main 演示 Workflow History 功能的真实使用场景

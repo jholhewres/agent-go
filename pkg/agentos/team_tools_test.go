@@ -4,11 +4,11 @@ import (
 	"context"
 	"testing"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/models"
-	"github.com/jholhewres/agent-go/pkg/agno/team"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
-	"github.com/jholhewres/agent-go/pkg/agno/types"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models"
+	"github.com/jholhewres/agent-go/pkg/agentgo/team"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 // mockModel is a lightweight Model implementation for testing tool aggregation.

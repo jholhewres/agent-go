@@ -120,8 +120,8 @@ Configure summaries by supplying a `session.SummaryManager`:
 
 ```go
 // import (
-//     "github.com/jholhewres/agent-go/pkg/agno/models/openai"
-//     "github.com/jholhewres/agent-go/pkg/agno/session"
+//     "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+//     "github.com/jholhewres/agent-go/pkg/agentgo/session"
 // )
 summaryModel, _ := openai.New("gpt-4o-mini", openai.Config{
     APIKey: os.Getenv("OPENAI_API_KEY"),

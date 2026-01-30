@@ -41,10 +41,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/models/openai"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/calculator"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {
@@ -98,7 +98,7 @@ curl http://localhost:8080/health
 
 ## What's New in v1.2.9
 
-- **EvoLink Media Agents** – First-class EvoLink provider under `pkg/agno/providers/evolink` and `pkg/agno/models/evolink/*` for text, image, and video generation, with example workflows in `website/examples/evolink-media-agents.md`.
+- **EvoLink Media Agents** – First-class EvoLink provider under `pkg/agentgo/providers/evolink` and `pkg/agentgo/models/evolink/*` for text, image, and video generation, with example workflows in `website/examples/evolink-media-agents.md`.
 - **Knowledge Upload Chunking** – `POST /api/v1/knowledge/content` now accepts `chunk_size` and `chunk_overlap` (JSON, `text/plain` query params, multipart form fields) and records these values plus `chunker_type` in stored chunk metadata.
 - **AgentOS HTTP Tips in Docs** – The AgentOS API page now documents how to customize health endpoints, rely on `/openapi.yaml` and `/docs`, and when to call `server.Resync()` after router changes.
 

@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jholhewres/agent-go/pkg/agno/vectordb"
+	"github.com/jholhewres/agent-go/pkg/agentgo/vectordb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )

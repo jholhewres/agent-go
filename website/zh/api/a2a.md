@@ -36,7 +36,7 @@ package main
 import (
     "github.com/gin-gonic/gin"
     "github.com/jholhewres/agent-go/pkg/agentos/a2a"
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
 )
 
 func main() {
@@ -346,8 +346,8 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/jholhewres/agent-go/pkg/agentos/a2a"
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
 )
 
 // AgentRegistry manages registered agents

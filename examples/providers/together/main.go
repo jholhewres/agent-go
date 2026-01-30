@@ -4,8 +4,8 @@ import (
     "context"
     "fmt"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    together "github.com/jholhewres/agent-go/pkg/agno/models/together"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    together "github.com/jholhewres/agent-go/pkg/agentgo/models/together"
 )
 
 // Minimal example showing Together AI model instantiation.

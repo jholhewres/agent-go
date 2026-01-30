@@ -43,20 +43,20 @@ go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
 ```bash
 # agentパッケージをテスト
-go test -v ./pkg/agno/agent/...
+go test -v ./pkg/agentgo/agent/...
 
 # カバレッジ付き
-go test -v -cover ./pkg/agno/agent/...
+go test -v -cover ./pkg/agentgo/agent/...
 ```
 
 ### 特定のテスト
 
 ```bash
 # 特定のテスト関数を実行
-go test -v -run TestAgentRun ./pkg/agno/agent/
+go test -v -run TestAgentRun ./pkg/agentgo/agent/
 
 # パターンに一致するテストを実行
-go test -v -run TestAgent.* ./pkg/agno/agent/
+go test -v -run TestAgent.* ./pkg/agentgo/agent/
 ```
 
 ### カバレッジレポート
@@ -101,8 +101,8 @@ import (
     "context"
     "testing"
 
-    "github.com/jholhewres/agent-go/pkg/agno/models"
-    "github.com/jholhewres/agent-go/pkg/agno/types"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models"
+    "github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 func TestAgentRun(t *testing.T) {
@@ -299,16 +299,16 @@ func BenchmarkAgentCreation(b *testing.B) {
 
 ```bash
 # すべてのベンチマークを実行
-go test -bench=. ./pkg/agno/agent/
+go test -bench=. ./pkg/agentgo/agent/
 
 # 特定のベンチマークを実行
-go test -bench=BenchmarkAgentCreation ./pkg/agno/agent/
+go test -bench=BenchmarkAgentCreation ./pkg/agentgo/agent/
 
 # メモリアロケーション統計付き
-go test -bench=. -benchmem ./pkg/agno/agent/
+go test -bench=. -benchmem ./pkg/agentgo/agent/
 
 # 精度のために複数回実行
-go test -bench=. -benchtime=10s -count=5 ./pkg/agno/agent/
+go test -bench=. -benchtime=10s -count=5 ./pkg/agentgo/agent/
 ```
 
 ### ベンチマーク出力
@@ -385,8 +385,8 @@ package testutil
 
 import (
     "testing"
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models"
 )
 
 func CreateTestAgent(t *testing.T) *agent.Agent {

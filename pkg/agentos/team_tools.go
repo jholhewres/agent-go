@@ -1,9 +1,9 @@
 package agentos
 
 import (
-	"github.com/jholhewres/agent-go/pkg/agno/models"
-	"github.com/jholhewres/agent-go/pkg/agno/team"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models"
+	"github.com/jholhewres/agent-go/pkg/agentgo/team"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 // TeamToolDefinitions returns the effective tool definitions available to a team.

@@ -30,9 +30,9 @@ import (
     "fmt"
     "log"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/workflow"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -453,7 +453,7 @@ If a step cancels the context, the latest history entry records the `RunStatusCa
 Attach images, audio, or files to a run without embedding them in the prompt:
 
 ```go
-// import "github.com/jholhewres/agent-go/pkg/agno/media"
+// import "github.com/jholhewres/agent-go/pkg/agentgo/media"
 attachments := []media.Attachment{
     {Type: "image", URL: "https://example.com/diagram.png"},
     {Type: "file",  ID:  "spec-v1", Name: "spec.pdf"},

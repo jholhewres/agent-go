@@ -3,8 +3,8 @@ package migrate
 import (
     "fmt"
 
-    "github.com/jholhewres/agent-go/pkg/agno/vectordb"
-    "github.com/jholhewres/agent-go/pkg/agno/vectordb/chromadb"
+    "github.com/jholhewres/agent-go/pkg/agentgo/vectordb"
+    "github.com/jholhewres/agent-go/pkg/agentgo/vectordb/chromadb"
 )
 
 // defaultFactory provides Chroma provider by default; Redis is optional and disabled here.

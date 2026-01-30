@@ -57,9 +57,9 @@ import (
 	"log"
 	"time"
 
-	"github.com/jholhewres/agent-go/pkg/agno/mcp/client"
-	"github.com/jholhewres/agent-go/pkg/agno/mcp/security"
-	mcptoolkit "github.com/jholhewres/agent-go/pkg/agno/mcp/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/mcp/client"
+	"github.com/jholhewres/agent-go/pkg/agentgo/mcp/security"
+	mcptoolkit "github.com/jholhewres/agent-go/pkg/agentgo/mcp/toolkit"
 )
 
 func main() {
@@ -285,8 +285,8 @@ The MCP toolkit can now be passed to an agno Agent!
 
 ```go
 import (
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 // 创建模型

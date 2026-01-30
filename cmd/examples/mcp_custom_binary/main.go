@@ -7,7 +7,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/jholhewres/agent-go/pkg/agno/mcp/client"
+	"github.com/jholhewres/agent-go/pkg/agentgo/mcp/client"
 )
 
 // This example demonstrates using custom binary executables with MCP

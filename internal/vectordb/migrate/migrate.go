@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/jholhewres/agent-go/pkg/agno/vectordb"
+	"github.com/jholhewres/agent-go/pkg/agentgo/vectordb"
 )
 
 // Options controls migration behavior for a VectorDB provider

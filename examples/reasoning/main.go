@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	openaiModel "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	openaiModel "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {

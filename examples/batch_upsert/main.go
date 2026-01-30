@@ -8,8 +8,8 @@ import (
 	"time"
 
 	_ "github.com/lib/pq"
-	"github.com/jholhewres/agent-go/pkg/agno/db/batch"
-	"github.com/jholhewres/agent-go/pkg/agno/session"
+	"github.com/jholhewres/agent-go/pkg/agentgo/db/batch"
+	"github.com/jholhewres/agent-go/pkg/agentgo/session"
 )
 
 func main() {

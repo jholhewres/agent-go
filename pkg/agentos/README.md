@@ -28,8 +28,8 @@ import (
     "syscall"
     "time"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
     "github.com/jholhewres/agent-go/pkg/agentos"
 )
 
@@ -296,8 +296,8 @@ server.RegisterAgent("technical-support", techSupportAgent)
 
 ```go
 import (
-    "github.com/jholhewres/agent-go/pkg/agno/tools/calculator"
-    "github.com/jholhewres/agent-go/pkg/agno/tools/http"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/http"
 )
 
 // Create agent with tools
@@ -317,7 +317,7 @@ server.RegisterAgent("tool-agent", ag)
 ### With Custom Session Storage
 
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/session"
+import "github.com/jholhewres/agent-go/pkg/agentgo/session"
 
 // Use custom storage (e.g., PostgreSQL, Redis)
 storage := session.NewPostgresStorage(connString)

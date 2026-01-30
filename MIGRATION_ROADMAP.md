@@ -27,7 +27,7 @@
 O diferencial principal do Agno Python: agentes que aprendem e melhoram com o tempo.
 
 **Componentes Ausentes:**
-- [ ] `pkg/agno/learning/` - Sistema de aprendizado principal
+- [ ] `pkg/agentgo/learning/` - Sistema de aprendizado principal
 - [ ] User Profiles (perfis persistentes entre sessões)
 - [ ] User Memories (acumulação de memórias ao longo do tempo)
 - [ ] Knowledge Learning (transferência de conhecimento entre usuários)

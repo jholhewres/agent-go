@@ -10,10 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/models"
-	"github.com/jholhewres/agent-go/pkg/agno/session"
-	"github.com/jholhewres/agent-go/pkg/agno/types"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models"
+	"github.com/jholhewres/agent-go/pkg/agentgo/session"
+	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 type simpleModel struct {

@@ -23,9 +23,9 @@ import (
 	semconv "go.opentelemetry.io/otel/semconv/v1.26.0"
 	"go.opentelemetry.io/otel/trace"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	openaiModel "github.com/jholhewres/agent-go/pkg/agno/models/openai"
-	"github.com/jholhewres/agent-go/pkg/agno/types"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	openaiModel "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 func main() {

@@ -64,9 +64,9 @@ package main
 import (
     "context"
     "fmt"
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
-    "github.com/jholhewres/agent-go/pkg/agno/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
 )
 
 func main() {
@@ -99,7 +99,7 @@ func main() {
 ## Why Agno-Go?
 ### What's New in v1.2.9
 
-- **EvoLink Media Agents** – First-class EvoLink provider under `pkg/agno/providers/evolink` and `pkg/agno/models/evolink/*` for text, image, and video generation, with end-to-end examples in the EvoLink Media Agents docs.
+- **EvoLink Media Agents** – First-class EvoLink provider under `pkg/agentgo/providers/evolink` and `pkg/agentgo/models/evolink/*` for text, image, and video generation, with end-to-end examples in the EvoLink Media Agents docs.
 - **Knowledge Upload Chunking** – `POST /api/v1/knowledge/content` supports `chunk_size` and `chunk_overlap` for JSON, `text/plain` (query params), and multipart uploads, and records these values plus `chunker_type` in chunk metadata.
 - **AgentOS HTTP Tips** – Updated docs show how to customize health endpoints, rely on `/openapi.yaml` and `/docs`, and use `server.Resync()` after router changes.
 

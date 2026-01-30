@@ -30,8 +30,8 @@ import (
     "context"
     "fmt"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -63,7 +63,7 @@ func main() {
 저장할 최대 메시지 수 설정:
 
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/memory"
+import "github.com/jholhewres/agent-go/pkg/agentgo/memory"
 
 customMemory := memory.New(memory.Config{
     MaxMessages: 50,  // 최대 50개 메시지 저장
@@ -118,7 +118,7 @@ for _, msg := range messages {
 메모리에 수동으로 메시지 추가:
 
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/types"
+import "github.com/jholhewres/agent-go/pkg/agentgo/types"
 
 // 시스템 메시지 추가
 agent.Memory.AddMessage(types.Message{

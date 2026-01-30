@@ -5,7 +5,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/jholhewres/agent-go/pkg/agno/vectordb"
+	"github.com/jholhewres/agent-go/pkg/agentgo/vectordb"
 )
 
 type fakeDB struct {

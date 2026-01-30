@@ -6,18 +6,18 @@ EvoLink support becomes a reusable provider under `pkg/agno`. The implementation
 - An async polling helper for task-based endpoints that clients can reuse.
 
 ## Components
-1. **Provider Package (`pkg/agno/providers/evolink`)**  
+1. **Provider Package (`pkg/agentgo/providers/evolink`)**  
    - Subpackages for `video`, `image`, `text`, each exporting typed `Options`, `Client`, and `Response` structs.  
    - Shared `client.go` handles base URL, auth header, JSON encode/decode, error wrapping, and `GetTask` polling.
 
 2. **Model Interfaces**  
-   - Implement `models.Model` (or the relevant interface) so that `pkg/agno/session`, workflows, and examples can instantiate EvoLink agents just like other providers.  
+   - Implement `models.Model` (or the relevant interface) so that `pkg/agentgo/session`, workflows, and examples can instantiate EvoLink agents just like other providers.  
    - Provide constructors such as `models/evolink/video.New(...)`, `models/evolink/image.New(...)`, `models/evolink/text.New(...)`.
 
 3. **Documentation & Samples**  
    - Update website example pages to demonstrate using the provider within Agno workflows (e.g., `agents.New(...)` referencing EvoLink models) rather than a bespoke CLI.
 
 ## Validations
-- Unit tests under `pkg/agno/providers/evolink/...` covering payload validation, polling, and error paths using httptest servers.
+- Unit tests under `pkg/agentgo/providers/evolink/...` covering payload validation, polling, and error paths using httptest servers.
 - Example integration test (or doc snippet) showing a workflow that chains EvoLink text → image → video.
 - Docs build check (`npm run docs:build`) to ensure the updated example renders.

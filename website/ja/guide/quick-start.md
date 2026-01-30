@@ -39,8 +39,8 @@ import (
     "log"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agno/agent"
-    "github.com/rexleimo/agno-Go/pkg/agno/models/openai"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -104,10 +104,10 @@ import (
     "log"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agno/agent"
-    "github.com/rexleimo/agno-Go/pkg/agno/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agno/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agno/tools/toolkit"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {
@@ -167,8 +167,8 @@ import (
     "os"
     "strings"
 
-    "github.com/rexleimo/agno-Go/pkg/agno/agent"
-    "github.com/rexleimo/agno-Go/pkg/agno/models/openai"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -381,11 +381,11 @@ export LOG_LEVEL=debug
 
 ```go
 import (
-    "github.com/rexleimo/agno-Go/pkg/agno/agent"
-    "github.com/rexleimo/agno-Go/pkg/agno/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agno/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agno/team"
-    "github.com/rexleimo/agno-Go/pkg/agno/workflow"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/team"
+    "github.com/rexleimo/agno-Go/pkg/agentgo/workflow"
     "github.com/rexleimo/agno-Go/pkg/agentos"
 )
 ```

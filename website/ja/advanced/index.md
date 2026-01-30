@@ -72,10 +72,10 @@ Agno-Go のモジュラーアーキテクチャと設計哲学について学ぶ
 make benchmark
 
 # 特定のベンチマークを実行
-go test -bench=BenchmarkAgentCreation -benchmem ./pkg/agno/agent/
+go test -bench=BenchmarkAgentCreation -benchmem ./pkg/agentgo/agent/
 
 # CPU プロファイルを生成
-go test -bench=. -cpuprofile=cpu.out ./pkg/agno/agent/
+go test -bench=. -cpuprofile=cpu.out ./pkg/agentgo/agent/
 ```
 
 [詳細なパフォーマンスメトリクスを見る →](/ja/advanced/performance)

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/jholhewres/agent-go/pkg/agno/team"
+	"github.com/jholhewres/agent-go/pkg/agentgo/team"
 )
 
 // TeamRegistry manages registered teams.

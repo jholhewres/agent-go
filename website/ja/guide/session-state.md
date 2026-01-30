@@ -47,7 +47,7 @@ import (
     "context"
     "fmt"
 
-    "github.com/jholhewres/agent-go/pkg/agno/workflow"
+    "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 )
 
 func main() {
@@ -156,7 +156,7 @@ Agno-Goは**ディープコピー + last-write-wins**戦略を使用します：
 4. 競合が存在する場合、後のブランチが前のブランチを上書き
 
 ```go
-// pkg/agno/workflow/parallel.go
+// pkg/agentgo/workflow/parallel.go
 
 func (p *Parallel) Execute(ctx context.Context, execCtx *ExecutionContext) (*ExecutionContext, error) {
     // 1. 各ブランチに独立したSessionStateコピーを作成
@@ -185,7 +185,7 @@ func (p *Parallel) Execute(ctx context.Context, execCtx *ExecutionContext) (*Exe
 ### マージ戦略
 
 ```go
-// pkg/agno/workflow/session_state.go
+// pkg/agentgo/workflow/session_state.go
 
 func MergeParallelSessionStates(original *SessionState, modified []*SessionState) *SessionState {
     merged := NewSessionState()
@@ -396,7 +396,7 @@ if !ok {
 
 テストを実行：
 ```bash
-cd pkg/agno/workflow
+cd pkg/agentgo/workflow
 go test -v -run TestSessionState
 ```
 

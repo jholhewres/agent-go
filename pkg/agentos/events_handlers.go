@@ -9,8 +9,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/types"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 // handleAgentRunStream 处理流式 Agent 运行请求（SSE）

@@ -1,7 +1,7 @@
 # EvoLink 媒体智能体（Media Agents）
 
 ## 概览
-本文演示如何在 Agno-Go 中使用 EvoLink Provider，通过 `pkg/agno/models/evolink/*` 生成文本、图片与视频。
+本文演示如何在 Agno-Go 中使用 EvoLink Provider，通过 `pkg/agentgo/models/evolink/*` 生成文本、图片与视频。
 
 ## 环境准备
 - 设置环境变量：
@@ -53,9 +53,9 @@ import (
   "fmt"
   "os"
 
-  evoText "github.com/jholhewres/agent-go/pkg/agno/models/evolink/text"
-  "github.com/jholhewres/agent-go/pkg/agno/models"
-  "github.com/jholhewres/agent-go/pkg/agno/types"
+  evoText "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/text"
+  "github.com/jholhewres/agent-go/pkg/agentgo/models"
+  "github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 func main() {
@@ -76,9 +76,9 @@ import (
   "fmt"
   "os"
 
-  evoImg "github.com/jholhewres/agent-go/pkg/agno/models/evolink/image"
-  "github.com/jholhewres/agent-go/pkg/agno/models"
-  "github.com/jholhewres/agent-go/pkg/agno/types"
+  evoImg "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/image"
+  "github.com/jholhewres/agent-go/pkg/agentgo/models"
+  "github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 func main() {
@@ -99,9 +99,9 @@ import (
   "fmt"
   "os"
 
-  evoVid "github.com/jholhewres/agent-go/pkg/agno/models/evolink/video"
-  "github.com/jholhewres/agent-go/pkg/agno/models"
-  "github.com/jholhewres/agent-go/pkg/agno/types"
+  evoVid "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/video"
+  "github.com/jholhewres/agent-go/pkg/agentgo/models"
+  "github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 func main() {

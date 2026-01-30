@@ -60,13 +60,13 @@ make install-tools  # 安装 golangci-lint 和 goimports
 make test
 
 # 运行特定包的测试
-go test -v ./pkg/agno/agent/...
+go test -v ./pkg/agentgo/agent/...
 
 # 生成覆盖率报告 (生成 coverage.html)
 make coverage
 
 # 运行特定测试用例
-go test -v -run TestAgentRun ./pkg/agno/agent/
+go test -v -run TestAgentRun ./pkg/agentgo/agent/
 ```
 
 ### 代码质量
@@ -119,9 +119,9 @@ AgentGo 遵循两种主要设计模式:
 
 ### 核心模块
 
-**源码根目录**: `pkg/agno/`
+**源码根目录**: `pkg/agentgo/`
 
-#### 1. Agent (pkg/agno/agent/)
+#### 1. Agent (pkg/agentgo/agent/)
 - **agent.go** - Agent 结构体和 Run 方法
 - **agent_test.go** - 单元测试 (74.7% 覆盖)
 - **agent_bench_test.go** - 性能基准测试
@@ -138,7 +138,7 @@ type Config struct {
 }
 ```
 
-#### 2. Team (pkg/agno/team/)
+#### 2. Team (pkg/agentgo/team/)
 多智能体协作,支持 4 种协作模式:
 
 - `ModeSequential` - 顺序执行,智能体逐个工作
@@ -148,7 +148,7 @@ type Config struct {
 
 **测试覆盖**: 92.3%
 
-#### 3. Workflow (pkg/agno/workflow/)
+#### 3. Workflow (pkg/agentgo/workflow/)
 基于步骤的工作流引擎,支持 5 种原语:
 
 - **step.go** - 基本工作流步骤 (运行 Agent 或自定义函数)
@@ -160,7 +160,7 @@ type Config struct {
 
 **测试覆盖**: 80.4%
 
-#### 4. Models (pkg/agno/models/)
+#### 4. Models (pkg/agentgo/models/)
 LLM 提供商接口和实现:
 
 - **base.go** - Model 接口 (Invoke/InvokeStream 方法)
@@ -180,7 +180,7 @@ type Model interface {
 }
 ```
 
-#### 5. Tools (pkg/agno/tools/)
+#### 5. Tools (pkg/agentgo/tools/)
 工具系统,扩展 Agent 能力:
 
 - **toolkit/toolkit.go** - Toolkit 接口和基础实现
@@ -188,7 +188,7 @@ type Model interface {
 - **http/http.go** - HTTP GET/POST 请求
 - **file/file.go** - 文件操作 (读、写、列表、删除,带安全控制)
 
-#### 6. Memory (pkg/agno/memory/)
+#### 6. Memory (pkg/agentgo/memory/)
 对话历史管理:
 
 - **memory.go** - 内存存储,支持自动截断
@@ -196,7 +196,7 @@ type Model interface {
 
 **测试覆盖**: 93.1%
 
-#### 7. Types (pkg/agno/types/)
+#### 7. Types (pkg/agentgo/types/)
 核心类型和错误:
 
 - **message.go** - 消息类型 (System, User, Assistant, Tool)
@@ -231,7 +231,7 @@ AgentGo 利用 Go 的并发模型实现卓越性能:
 
 ### 添加模型提供商
 
-1. 创建目录: `pkg/agno/models/<your_model>/`
+1. 创建目录: `pkg/agentgo/models/<your_model>/`
 2. 实现 `models.Model` 接口 (来自 `models/base.go`):
    - `Invoke(ctx context.Context, req *InvokeRequest) (*ModelResponse, error)`
    - `InvokeStream(ctx context.Context, req *InvokeRequest) (<-chan ResponseChunk, error)`
@@ -259,7 +259,7 @@ func (m *YourModel) Invoke(ctx context.Context, req *models.InvokeRequest) (*typ
 
 ### 添加工具
 
-1. 创建目录: `pkg/agno/tools/<your_tool>/`
+1. 创建目录: `pkg/agentgo/tools/<your_tool>/`
 2. 创建嵌入 `toolkit.BaseToolkit` 的结构体
 3. 使用 `RegisterFunction` 注册函数,提供正确的参数定义
 4. 参考 `tools/calculator/calculator.go` 或 `tools/http/http.go` 作为示例

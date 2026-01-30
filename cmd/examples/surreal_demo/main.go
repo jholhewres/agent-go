@@ -8,8 +8,8 @@ import (
 
 	"github.com/google/uuid"
 
-	"github.com/jholhewres/agent-go/pkg/agno/db/surreal"
-	"github.com/jholhewres/agent-go/pkg/agno/session"
+	"github.com/jholhewres/agent-go/pkg/agentgo/db/surreal"
+	"github.com/jholhewres/agent-go/pkg/agentgo/session"
 )
 
 func main() {

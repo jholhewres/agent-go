@@ -80,9 +80,9 @@ import (
     "context"
     "fmt"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/memory"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/memory"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -138,7 +138,7 @@ import (
     "net/http"
 
     "github.com/gin-gonic/gin"
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
 )
 
 var sharedAgent *agent.Agent
@@ -223,7 +223,7 @@ curl -X POST http://localhost:8080/chat \
 Memory 인터페이스는 선택적 `userID` 매개변수를 지원합니다:
 
 ```go
-// pkg/agno/memory/memory.go
+// pkg/agentgo/memory/memory.go
 
 type Memory interface {
     // 메시지 추가 (선택적 userID 지원)
@@ -321,7 +321,7 @@ type Config struct {
 ### Run 메서드 구현
 
 ```go
-// pkg/agno/agent/agent.go
+// pkg/agentgo/agent/agent.go
 
 func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
     // ...
@@ -529,10 +529,10 @@ func MapA2ARequestToRunInput(req *JSONRPC2Request) (*RunInput, error) {
 
 테스트 실행:
 ```bash
-cd pkg/agno/memory
+cd pkg/agentgo/memory
 go test -v -run TestInMemory
 
-cd pkg/agno/agent
+cd pkg/agentgo/agent
 go test -v -run TestAgent_MultiTenant
 ```
 

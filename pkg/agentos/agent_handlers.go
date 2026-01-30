@@ -11,11 +11,11 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/media"
-	"github.com/jholhewres/agent-go/pkg/agno/run"
-	"github.com/jholhewres/agent-go/pkg/agno/session"
-	"github.com/jholhewres/agent-go/pkg/agno/types"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/media"
+	"github.com/jholhewres/agent-go/pkg/agentgo/run"
+	"github.com/jholhewres/agent-go/pkg/agentgo/session"
+	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 // AgentRunRequest represents a request to run an agent

@@ -7,10 +7,10 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/models/openai"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/googlesheets"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/googlesheets"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 // 本示例演示如何使用 Google Sheets 工具包

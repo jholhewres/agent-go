@@ -47,7 +47,7 @@ import (
     "context"
     "fmt"
 
-    "github.com/jholhewres/agent-go/pkg/agno/workflow"
+    "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 )
 
 func main() {
@@ -158,7 +158,7 @@ Agno-Go 使用 **深拷贝 + 最终写入优先** 策略:
 4. 如果有冲突,后执行的分支覆盖先执行的分支
 
 ```go
-// pkg/agno/workflow/parallel.go
+// pkg/agentgo/workflow/parallel.go
 
 func (p *Parallel) Execute(ctx context.Context, execCtx *ExecutionContext) (*ExecutionContext, error) {
     // 1. 为每个分支创建独立的 SessionState 副本
@@ -187,7 +187,7 @@ func (p *Parallel) Execute(ctx context.Context, execCtx *ExecutionContext) (*Exe
 ### 合并策略
 
 ```go
-// pkg/agno/workflow/session_state.go
+// pkg/agentgo/workflow/session_state.go
 
 func MergeParallelSessionStates(original *SessionState, modified []*SessionState) *SessionState {
     merged := NewSessionState()
@@ -646,7 +646,7 @@ execCtx.SetSessionState("branch_c_counter", 3)
 
 运行测试:
 ```bash
-cd pkg/agno/workflow
+cd pkg/agentgo/workflow
 go test -v -run TestSessionState
 ```
 

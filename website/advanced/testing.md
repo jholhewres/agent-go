@@ -43,20 +43,20 @@ go test -v -race -coverprofile=coverage.out -covermode=atomic ./...
 
 ```bash
 # Test agent package
-go test -v ./pkg/agno/agent/...
+go test -v ./pkg/agentgo/agent/...
 
 # Test with coverage
-go test -v -cover ./pkg/agno/agent/...
+go test -v -cover ./pkg/agentgo/agent/...
 ```
 
 ### Specific Test
 
 ```bash
 # Run specific test function
-go test -v -run TestAgentRun ./pkg/agno/agent/
+go test -v -run TestAgentRun ./pkg/agentgo/agent/
 
 # Run tests matching pattern
-go test -v -run TestAgent.* ./pkg/agno/agent/
+go test -v -run TestAgent.* ./pkg/agentgo/agent/
 ```
 
 ### Coverage Report
@@ -101,8 +101,8 @@ import (
     "context"
     "testing"
 
-    "github.com/jholhewres/agent-go/pkg/agno/models"
-    "github.com/jholhewres/agent-go/pkg/agno/types"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models"
+    "github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
 func TestAgentRun(t *testing.T) {
@@ -299,16 +299,16 @@ func BenchmarkAgentCreation(b *testing.B) {
 
 ```bash
 # Run all benchmarks
-go test -bench=. ./pkg/agno/agent/
+go test -bench=. ./pkg/agentgo/agent/
 
 # Run specific benchmark
-go test -bench=BenchmarkAgentCreation ./pkg/agno/agent/
+go test -bench=BenchmarkAgentCreation ./pkg/agentgo/agent/
 
 # With memory allocation stats
-go test -bench=. -benchmem ./pkg/agno/agent/
+go test -bench=. -benchmem ./pkg/agentgo/agent/
 
 # Multiple runs for accuracy
-go test -bench=. -benchtime=10s -count=5 ./pkg/agno/agent/
+go test -bench=. -benchtime=10s -count=5 ./pkg/agentgo/agent/
 ```
 
 ### Benchmark Output
@@ -385,8 +385,8 @@ package testutil
 
 import (
     "testing"
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models"
 )
 
 func CreateTestAgent(t *testing.T) *agent.Agent {

@@ -4,7 +4,7 @@ import (
 	"context"
 	"testing"
 
-	"github.com/jholhewres/agent-go/pkg/agno/run"
+	"github.com/jholhewres/agent-go/pkg/agentgo/run"
 )
 
 func TestDeriveRunContextUsesPayload(t *testing.T) {

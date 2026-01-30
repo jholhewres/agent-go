@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/jholhewres/agent-go/pkg/agno/media"
+	"github.com/jholhewres/agent-go/pkg/agentgo/media"
 )
 
 // EventType 表示事件类型

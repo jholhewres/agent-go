@@ -7,10 +7,10 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/models"
-	"github.com/jholhewres/agent-go/pkg/agno/team"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models"
+	"github.com/jholhewres/agent-go/pkg/agentgo/team"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func TestHandleTeamTools_ReturnsAggregatedTools(t *testing.T) {

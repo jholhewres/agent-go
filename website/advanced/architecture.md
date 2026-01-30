@@ -77,7 +77,7 @@ type Memory interface {
 
 ### Agent
 
-**File**: `pkg/agno/agent/agent.go`
+**File**: `pkg/agentgo/agent/agent.go`
 
 Autonomous AI entity that:
 - Uses LLM for reasoning
@@ -94,7 +94,7 @@ ClearMemory()
 
 ### Team
 
-**File**: `pkg/agno/team/team.go`
+**File**: `pkg/agentgo/team/team.go`
 
 Multi-agent collaboration with 4 coordination modes:
 
@@ -105,7 +105,7 @@ Multi-agent collaboration with 4 coordination modes:
 
 ### Workflow
 
-**File**: `pkg/agno/workflow/workflow.go`
+**File**: `pkg/agentgo/workflow/workflow.go`
 
 Step-based orchestration with 5 primitives:
 
@@ -117,7 +117,7 @@ Step-based orchestration with 5 primitives:
 
 ### Models
 
-**Directory**: `pkg/agno/models/`
+**Directory**: `pkg/agentgo/models/`
 
 LLM provider implementations:
 - `openai/` - OpenAI GPT models
@@ -127,7 +127,7 @@ LLM provider implementations:
 
 ### Tools
 
-**Directory**: `pkg/agno/tools/`
+**Directory**: `pkg/agentgo/tools/`
 
 Extensible toolkit system:
 - `calculator/` - Math operations

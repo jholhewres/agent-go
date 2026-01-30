@@ -9,12 +9,12 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/embeddings/openai"
-	"github.com/jholhewres/agent-go/pkg/agno/session"
-	"github.com/jholhewres/agent-go/pkg/agno/team"
-	"github.com/jholhewres/agent-go/pkg/agno/vectordb"
-	"github.com/jholhewres/agent-go/pkg/agno/vectordb/chromadb"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/embeddings/openai"
+	"github.com/jholhewres/agent-go/pkg/agentgo/session"
+	"github.com/jholhewres/agent-go/pkg/agentgo/team"
+	"github.com/jholhewres/agent-go/pkg/agentgo/vectordb"
+	"github.com/jholhewres/agent-go/pkg/agentgo/vectordb/chromadb"
 )
 
 // Server represents the AgentOS HTTP server

@@ -74,7 +74,7 @@ storage, _ := sqlite.New("./learning.db")
 
 **PostgreSQL** (production, scalable):
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/learning/postgres"
+import "github.com/jholhewres/agent-go/pkg/agentgo/learning/postgres"
 
 db, _ := sql.Open("postgres", "postgresql://localhost/agentgo")
 storage, _ := postgres.New(db, "public")

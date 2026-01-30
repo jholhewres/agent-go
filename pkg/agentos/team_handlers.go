@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/jholhewres/agent-go/pkg/agno/models"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models"
 )
 
 // TeamToolsResponse is the API payload for listing team tools.

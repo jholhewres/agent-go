@@ -35,10 +35,10 @@ import (
     "log"
     "os"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
-    "github.com/jholhewres/agent-go/pkg/agno/tools/calculator"
-    "github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {
@@ -73,7 +73,7 @@ func main() {
 ### 示例
 
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/tools/calculator"
+import "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
 
 agent, _ := agent.New(agent.Config{
     Model:    model,
@@ -98,7 +98,7 @@ output, _ := agent.Run(ctx, "Calculate 15% tip on $85")
 ### 示例
 
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/tools/http"
+import "github.com/jholhewres/agent-go/pkg/agentgo/tools/http"
 
 agent, _ := agent.New(agent.Config{
     Model:    model,
@@ -136,7 +136,7 @@ httpTool := http.New(http.Config{
 ### 示例
 
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/tools/file"
+import "github.com/jholhewres/agent-go/pkg/agentgo/tools/file"
 
 fileTool := file.New(file.Config{
     AllowedPaths: []string{"/tmp", "./data"},  // Restrict access
@@ -193,7 +193,7 @@ output, _ := agent.Run(ctx,
 ```go
 package mytool
 
-import "github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+import "github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 
 type MyToolkit struct {
     *toolkit.BaseToolkit
@@ -450,7 +450,7 @@ args := map[string]interface{}{
 ### 使用方法
 
 ```go
-import "github.com/jholhewres/agent-go/pkg/agno/tools/googlesheets"
+import "github.com/jholhewres/agent-go/pkg/agentgo/tools/googlesheets"
 
 // 从 JSON 文件加载凭据
 sheetsTool, err := googlesheets.New(googlesheets.Config{
@@ -479,10 +479,10 @@ import (
     "log"
     "os"
 
-    "github.com/jholhewres/agent-go/pkg/agno/agent"
-    "github.com/jholhewres/agent-go/pkg/agno/models/openai"
-    "github.com/jholhewres/agent-go/pkg/agno/tools/googlesheets"
-    "github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/googlesheets"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {

@@ -66,10 +66,10 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/models/ollama"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/calculator"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models/ollama"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {

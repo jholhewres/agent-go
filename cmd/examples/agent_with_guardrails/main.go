@@ -7,12 +7,12 @@ import (
 	"os"
 	"strings"
 
-	"github.com/jholhewres/agent-go/pkg/agno/agent"
-	"github.com/jholhewres/agent-go/pkg/agno/guardrails"
-	"github.com/jholhewres/agent-go/pkg/agno/hooks"
-	"github.com/jholhewres/agent-go/pkg/agno/models/openai"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/calculator"
-	"github.com/jholhewres/agent-go/pkg/agno/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/guardrails"
+	"github.com/jholhewres/agent-go/pkg/agentgo/hooks"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 // CustomPreHook is an example of a custom pre-hook function
