@@ -5,6 +5,41 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.3] - 2026-01-30
+
+### Added
+- **DisableSkillScripts** configuration option in `agent.Config`
+- Skills can now be disabled from executing scripts while keeping instructions/references
+- `Skills.DisableScripts()` method to programmatically disable script execution
+- `Skills.EnableScripts()` method to re-enable script execution
+- `Skills.ScriptsEnabled()` method to check current script execution state
+
+### Changed
+- Skills toolkit now conditionally registers `get_skill_script` based on `enableScripts` flag
+- When `DisableSkillScripts: true`, only `get_skill_instructions` and `get_skill_reference` are available
+- Script execution remains enabled by default (backward compatible)
+
+### Use Case
+Useful when you want to use skills only for documentation/guidance without allowing script execution:
+```go
+agent, err := agentgo.New(agentgo.Config{
+    Model:               model,
+    Skills:              agentSkills,
+    DisableSkillScripts: true, // Only instructions/references, no scripts
+})
+```
+
+### Testing
+New tests added:
+- ✅ `TestDisableScripts` - Verifies DisableScripts/EnableScripts/ScriptsEnabled
+- ✅ `TestAsToolkitWithScriptsDisabled` - Validates toolkit generation with scripts disabled
+- ✅ `TestNewSkillsDefaultScriptState` - Ensures default behavior (scripts enabled)
+- ✅ `TestAgentWithDisabledScripts` - Agent integration with disabled scripts
+- ✅ `TestAgentWithEnabledScripts` - Agent integration with enabled scripts (default)
+- ✅ `TestAgentWithoutSkillsUnaffected` - DisableSkillScripts has no effect without skills
+
+All existing tests passing with backward compatibility maintained.
+
 ## [1.1.2] - 2026-01-30
 
 ### Fixed

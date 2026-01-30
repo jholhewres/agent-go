@@ -10,10 +10,11 @@ import (
 
 // Skills is the main orchestrator that manages skills through loaders
 type Skills struct {
-	loaders      []SkillLoader
-	skills       map[string]*Skill
-	systemPrompt string
-	mu           sync.RWMutex
+	loaders       []SkillLoader
+	skills        map[string]*Skill
+	systemPrompt  string
+	enableScripts bool // Controls whether script execution tools are available
+	mu            sync.RWMutex
 }
 
 // NewSkills creates a new Skills orchestrator with the given loaders
@@ -23,8 +24,9 @@ func NewSkills(loaders []SkillLoader) (*Skills, error) {
 	}
 
 	s := &Skills{
-		loaders: loaders,
-		skills:  make(map[string]*Skill),
+		loaders:       loaders,
+		skills:        make(map[string]*Skill),
+		enableScripts: true, // Default: scripts enabled (current behavior)
 	}
 
 	if err := s.LoadAll(); err != nil {
@@ -158,4 +160,29 @@ func (s *Skills) GetToolkit() toolkit.Toolkit {
 
 	skillTools := NewSkillTools(s)
 	return skillTools.AsToolkit()
+}
+
+// DisableScripts disables script execution tools for this Skills instance.
+// After calling this method, get_skill_script will not be registered as a tool.
+// This is useful when you want to use skills only for instructions/references
+// without allowing script execution.
+func (s *Skills) DisableScripts() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.enableScripts = false
+}
+
+// EnableScripts enables script execution tools for this Skills instance.
+// This is the default behavior.
+func (s *Skills) EnableScripts() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.enableScripts = true
+}
+
+// ScriptsEnabled returns whether script execution is enabled.
+func (s *Skills) ScriptsEnabled() bool {
+	s.mu.RLock()
+	defer s.mu.RUnlock()
+	return s.enableScripts
 }

@@ -89,7 +89,8 @@ type Config struct {
 	LearningMachine learning.LearningMachine // Learning machine instance / 学习机器实例
 
 	// Skills system / 技能系统
-	Skills interface{} // Skills orchestrator (will be *skills.Skills to avoid import cycle) / 技能编排器
+	Skills              interface{} // Skills orchestrator (will be *skills.Skills to avoid import cycle) / 技能编排器
+	DisableSkillScripts bool        // Disable script execution in skills (get_skill_script tool won't be registered) / 禁用技能脚本执行
 
 	// Storage control flags (nil means use default: true) / 存储控制标志 (nil 表示使用默认值: true)
 	// StoreToolMessages controls whether tool-related messages are included in RunOutput.
@@ -163,6 +164,11 @@ func New(config Config) (*Agent, error) {
 	if config.Skills != nil {
 		// Type assertion to *skills.Skills
 		if skillsObj, ok := config.Skills.(*skills.Skills); ok && skillsObj != nil {
+			// Disable script execution if requested
+			if config.DisableSkillScripts {
+				skillsObj.DisableScripts()
+			}
+
 			// 1. Add skills system prompt snippet to instructions
 			skillsSnippet := skillsObj.GetSystemPrompt()
 			if skillsSnippet != "" {

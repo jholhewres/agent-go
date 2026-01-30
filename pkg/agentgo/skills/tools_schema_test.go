@@ -56,6 +56,7 @@ func TestGetSkillScriptParametersValid(t *testing.T) {
 		skills: map[string]*Skill{
 			"test": mockSkill,
 		},
+		enableScripts: true, // ← Enable scripts explicitly
 	}
 
 	skillTools := NewSkillTools(skills)
@@ -89,7 +90,7 @@ func TestGetSkillScriptParametersValid(t *testing.T) {
 }
 
 func TestAllSkillToolsHaveValidParameters(t *testing.T) {
-	// Test all three tools
+	// Test all three tools (with scripts enabled)
 	mockSkill := &Skill{
 		Name:         "validation-test",
 		Description:  "Test skill",
@@ -100,6 +101,7 @@ func TestAllSkillToolsHaveValidParameters(t *testing.T) {
 		skills: map[string]*Skill{
 			"validation-test": mockSkill,
 		},
+		enableScripts: true, // ← Enable scripts explicitly
 	}
 
 	skillTools := NewSkillTools(skills)

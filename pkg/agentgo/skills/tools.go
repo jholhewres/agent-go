@@ -28,7 +28,7 @@ func NewSkillTools(skills *Skills) *SkillTools {
 func (st *SkillTools) AsToolkit() toolkit.Toolkit {
 	t := toolkit.NewBaseToolkit("skills")
 
-	// get_skill_instructions tool
+	// get_skill_instructions tool (always available)
 	t.RegisterFunction(&toolkit.Function{
 		Name:        "get_skill_instructions",
 		Description: "Load full instructions for a skill. Use this when you need detailed guidance on how to use a skill.",
@@ -42,7 +42,7 @@ func (st *SkillTools) AsToolkit() toolkit.Toolkit {
 		Handler: st.getSkillInstructions,
 	})
 
-	// get_skill_reference tool
+	// get_skill_reference tool (always available)
 	t.RegisterFunction(&toolkit.Function{
 		Name:        "get_skill_reference",
 		Description: "Load a reference document from a skill. Use this to access supporting documentation.",
@@ -61,42 +61,44 @@ func (st *SkillTools) AsToolkit() toolkit.Toolkit {
 		Handler: st.getSkillReference,
 	})
 
-	// get_skill_script tool
-	t.RegisterFunction(&toolkit.Function{
-		Name:        "get_skill_script",
-		Description: "Read or execute a script from a skill. Use this to run automated tasks.",
-		Parameters: map[string]toolkit.Parameter{
-			"skill_name": {
-				Type:        "string",
-				Description: "The name of the skill",
-				Required:    true,
-			},
-			"script_path": {
-				Type:        "string",
-				Description: "The path to the script (e.g., 'check_style.py')",
-				Required:    true,
-			},
-			"execute": {
-				Type:        "boolean",
-				Description: "Whether to execute the script (true) or just return its content (false)",
-				Required:    false,
-			},
-			"args": {
-				Type:        "array",
-				Description: "Arguments to pass to the script when executing",
-				Required:    false,
-				Items: &toolkit.Parameter{
-					Type: "string",
+	// get_skill_script tool (only if scripts are enabled)
+	if st.skills.ScriptsEnabled() {
+		t.RegisterFunction(&toolkit.Function{
+			Name:        "get_skill_script",
+			Description: "Read or execute a script from a skill. Use this to run automated tasks.",
+			Parameters: map[string]toolkit.Parameter{
+				"skill_name": {
+					Type:        "string",
+					Description: "The name of the skill",
+					Required:    true,
+				},
+				"script_path": {
+					Type:        "string",
+					Description: "The path to the script (e.g., 'check_style.py')",
+					Required:    true,
+				},
+				"execute": {
+					Type:        "boolean",
+					Description: "Whether to execute the script (true) or just return its content (false)",
+					Required:    false,
+				},
+				"args": {
+					Type:        "array",
+					Description: "Arguments to pass to the script when executing",
+					Required:    false,
+					Items: &toolkit.Parameter{
+						Type: "string",
+					},
+				},
+				"timeout": {
+					Type:        "integer",
+					Description: "Timeout in seconds for script execution (default: 30)",
+					Required:    false,
 				},
 			},
-			"timeout": {
-				Type:        "integer",
-				Description: "Timeout in seconds for script execution (default: 30)",
-				Required:    false,
-			},
-		},
-		Handler: st.getSkillScript,
-	})
+			Handler: st.getSkillScript,
+		})
+	}
 
 	return t
 }
