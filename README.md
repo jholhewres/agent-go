@@ -7,6 +7,8 @@
 
 **AgentGo** is a high-performance multi-agent framework written in Go. It keeps the KISS philosophy of the Agno project while embracing Go’s strengths: lightweight goroutines, a tiny memory footprint, single static binaries, and a batteries-included toolchain.
 
+> **📜 Credits**: AgentGo is a fork and major enhancement of [**agno-go**](https://github.com/rexleimo/agno-go) by [@rexleimo](https://github.com/rexleimo), which itself was inspired by the Python [**Agno**](https://github.com/agno-agi/agno) framework. We extend the original with Learning System, Agent Skills, Prompt Engineering, and pgvector support. See [CREDITS.md](CREDITS.md) for full attribution.
+
 ---
 
 ## Feature Highlights
@@ -214,8 +216,35 @@ For ongoing changes and release scope, see [`CHANGELOG.md`](CHANGELOG.md) and th
 
 ## License
 
-MIT © [Contributors](https://github.com/rexleimo/agno-Go/graphs/contributors). Inspired by the [Agno (Python)](https://github.com/agno-agi/agno) framework.
+MIT © [Contributors](https://github.com/jholhewres/agent-go/graphs/contributors)
 
-## Credits
+## Credits & Acknowledgments
 
-Forked from [agno-go](https://github.com/rexleimo/agno-go) by [rexleimo](https://github.com/rexleimo). See [CREDITS.md](CREDITS.md) for full attribution.
+**AgentGo** is built on the excellent foundation provided by:
+
+### 🔧 Original Go Implementation
+**agno-go** by [@rexleimo](https://github.com/rexleimo)  
+Repository: https://github.com/rexleimo/agno-go  
+License: MIT
+
+### 🐍 Python Inspiration
+**Agno** - The original multi-agent framework  
+Repository: https://github.com/agno-agi/agno  
+Documentation: https://docs.agno.com  
+License: Apache-2.0
+
+### 🚀 AgentGo Enhancements
+
+AgentGo extends the original agno-go with:
+- **Learning System** - Agents that learn and improve over time with user profiles, memories, and knowledge transfer
+- **Agent Skills** - Modular capabilities system following the Agent Skills specification
+- **Advanced Reasoning** - Unified reasoning support across all model providers
+- **pgvector Integration** - PostgreSQL-based vector database support
+- **Prompt Engineering** - Template system with versioning and optimization
+
+See [CREDITS.md](CREDITS.md) for complete attribution and detailed information.
+
+---
+
+**Maintainer**: [@jholhewres](https://github.com/jholhewres)  
+**Repository**: https://github.com/jholhewres/agent-go
