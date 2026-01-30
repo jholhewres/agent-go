@@ -13,19 +13,35 @@
 
 ## Feature Highlights
 
-- **🚀 Extreme performance** – agent instantiation in ~180 ns and (~1.2 KB) memory per agent, 16× faster than the Python version.
-- **🧠 Learning System** – NEW! Agents that learn and improve with user profiles, memories, and transferable knowledge across sessions.
-- **🎯 Agent Skills** – NEW! Modular capability system following Agent Skills specification with filesystem and database loaders.
-- **💡 Prompt Engineering** – NEW! Template system with variable substitution, few-shot examples, and validation.
-- **🧠 Advanced Reasoning** – Unified reasoning API across all model providers (OpenAI o1/o3, Claude, Gemini 2.0).
-- **🤖 Production ready** – AgentOS REST server (OpenAPI 3.0), session storage, health checks, structured logging, CORS, request timeouts.
-- **🪄 Session parity** – shared sessions across agents/teams, async + sync summaries, run metadata with cache hits.
-- **🧩 Flexible architecture** – build with Agents, Teams (4 coordination modes), or Workflows (5 primitives) and mix freely.
-- **🔌 Multi-provider models** – OpenAI, Anthropic Claude, Google Gemini, DeepSeek, GLM, Ollama, Cohere, Groq, Together, and more.
-- **🔧 Extensible tooling** – calculator, HTTP, file operations, search, Tavily, Jira, Gmail, ElevenLabs, and SDK for custom toolkits.
-- **💾 Knowledge & RAG** – pgvector, ChromaDB, RedisDB integration with batching and caching.
-- **🛡️ Guardrails & hooks** – prompt-injection guard, custom pre/post hooks, media validation.
-- **📊 Observability** – rich SSE event stream with reasoning snapshots, Logfire / OpenTelemetry included.
+### 🆕 New in v2.0.0
+
+- **🧠 Learning System** – Agents that learn and improve over time with persistent user profiles, memories, and transferable knowledge across sessions. Supports PostgreSQL, SQLite, and MongoDB backends with GDPR compliance.
+- **🎯 Agent Skills** – Modular capability system following the Agent Skills specification (agentskills.io). Load skills from local filesystem (`.agentgo/skills/`) or databases. Automatic tool generation: `get_skill_instructions`, `get_skill_reference`, `get_skill_script`.
+- **💡 Prompt Engineering** – Advanced template system with Go `text/template` engine, variable validation (string, int, bool, array, object), few-shot examples injection, and YAML-based prompt definitions.
+- **💾 pgvector Support** – PostgreSQL-based vector database with HNSW & IVFFlat indexes, cosine similarity search, metadata filtering, and batch operations. Complements existing ChromaDB and RedisDB support.
+
+### ⚡ Performance & Architecture
+
+- **🚀 Extreme Performance** – Agent instantiation in ~180 ns and ~1.2 KB memory per agent. **16× faster** than Python version with native goroutines and no GIL limitations.
+- **🧩 Flexible Architecture** – Three orchestration patterns: **Agents** (autonomous), **Teams** (4 coordination modes: Sequential, Parallel, Leader-Follower, Consensus), **Workflows** (5 primitives: Step, Condition, Loop, Parallel, Router). Mix and compose freely.
+- **🤖 Production Ready** – AgentOS REST server with OpenAPI 3.0, session storage (PostgreSQL/MongoDB/SQLite), health checks, structured logging, CORS, request timeouts, and response caching.
+
+### 🤝 Model Providers & Reasoning
+
+- **🔌 15+ Model Providers** – OpenAI (GPT-4o, o1, o3), Anthropic Claude (3.5 Sonnet, Opus), Google Gemini (2.0 Flash, Pro), DeepSeek, GLM (智谱AI), Ollama (local), Groq, Cohere, Together, Vertex AI, Azure OpenAI, Perplexity, Mistral, Fireworks, and more.
+- **🧠 Unified Reasoning** – First-class reasoning support across all providers. Extract thinking/reasoning from OpenAI o1/o3, Claude extended thinking, Gemini 2.0 thinking mode, and Vertex AI Reasoning Engine with unified API.
+
+### 🛠️ Tools & Knowledge
+
+- **🔧 25+ Built-in Tools** – Calculator, HTTP client, file operations (read/write/list/delete), web search, Tavily search, Jira, Google Sheets, Gmail, ElevenLabs TTS, YouTube, and more. SDK for custom toolkits.
+- **💾 Knowledge & RAG** – Three vector database options: **pgvector** (PostgreSQL), **ChromaDB**, **RedisDB**. Includes document chunking, embeddings, batching, caching, and metadata filtering.
+- **📚 MCP Support** – Model Context Protocol integration for external tools and services.
+
+### 🛡️ Safety & Observability
+
+- **🛡️ Guardrails & Hooks** – Prompt injection guard, custom pre/post hooks (PreToolUse, PostToolUse, Stop), media validation, and input/output filters.
+- **🪄 Session Management** – Shared sessions across agents/teams/workflows, async + sync summaries, run metadata with cache hits, and pluggable storage adapters.
+- **📊 Rich Observability** – SSE event stream with reasoning snapshots, structured logging, Logfire integration, OpenTelemetry spans, token usage tracking, and run analytics.
 
 ---
 
