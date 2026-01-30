@@ -14,6 +14,7 @@ import (
 
 	"github.com/jholhewres/agent-go/pkg/agno/cache"
 	"github.com/jholhewres/agent-go/pkg/agno/hooks"
+	"github.com/jholhewres/agent-go/pkg/agno/learning"
 	"github.com/jholhewres/agent-go/pkg/agno/memory"
 	"github.com/jholhewres/agent-go/pkg/agno/models"
 	"github.com/jholhewres/agent-go/pkg/agno/reasoning"
@@ -51,6 +52,10 @@ type Agent struct {
 	cacheTTL     time.Duration
 	cacheEnabled bool
 
+	// Learning system / 学习系统
+	learning        bool
+	learningMachine learning.LearningMachine
+
 	// Storage control / 存储控制
 	storeToolMessages    bool // Whether to store tool messages in RunOutput / 是否在 RunOutput 中存储工具消息
 	storeHistoryMessages bool // Whether to store history messages in RunOutput / 是否在 RunOutput 中存储历史消息
@@ -77,6 +82,10 @@ type Config struct {
 	EnableCache   bool
 	CacheProvider cache.Provider
 	CacheTTL      time.Duration
+
+	// Learning system / 学习系统
+	Learning        bool                     // Enable learning system / 启用学习系统
+	LearningMachine learning.LearningMachine // Learning machine instance / 学习机器实例
 
 	// Storage control flags (nil means use default: true) / 存储控制标志 (nil 表示使用默认值: true)
 	// StoreToolMessages controls whether tool-related messages are included in RunOutput.
@@ -158,6 +167,10 @@ func New(config Config) (*Agent, error) {
 		cache:        cacheProvider,
 		cacheTTL:     cacheTTL,
 		cacheEnabled: config.EnableCache && cacheProvider != nil,
+
+		// Learning system / 学习系统
+		learning:        config.Learning,
+		learningMachine: config.LearningMachine,
 
 		// Storage control (default to true for backward compatibility) / 存储控制 (默认为 true 以保持向后兼容)
 		storeToolMessages:    boolOrDefault(config.StoreToolMessages, true),
