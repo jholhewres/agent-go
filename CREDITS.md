@@ -37,5 +37,5 @@ AgentGo is licensed under the MIT License, maintaining compatibility with the or
 
 ---
 
-**Maintainer**: [@jholhewres](https://github.com/jholhewres)  
+**Maintainer**: Jhol Hewres ([@jholhewres](https://github.com/jholhewres))  
 **Repository**: https://github.com/jholhewres/agent-go
