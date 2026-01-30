@@ -5,6 +5,22 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-01-30
+
+### Fixed
+- **[CRITICAL]** Fixed invalid JSON schema for `get_skill_script` function - added missing `items` field for `args` array parameter
+- OpenAI API was rejecting skills toolkit with "array schema missing items" error (HTTP 400)
+- All LLM providers now accept the corrected schema
+
+### Changed
+- `toolkit.Parameter` struct now includes `Items *Parameter` field for array type definitions
+- `get_skill_script` args parameter now correctly specifies `items: {type: "string"}`
+
+### Added
+- Schema validation tests in `pkg/agentgo/skills/tools_schema_test.go`
+- `TestSkillToolsSchemaValid` validates all skill tools have valid OpenAI-compatible schemas
+- `TestGetSkillScriptParametersValid` specifically validates get_skill_script parameter structure
+
 ## [1.1.0] - 2026-01-30
 
 ### Fixed

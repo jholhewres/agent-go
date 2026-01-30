@@ -23,6 +23,7 @@ type Parameter struct {
 	Required    bool        `json:"required,omitempty"`
 	Enum        []string    `json:"enum,omitempty"`
 	Default     interface{} `json:"default,omitempty"`
+	Items       *Parameter  `json:"items,omitempty"` // For array types: defines the type of array elements
 }
 
 // HandlerFunc is the function signature for tool handlers

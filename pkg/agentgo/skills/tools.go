@@ -81,11 +81,14 @@ func (st *SkillTools) AsToolkit() toolkit.Toolkit {
 				Description: "Whether to execute the script (true) or just return its content (false)",
 				Required:    false,
 			},
-			"args": {
-				Type:        "array",
-				Description: "Arguments to pass to the script when executing",
-				Required:    false,
+		"args": {
+			Type:        "array",
+			Description: "Arguments to pass to the script when executing",
+			Required:    false,
+			Items: &toolkit.Parameter{
+				Type: "string",
 			},
+		},
 			"timeout": {
 				Type:        "integer",
 				Description: "Timeout in seconds for script execution (default: 30)",
