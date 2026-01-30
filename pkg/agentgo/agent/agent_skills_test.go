@@ -110,8 +110,8 @@ func TestAgentWithSkills(t *testing.T) {
 	if !foundGetReference {
 		t.Error("Agent should have get_skill_reference tool")
 	}
-	if !foundGetScript {
-		t.Error("Agent should have get_skill_script tool")
+	if foundGetScript {
+		t.Error("Agent should NOT have get_skill_script tool (permanently disabled)")
 	}
 
 	// Test 4: Verify toolkit count
@@ -251,10 +251,10 @@ func TestAgentSkillsWithMultipleSkills(t *testing.T) {
 	for _, tk := range agent.Toolkits {
 		if tk.Name() == "skills" {
 			hasSkillsToolkit = true
-			// Should have 3 functions
+			// Should have 2 functions only (scripts permanently disabled)
 			funcs := tk.Functions()
-			if len(funcs) != 3 {
-				t.Errorf("Skills toolkit should have 3 functions, got %d", len(funcs))
+			if len(funcs) != 2 {
+				t.Errorf("Skills toolkit should have 2 functions (scripts disabled), got %d", len(funcs))
 			}
 			break
 		}

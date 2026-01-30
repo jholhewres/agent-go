@@ -12,29 +12,21 @@ func TestDisableScripts(t *testing.T) {
 	}
 
 	skills := &Skills{
-		skills:        map[string]*Skill{"test-skill": mockSkill},
-		enableScripts: true, // Default
+		skills: map[string]*Skill{"test-skill": mockSkill},
 	}
 
-	// Check default state
-	if !skills.ScriptsEnabled() {
-		t.Error("Scripts should be enabled by default")
-	}
-
-	// Disable scripts
-	skills.DisableScripts()
-
-	// Verify scripts are disabled
+	// Scripts should ALWAYS be disabled (hardcoded)
 	if skills.ScriptsEnabled() {
-		t.Error("Scripts should be disabled after calling DisableScripts()")
+		t.Error("Scripts should be permanently disabled (hardcoded)")
 	}
 
-	// Re-enable scripts
+	// These methods should be no-ops but not crash
+	skills.DisableScripts()
 	skills.EnableScripts()
 
-	// Verify scripts are enabled again
-	if !skills.ScriptsEnabled() {
-		t.Error("Scripts should be enabled after calling EnableScripts()")
+	// Scripts should STILL be disabled (hardcoded)
+	if skills.ScriptsEnabled() {
+		t.Error("Scripts should remain permanently disabled even after Enable/Disable calls")
 	}
 }
 
@@ -46,49 +38,30 @@ func TestAsToolkitWithScriptsDisabled(t *testing.T) {
 	}
 
 	skills := &Skills{
-		skills:        map[string]*Skill{"test-skill": mockSkill},
-		enableScripts: true,
+		skills: map[string]*Skill{"test-skill": mockSkill},
 	}
 
-	// Create toolkit with scripts enabled
+	// Create toolkit (scripts always disabled)
 	skillTools := NewSkillTools(skills)
-	tkWithScripts := skillTools.AsToolkit()
-
-	// Count functions (should be 3: instructions, reference, script)
-	functionsWithScripts := tkWithScripts.Functions()
-	if len(functionsWithScripts) != 3 {
-		t.Errorf("Expected 3 functions with scripts enabled, got %d", len(functionsWithScripts))
-	}
-
-	// Verify get_skill_script is present
-	if _, exists := functionsWithScripts["get_skill_script"]; !exists {
-		t.Error("get_skill_script should be present when scripts are enabled")
-	}
-
-	// Now disable scripts
-	skills.DisableScripts()
-
-	// Create toolkit with scripts disabled
-	skillToolsNoScripts := NewSkillTools(skills)
-	tkWithoutScripts := skillToolsNoScripts.AsToolkit()
+	tk := skillTools.AsToolkit()
 
 	// Count functions (should be 2: instructions, reference only)
-	functionsWithoutScripts := tkWithoutScripts.Functions()
-	if len(functionsWithoutScripts) != 2 {
-		t.Errorf("Expected 2 functions with scripts disabled, got %d", len(functionsWithoutScripts))
+	functions := tk.Functions()
+	if len(functions) != 2 {
+		t.Errorf("Expected 2 functions (scripts permanently disabled), got %d", len(functions))
 	}
 
-	// Verify get_skill_script is NOT present
-	if _, exists := functionsWithoutScripts["get_skill_script"]; exists {
-		t.Error("get_skill_script should NOT be present when scripts are disabled")
+	// Verify get_skill_script is NEVER present
+	if _, exists := functions["get_skill_script"]; exists {
+		t.Error("get_skill_script should NEVER be present (hardcoded disabled)")
 	}
 
-	// Verify instructions and reference are still present
-	if _, exists := functionsWithoutScripts["get_skill_instructions"]; !exists {
+	// Verify instructions and reference are present
+	if _, exists := functions["get_skill_instructions"]; !exists {
 		t.Error("get_skill_instructions should always be present")
 	}
 
-	if _, exists := functionsWithoutScripts["get_skill_reference"]; !exists {
+	if _, exists := functions["get_skill_reference"]; !exists {
 		t.Error("get_skill_reference should always be present")
 	}
 }
@@ -118,8 +91,8 @@ func TestNewSkillsDefaultScriptState(t *testing.T) {
 		t.Fatalf("Failed to create skills: %v", err)
 	}
 
-	// By default, scripts should be enabled
-	if !skills.ScriptsEnabled() {
-		t.Error("Scripts should be enabled by default when creating new Skills")
+	// Scripts should ALWAYS be disabled (hardcoded)
+	if skills.ScriptsEnabled() {
+		t.Error("Scripts should be permanently disabled by default (hardcoded)")
 	}
 }
