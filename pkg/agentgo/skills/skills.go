@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"sync"
+
+	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 // Skills is the main orchestrator that manages skills through loaders
@@ -145,4 +147,15 @@ func (s *Skills) Count() int {
 	defer s.mu.RUnlock()
 
 	return len(s.skills)
+}
+
+// GetToolkit returns a toolkit.Toolkit for agent integration
+// This is a convenience method that creates SkillTools and converts to Toolkit
+func (s *Skills) GetToolkit() toolkit.Toolkit {
+	if s == nil {
+		return nil
+	}
+
+	skillTools := NewSkillTools(s)
+	return skillTools.AsToolkit()
 }

@@ -5,6 +5,35 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-30
+
+### Fixed
+- **[CRITICAL]** Skills system now automatically integrates into agents when config.Skills is provided
+- Skills.GetSystemPrompt() is now appended to agent instructions automatically
+- Skills toolkit (get_skill_* tools) is now prepended to agent toolkits
+- Agent can now discover and use skills through system prompt and tools
+
+### Added
+- Skills.GetToolkit() convenience method for agent integration
+- Agent skills integration tests (4 comprehensive tests)
+- Complete document loaders suite (PDF, CSV, JSON, HTML, URL)
+- MultiURLLoader for concurrent URL fetching
+- Knowledge loaders README with examples and best practices
+- Knowledge loaders demo example
+
+### Changed
+- Agent.New() now processes config.Skills automatically
+- Skills toolkit is prepended to user toolkits (skills tools appear first)
+- Final instructions include both base instructions and skills snippet
+
+### Dependencies
+- Added github.com/ledongthuc/pdf v0.0.0-20250511090121 (PDF text extraction)
+- Added github.com/PuerkitoBio/goquery v1.11.0 (HTML parsing)
+
+### Documentation
+- pkg/agentgo/knowledge/README.md with complete loader documentation
+- cmd/examples/knowledge_loader_demo/main.go demonstrating all loaders
+
 ## [2.0.0] - 2026-01-30
 
 ### 🎉 AgentGo Launch

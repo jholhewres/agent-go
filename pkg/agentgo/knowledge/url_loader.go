@@ -226,7 +226,7 @@ func (l *MultiURLLoader) Load() ([]Document, error) {
 	// Launch concurrent loaders
 	for _, url := range l.URLs {
 		go func(u string) {
-			semaphore <- struct{}{} // Acquire
+			semaphore <- struct{}{}        // Acquire
 			defer func() { <-semaphore }() // Release
 
 			loader := NewURLLoader(u)

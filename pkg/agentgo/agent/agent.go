@@ -19,6 +19,7 @@ import (
 	"github.com/jholhewres/agent-go/pkg/agentgo/models"
 	"github.com/jholhewres/agent-go/pkg/agentgo/reasoning"
 	"github.com/jholhewres/agent-go/pkg/agentgo/run"
+	"github.com/jholhewres/agent-go/pkg/agentgo/skills"
 	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
@@ -155,13 +156,41 @@ func New(config Config) (*Agent, error) {
 		return *ptr
 	}
 
+	// Process Skills if provided / 如果提供了 Skills 则处理
+	finalInstructions := config.Instructions
+	finalToolkits := make([]toolkit.Toolkit, 0, len(config.Toolkits)+1)
+
+	if config.Skills != nil {
+		// Type assertion to *skills.Skills
+		if skillsObj, ok := config.Skills.(*skills.Skills); ok && skillsObj != nil {
+			// 1. Add skills system prompt snippet to instructions
+			skillsSnippet := skillsObj.GetSystemPrompt()
+			if skillsSnippet != "" {
+				if finalInstructions != "" {
+					finalInstructions = finalInstructions + "\n\n" + skillsSnippet
+				} else {
+					finalInstructions = skillsSnippet
+				}
+			}
+
+			// 2. Add skills toolkit (prepend so skills tools appear first)
+			skillToolkit := skillsObj.GetToolkit()
+			if skillToolkit != nil {
+				finalToolkits = append(finalToolkits, skillToolkit)
+			}
+		}
+	}
+
+	// Append user toolkits / 添加用户工具包
+	finalToolkits = append(finalToolkits, config.Toolkits...)
+
 	agent := &Agent{
 		ID:           config.ID,
 		Name:         config.Name,
 		Model:        config.Model,
-		Toolkits:     config.Toolkits,
+		Toolkits:     finalToolkits,
 		Memory:       config.Memory,
-		Instructions: config.Instructions,
+		Instructions: finalInstructions,
 		MaxLoops:     config.MaxLoops,
 		UserID:       config.UserID,
 		PreHooks:     config.PreHooks,
@@ -182,8 +211,8 @@ func New(config Config) (*Agent, error) {
 
 	// Add system message if instructions provided
 	// 如果提供了指令则添加系统消息
-	if config.Instructions != "" {
-		agent.Memory.Add(types.NewSystemMessage(config.Instructions), config.UserID)
+	if finalInstructions != "" {
+		agent.Memory.Add(types.NewSystemMessage(finalInstructions), config.UserID)
 	}
 
 	return agent, nil
