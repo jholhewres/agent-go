@@ -56,41 +56,35 @@ func TestGetSkillScriptParametersValid(t *testing.T) {
 		skills: map[string]*Skill{
 			"test": mockSkill,
 		},
-		enableScripts: true, // ← Enable scripts explicitly
 	}
 
 	skillTools := NewSkillTools(skills)
 	tk := skillTools.AsToolkit()
 	functions := tk.Functions()
 
-	getSkillScript, exists := functions["get_skill_script"]
-	if !exists {
-		t.Fatal("get_skill_script function not found")
+	// get_skill_script should NOT exist (permanently disabled)
+	if _, exists := functions["get_skill_script"]; exists {
+		t.Fatal("get_skill_script should NOT be present (hardcoded disabled)")
 	}
 
-	// Check that 'args' parameter has Items
-	argsParam, exists := getSkillScript.Parameters["args"]
-	if !exists {
-		t.Fatal("'args' parameter not found in get_skill_script")
+	// Verify that only instructions and reference are present
+	if len(functions) != 2 {
+		t.Errorf("Expected 2 functions, got %d", len(functions))
 	}
 
-	if argsParam.Type != "array" {
-		t.Errorf("'args' parameter should be type 'array', got '%s'", argsParam.Type)
+	if _, exists := functions["get_skill_instructions"]; !exists {
+		t.Error("get_skill_instructions should be present")
 	}
 
-	if argsParam.Items == nil {
-		t.Fatal("'args' parameter is type 'array' but 'Items' is nil - OpenAI will reject this schema")
+	if _, exists := functions["get_skill_reference"]; !exists {
+		t.Error("get_skill_reference should be present")
 	}
 
-	if argsParam.Items.Type != "string" {
-		t.Errorf("'args' parameter Items.Type should be 'string', got '%s'", argsParam.Items.Type)
-	}
-
-	t.Logf("✅ get_skill_script schema is valid: args.items.type = %s", argsParam.Items.Type)
+	t.Logf("✅ Skills toolkit has only 2 tools (scripts permanently disabled)")
 }
 
 func TestAllSkillToolsHaveValidParameters(t *testing.T) {
-	// Test all three tools (with scripts enabled)
+	// Test only available tools (scripts permanently disabled)
 	mockSkill := &Skill{
 		Name:         "validation-test",
 		Description:  "Test skill",
@@ -101,7 +95,6 @@ func TestAllSkillToolsHaveValidParameters(t *testing.T) {
 		skills: map[string]*Skill{
 			"validation-test": mockSkill,
 		},
-		enableScripts: true, // ← Enable scripts explicitly
 	}
 
 	skillTools := NewSkillTools(skills)
@@ -111,7 +104,7 @@ func TestAllSkillToolsHaveValidParameters(t *testing.T) {
 	expectedFunctions := []string{
 		"get_skill_instructions",
 		"get_skill_reference",
-		"get_skill_script",
+		// get_skill_script is permanently disabled
 	}
 
 	for _, expectedFunc := range expectedFunctions {
@@ -120,8 +113,13 @@ func TestAllSkillToolsHaveValidParameters(t *testing.T) {
 		}
 	}
 
-	// Count should be exactly 3
-	if len(functions) != 3 {
-		t.Errorf("Expected 3 functions, got %d", len(functions))
+	// Count should be exactly 2 (scripts permanently disabled)
+	if len(functions) != 2 {
+		t.Errorf("Expected 2 functions, got %d", len(functions))
+	}
+
+	// Ensure get_skill_script is NOT present
+	if _, exists := functions["get_skill_script"]; exists {
+		t.Error("get_skill_script should NOT be present (hardcoded disabled)")
 	}
 }

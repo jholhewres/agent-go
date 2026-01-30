@@ -10,11 +10,10 @@ import (
 
 // Skills is the main orchestrator that manages skills through loaders
 type Skills struct {
-	loaders       []SkillLoader
-	skills        map[string]*Skill
-	systemPrompt  string
-	enableScripts bool // Controls whether script execution tools are available
-	mu            sync.RWMutex
+	loaders      []SkillLoader
+	skills       map[string]*Skill
+	systemPrompt string
+	mu           sync.RWMutex
 }
 
 // NewSkills creates a new Skills orchestrator with the given loaders
@@ -24,9 +23,8 @@ func NewSkills(loaders []SkillLoader) (*Skills, error) {
 	}
 
 	s := &Skills{
-		loaders:       loaders,
-		skills:        make(map[string]*Skill),
-		enableScripts: true, // Default: scripts enabled (current behavior)
+		loaders: loaders,
+		skills:  make(map[string]*Skill),
 	}
 
 	if err := s.LoadAll(); err != nil {
@@ -162,27 +160,20 @@ func (s *Skills) GetToolkit() toolkit.Toolkit {
 	return skillTools.AsToolkit()
 }
 
-// DisableScripts disables script execution tools for this Skills instance.
-// After calling this method, get_skill_script will not be registered as a tool.
-// This is useful when you want to use skills only for instructions/references
-// without allowing script execution.
+// DisableScripts is kept for API compatibility but has no effect.
+// Script execution is permanently disabled in this version.
 func (s *Skills) DisableScripts() {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.enableScripts = false
+	// No-op: scripts are always disabled
 }
 
-// EnableScripts enables script execution tools for this Skills instance.
-// This is the default behavior.
+// EnableScripts is kept for API compatibility but has no effect.
+// Script execution is permanently disabled in this version.
 func (s *Skills) EnableScripts() {
-	s.mu.Lock()
-	defer s.mu.Unlock()
-	s.enableScripts = true
+	// No-op: scripts are always disabled
 }
 
-// ScriptsEnabled returns whether script execution is enabled.
+// ScriptsEnabled always returns false.
+// Script execution is permanently disabled for security reasons.
 func (s *Skills) ScriptsEnabled() bool {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
-	return s.enableScripts
+	return false // Hardcoded: scripts always disabled
 }

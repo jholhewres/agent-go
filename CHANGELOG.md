@@ -5,6 +5,64 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.5] - 2026-01-30
+
+### Changed
+- **[SECURITY]** Script execution permanently disabled (hardcoded)
+- `Skills.ScriptsEnabled()` now always returns `false`
+- `get_skill_script` tool is never registered, regardless of configuration
+- Removed `DisableSkillScripts` configuration flag (no longer needed)
+- `DisableScripts()` and `EnableScripts()` methods kept for API compatibility but are no-ops
+
+### Removed
+- `enableScripts` field from `Skills` struct (scripts always disabled now)
+- `DisableSkillScripts` field from `agent.Config` (no longer needed)
+- Logic to conditionally disable scripts based on config
+
+### Why This Change?
+For enhanced security and simplicity:
+- Scripts execution is a security risk and was never used
+- Hardcoding the disabled state removes attack surface
+- Simplifies codebase by removing conditional logic
+- Skills still provide instructions and references (core functionality)
+
+### Migration from v1.1.4
+
+**No code changes required!** If you were using:
+
+```go
+// v1.1.4 (still works in v1.1.5)
+agent, _ := agentgo.New(agentgo.Config{
+    Skills:              skills,
+    DisableSkillScripts: true, // ← This flag is now ignored (but doesn't break)
+})
+```
+
+New simplified version (recommended):
+```go
+// v1.1.5
+agent, _ := agentgo.New(agentgo.Config{
+    Skills: skills, // Scripts always disabled, no flag needed
+})
+```
+
+### Behavior
+
+| Feature | v1.1.4 | v1.1.5 |
+|---------|--------|--------|
+| **get_skill_instructions** | ✅ Always available | ✅ Always available |
+| **get_skill_reference** | ✅ Always available | ✅ Always available |
+| **get_skill_script** | ⚠️ Conditional (config flag) | ❌ **Never available** |
+| **DisableSkillScripts flag** | ✅ Works | ⚠️ Ignored (no-op) |
+| **Default behavior** | Scripts enabled | Scripts **always disabled** |
+
+### Testing
+All tests updated and passing:
+- ✅ Skills integration tests
+- ✅ Schema validation tests
+- ✅ Agent creation tests
+- ✅ 100% backward compatible (no breaking changes to API)
+
 ## [1.1.4] - 2026-01-30
 
 ### Fixed
