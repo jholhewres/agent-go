@@ -15,7 +15,7 @@ coverage: test ## Show test coverage
 
 lint: ## Run linters
 	@command -v golangci-lint >/dev/null 2>&1 || { echo "golangci-lint not installed. Run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest"; exit 1; }
-	golangci-lint run ./...
+	golangci-lint run --timeout=10m ./...
 
 contract-test: ## Run Go/Python contract comparison tests
 	go test ./internal/session/contract -run Test
