@@ -7,7 +7,11 @@
 
 **AgentGo** is a high-performance multi-agent framework written in Go. It keeps the KISS philosophy of the Agno project while embracing Go’s strengths: lightweight goroutines, a tiny memory footprint, single static binaries, and a batteries-included toolchain.
 
-> **📜 Credits**: AgentGo is a fork and major enhancement of [**agno-go**](https://github.com/rexleimo/agno-go) by [@rexleimo](https://github.com/rexleimo), which itself was inspired by the Python [**Agno**](https://github.com/agno-agi/agno) framework. We extend the original with Learning System, Agent Skills, Prompt Engineering, and pgvector support. See [CREDITS.md](CREDITS.md) for full attribution.
+> **📜 Credits**: AgentGo is a fork and major enhancement of the original **agno-go** project, which itself was inspired by the Python [**Agno**](https://github.com/agno-agi/agno) framework. We extend the original with Learning System, Agent Skills, Prompt Engineering, pgvector support, and critical bug fixes. See [CREDITS.md](CREDITS.md) for full attribution.
+>
+> **⚡ New Architecture**: AgentGo offers **two deployment modes**:
+> - **SDK** – Embed agents directly in your Go applications (zero HTTP overhead)
+> - **AgentOS** – Production-ready REST API server for microservices and multi-language integrations
 
 ---
 
@@ -24,7 +28,9 @@
 
 - **🚀 Extreme Performance** – Agent instantiation in ~180 ns and ~1.2 KB memory per agent. **16× faster** than Python version with native goroutines and no GIL limitations.
 - **🧩 Flexible Architecture** – Three orchestration patterns: **Agents** (autonomous), **Teams** (4 coordination modes: Sequential, Parallel, Leader-Follower, Consensus), **Workflows** (5 primitives: Step, Condition, Loop, Parallel, Router). Mix and compose freely.
-- **🤖 Production Ready** – AgentOS REST server with OpenAPI 3.0, session storage (PostgreSQL/MongoDB/SQLite), health checks, structured logging, CORS, request timeouts, and response caching.
+- **🤖 Two Deployment Modes**:
+  - **SDK** – Embed agents in Go apps with zero HTTP overhead
+  - **AgentOS** – Production REST API server with OpenAPI 3.0, session storage (PostgreSQL/MongoDB/SQLite), SSE streaming, health checks, structured logging, CORS, timeouts, and caching
 
 ### 🤝 Model Providers & Reasoning
 
@@ -48,8 +54,12 @@
 ## Getting Started
 
 ```bash
-go get github.com/jholhewres/agent-go
+go get github.com/jholhewres/agent-go@latest
 ```
+
+### Option 1: SDK (Embedded Agents)
+
+Perfect for Go applications, CLIs, and libraries:
 
 ```go
 package main
@@ -81,12 +91,25 @@ func main() {
 }
 ```
 
-Run the production server with Docker:
+### Option 2: AgentOS (REST API Server)
+
+Perfect for microservices and multi-language integrations:
 
 ```bash
+# Run with Docker
 docker compose up -d
+
+# Or start manually
+go run cmd/server/main.go
+
+# Test the API
 curl http://localhost:8080/health
+curl -X POST http://localhost:8080/api/v1/agents/assistant/run \
+  -H "Content-Type: application/json" \
+  -d '{"input":"Hello, AgentOS!"}'
 ```
+
+See [pkg/agentos/README.md](pkg/agentos/README.md) for full AgentOS documentation.
 
 ### AgentOS HTTP tips
 
@@ -107,12 +130,12 @@ curl http://localhost:8080/health
 
 | Resource | Link |
 | --- | --- |
-| Guides | https://rexleimo.github.io/agno-Go/guide/ |
-| API Reference | https://rexleimo.github.io/agno-Go/api/ |
-| Advanced Topics | https://rexleimo.github.io/agno-Go/advanced/ |
-| Examples | https://rexleimo.github.io/agno-Go/examples/ |
-| Release Notes | https://rexleimo.github.io/agno-Go/release-notes |
-| Internal / WIP Docs | [`docs/`](docs/) |
+| **AgentOS API** | [pkg/agentos/README.md](pkg/agentos/README.md) |
+| **Examples** | [cmd/examples/](cmd/examples/) |
+| **Knowledge RAG** | [pkg/agentgo/knowledge/README.md](pkg/agentgo/knowledge/README.md) |
+| **Changelog** | [CHANGELOG.md](CHANGELOG.md) |
+| **Development** | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) |
+| **Internal Docs** | [docs/](docs/) |
 
 ## What's New in v1.2.9
 
