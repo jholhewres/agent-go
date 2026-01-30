@@ -23,7 +23,7 @@ func (e *Extractor) ExtractMemories(userID string, messages []types.Message) []U
 	var memories []UserMemory
 
 	for _, msg := range messages {
-		if msg.Role != types.MessageRoleUser {
+		if msg.Role != types.RoleUser {
 			continue
 		}
 
@@ -77,7 +77,7 @@ func (e *Extractor) ExtractKnowledge(messages []types.Message) []Knowledge {
 	var knowledge []Knowledge
 
 	for _, msg := range messages {
-		if msg.Role != types.MessageRoleAssistant {
+		if msg.Role != types.RoleAssistant {
 			continue
 		}
 

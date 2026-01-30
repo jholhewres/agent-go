@@ -11,15 +11,19 @@
 
 ## Feature Highlights
 
-- **🚀 Extreme performance** – agent instantiation in ~180 ns and (~1.2 KB) memory per agent, 16× faster than the Python version.
-- **🤖 Production ready** – AgentOS REST server (OpenAPI 3.0), session storage, health checks, structured logging, CORS, request timeouts, and parity endpoints for summaries, reuse, and history filters.
-- **🪄 Session parity** – shared sessions across agents/teams, async + sync summaries, run metadata with cache hits and cancellation reasons, and `stream_events` flags matching the Python runtime.
-- **🧩 Flexible architecture** – build with Agents, Teams (4 coordination modes), or Workflows (5 primitives) and mix freely; teams inherit/default models and workflows resume from snapshots.
-- **🔌 Multi-provider models** – OpenAI (incl. o-series reasoning), Anthropic Claude, Google Gemini, DeepSeek, GLM, ModelScope, Ollama, Cohere, Groq, Together, OpenRouter, LM Studio, Vercel, Portkey, InternLM, SambaNova.
-- **🔧 Extensible tooling** – calculator, HTTP, file operations, search, Claude Agent Skills, Tavily Reader, PPTX reader, Jira worklogs, Gmail mark-as-read, ElevenLabs speech, plus an SDK for bespoke toolkits or MCP connectors.
-- **💾 Knowledge & RAG** – ChromaDB integration, batching utilities, response caching helpers, and ingestion helpers.
-- **🛡️ Guardrails & hooks** – prompt-injection guard, custom pre/post hooks, media validation, graceful degradation.
-- **📊 Observability** – rich SSE event stream with reasoning snapshots, Logfire / OpenTelemetry sample included.
+- **🚀 Extreme performance** – agent instantiation in ~180 ns and (~1.2 KB) memory per agent, 16× faster than the Python version.
+- **🧠 Learning System** – NEW! Agents that learn and improve with user profiles, memories, and transferable knowledge across sessions.
+- **🎯 Agent Skills** – NEW! Modular capability system following Agent Skills specification with filesystem and database loaders.
+- **💡 Prompt Engineering** – NEW! Template system with variable substitution, few-shot examples, and validation.
+- **🧠 Advanced Reasoning** – Unified reasoning API across all model providers (OpenAI o1/o3, Claude, Gemini 2.0).
+- **🤖 Production ready** – AgentOS REST server (OpenAPI 3.0), session storage, health checks, structured logging, CORS, request timeouts.
+- **🪄 Session parity** – shared sessions across agents/teams, async + sync summaries, run metadata with cache hits.
+- **🧩 Flexible architecture** – build with Agents, Teams (4 coordination modes), or Workflows (5 primitives) and mix freely.
+- **🔌 Multi-provider models** – OpenAI, Anthropic Claude, Google Gemini, DeepSeek, GLM, Ollama, Cohere, Groq, Together, and more.
+- **🔧 Extensible tooling** – calculator, HTTP, file operations, search, Tavily, Jira, Gmail, ElevenLabs, and SDK for custom toolkits.
+- **💾 Knowledge & RAG** – pgvector, ChromaDB, RedisDB integration with batching and caching.
+- **🛡️ Guardrails & hooks** – prompt-injection guard, custom pre/post hooks, media validation.
+- **📊 Observability** – rich SSE event stream with reasoning snapshots, Logfire / OpenTelemetry included.
 
 ---
 
