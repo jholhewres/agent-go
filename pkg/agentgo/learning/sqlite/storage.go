@@ -86,10 +86,16 @@ func (s *Storage) migrate() error {
 
 // SaveUserProfile saves or updates a user profile
 func (s *Storage) SaveUserProfile(ctx context.Context, profile *learning.UserProfile) error {
-	preferencesJSON, _ := json.Marshal(profile.Preferences)
-	contextJSON, _ := json.Marshal(profile.Context)
+	preferencesJSON, err := json.Marshal(profile.Preferences)
+	if err != nil {
+		return fmt.Errorf("failed to marshal preferences: %w", err)
+	}
+	contextJSON, err := json.Marshal(profile.Context)
+	if err != nil {
+		return fmt.Errorf("failed to marshal context: %w", err)
+	}
 
-	_, err := s.db.ExecContext(ctx, `
+	_, err = s.db.ExecContext(ctx, `
 		INSERT OR REPLACE INTO learning_user_profiles (user_id, name, preferences, context, created_at, updated_at)
 		VALUES (?, ?, ?, ?, ?, ?)
 	`, profile.UserID, profile.Name, string(preferencesJSON), string(contextJSON), profile.CreatedAt, profile.UpdatedAt)
@@ -114,17 +120,24 @@ func (s *Storage) GetUserProfile(ctx context.Context, userID string) (*learning.
 		return nil, err
 	}
 
-	json.Unmarshal([]byte(preferencesJSON), &profile.Preferences)
-	json.Unmarshal([]byte(contextJSON), &profile.Context)
+	if err := json.Unmarshal([]byte(preferencesJSON), &profile.Preferences); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal preferences: %w", err)
+	}
+	if err := json.Unmarshal([]byte(contextJSON), &profile.Context); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal context: %w", err)
+	}
 
 	return &profile, nil
 }
 
 // SaveUserMemory saves a user memory
 func (s *Storage) SaveUserMemory(ctx context.Context, memory *learning.UserMemory) error {
-	metadataJSON, _ := json.Marshal(memory.Metadata)
+	metadataJSON, err := json.Marshal(memory.Metadata)
+	if err != nil {
+		return fmt.Errorf("failed to marshal metadata: %w", err)
+	}
 
-	_, err := s.db.ExecContext(ctx, `
+	_, err = s.db.ExecContext(ctx, `
 		INSERT OR IGNORE INTO learning_user_memories (id, user_id, content, type, metadata, created_at)
 		VALUES (?, ?, ?, ?, ?, ?)
 	`, memory.ID, memory.UserID, memory.Content, string(memory.Type), string(metadataJSON), memory.CreatedAt)
@@ -154,7 +167,9 @@ func (s *Storage) GetUserMemories(ctx context.Context, userID string, limit int)
 		}
 
 		memory.Type = learning.MemoryType(memoryType)
-		json.Unmarshal([]byte(metadataJSON), &memory.Metadata)
+		if err := json.Unmarshal([]byte(metadataJSON), &memory.Metadata); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal memory metadata: %w", err)
+		}
 		memories = append(memories, memory)
 	}
 
@@ -169,9 +184,12 @@ func (s *Storage) DeleteUserMemories(ctx context.Context, userID string) error {
 
 // SaveKnowledge saves learned knowledge
 func (s *Storage) SaveKnowledge(ctx context.Context, knowledge *learning.Knowledge) error {
-	metadataJSON, _ := json.Marshal(knowledge.Metadata)
+	metadataJSON, err := json.Marshal(knowledge.Metadata)
+	if err != nil {
+		return fmt.Errorf("failed to marshal knowledge metadata: %w", err)
+	}
 
-	_, err := s.db.ExecContext(ctx, `
+	_, err = s.db.ExecContext(ctx, `
 		INSERT OR IGNORE INTO learning_knowledge (id, topic, content, source, relevance, metadata, created_at)
 		VALUES (?, ?, ?, ?, ?, ?, ?)
 	`, knowledge.ID, knowledge.Topic, knowledge.Content, knowledge.Source, knowledge.Relevance, string(metadataJSON), knowledge.CreatedAt)
@@ -200,7 +218,9 @@ func (s *Storage) GetKnowledge(ctx context.Context, topic string, limit int) ([]
 			return nil, err
 		}
 
-		json.Unmarshal([]byte(metadataJSON), &k.Metadata)
+		if err := json.Unmarshal([]byte(metadataJSON), &k.Metadata); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal knowledge metadata: %w", err)
+		}
 		knowledgeList = append(knowledgeList, k)
 	}
 
@@ -228,7 +248,9 @@ func (s *Storage) SearchKnowledge(ctx context.Context, query string, limit int) 
 			return nil, err
 		}
 
-		json.Unmarshal([]byte(metadataJSON), &k.Metadata)
+		if err := json.Unmarshal([]byte(metadataJSON), &k.Metadata); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal knowledge metadata: %w", err)
+		}
 		knowledgeList = append(knowledgeList, k)
 	}
 
@@ -237,9 +259,12 @@ func (s *Storage) SearchKnowledge(ctx context.Context, query string, limit int) 
 
 // SaveLearningEvent saves a learning event
 func (s *Storage) SaveLearningEvent(ctx context.Context, event *learning.LearningEvent) error {
-	dataJSON, _ := json.Marshal(event.Data)
+	dataJSON, err := json.Marshal(event.Data)
+	if err != nil {
+		return fmt.Errorf("failed to marshal event data: %w", err)
+	}
 
-	_, err := s.db.ExecContext(ctx, `
+	_, err = s.db.ExecContext(ctx, `
 		INSERT INTO learning_events (id, user_id, event_type, data, occurred_at)
 		VALUES (?, ?, ?, ?, ?)
 	`, event.ID, event.UserID, event.EventType, string(dataJSON), event.OccurredAt)
@@ -268,7 +293,9 @@ func (s *Storage) GetLearningEvents(ctx context.Context, userID string, limit in
 			return nil, err
 		}
 
-		json.Unmarshal([]byte(dataJSON), &event.Data)
+		if err := json.Unmarshal([]byte(dataJSON), &event.Data); err != nil {
+			return nil, fmt.Errorf("failed to unmarshal event data: %w", err)
+		}
 		events = append(events, event)
 	}
 
