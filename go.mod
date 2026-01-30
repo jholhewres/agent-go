@@ -14,6 +14,7 @@ require (
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/lib/pq v1.10.9
+	github.com/pgvector/pgvector-go v0.3.0
 	github.com/redis/go-redis/v9 v9.5.2
 	github.com/sashabaranov/go-openai v1.35.6
 	github.com/stretchr/testify v1.11.1

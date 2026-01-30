@@ -2,6 +2,7 @@ package vectordb
 
 import (
 	"context"
+	"time"
 )
 
 // Document represents a document to be stored in the vector database
@@ -10,6 +11,7 @@ type Document struct {
 	Content   string                 `json:"content"`
 	Metadata  map[string]interface{} `json:"metadata,omitempty"`
 	Embedding []float32              `json:"embedding,omitempty"`
+	CreatedAt time.Time              `json:"created_at,omitempty"`
 }
 
 // SearchResult represents a search result from the vector database

@@ -87,6 +87,9 @@ type Config struct {
 	Learning        bool                     // Enable learning system / 启用学习系统
 	LearningMachine learning.LearningMachine // Learning machine instance / 学习机器实例
 
+	// Skills system / 技能系统
+	Skills interface{} // Skills orchestrator (will be *skills.Skills to avoid import cycle) / 技能编排器
+
 	// Storage control flags (nil means use default: true) / 存储控制标志 (nil 表示使用默认值: true)
 	// StoreToolMessages controls whether tool-related messages are included in RunOutput.
 	// When false, tool messages and tool-related fields are filtered from output.
