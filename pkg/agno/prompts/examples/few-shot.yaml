@@ -1,0 +1,35 @@
+name: few-shot-classifier
+version: 1.0.0
+template: |
+  Classify the following {{.domain}} input into one of these categories: {{.categories}}.
+  
+  {{- if .examples}}
+  Examples:
+  {{range .examples}}
+  Input: {{.input}}
+  Category: {{.output}}
+  {{end}}
+  {{- end}}
+  
+  Now classify this:
+  Input: {{.input}}
+  Category:
+  
+variables:
+  - name: domain
+    type: string
+    required: true
+    description: The domain being classified
+  - name: categories
+    type: string
+    required: true
+    description: Comma-separated list of categories
+  - name: input
+    type: string
+    required: true
+    description: The input to classify
+  - name: examples
+    type: array
+    required: false
+    default: []
+    description: Few-shot examples

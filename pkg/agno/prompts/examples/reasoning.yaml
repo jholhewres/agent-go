@@ -1,0 +1,30 @@
+name: reasoning-task
+version: 1.0.0
+template: |
+  You are an expert {{.role}}.
+  
+  {{- if .examples}}
+  Here are some examples:
+  {{range .examples}}
+  Input: {{.input}}
+  Output: {{.output}}
+  {{end}}
+  {{- end}}
+  
+  Task: {{.task}}
+  
+  Think step by step before answering.
+  
+variables:
+  - name: role
+    type: string
+    required: true
+    description: The expert role to adopt
+  - name: task
+    type: string
+    required: true
+    description: The task to perform
+  - name: examples
+    type: array
+    required: false
+    description: Few-shot examples
