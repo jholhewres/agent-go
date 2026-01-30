@@ -96,18 +96,37 @@ func ToModelToolDefinitions(toolkits []Toolkit) []models.ToolDefinition {
 			properties := make(map[string]interface{})
 			var required []string
 
-			for paramName, param := range fn.Parameters {
-				properties[paramName] = map[string]interface{}{
-					"type":        param.Type,
-					"description": param.Description,
-				}
-				if len(param.Enum) > 0 {
-					properties[paramName].(map[string]interface{})["enum"] = param.Enum
-				}
-				if param.Required {
-					required = append(required, paramName)
-				}
+		for paramName, param := range fn.Parameters {
+			paramSchema := map[string]interface{}{
+				"type":        param.Type,
+				"description": param.Description,
 			}
+			
+			// Add enum if present
+			if len(param.Enum) > 0 {
+				paramSchema["enum"] = param.Enum
+			}
+			
+			// Add items for array types (CRITICAL FIX)
+			if param.Type == "array" && param.Items != nil {
+				itemsSchema := map[string]interface{}{
+					"type": param.Items.Type,
+				}
+				if param.Items.Description != "" {
+					itemsSchema["description"] = param.Items.Description
+				}
+				if len(param.Items.Enum) > 0 {
+					itemsSchema["enum"] = param.Items.Enum
+				}
+				paramSchema["items"] = itemsSchema
+			}
+			
+			properties[paramName] = paramSchema
+			
+			if param.Required {
+				required = append(required, paramName)
+			}
+		}
 
 			parameters := map[string]interface{}{
 				"type":       "object",

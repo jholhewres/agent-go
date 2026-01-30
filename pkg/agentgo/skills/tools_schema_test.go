@@ -32,10 +32,10 @@ func TestSkillToolsSchemaValid(t *testing.T) {
 				// If parameter is array type, it MUST have Items defined
 				if param.Type == "array" {
 					if param.Items == nil {
-						t.Errorf("Function %s: parameter %s is type 'array' but missing 'items' field (OpenAI will reject this schema)", 
+						t.Errorf("Function %s: parameter %s is type 'array' but missing 'items' field (OpenAI will reject this schema)",
 							funcName, paramName)
 					} else if param.Items.Type == "" {
-						t.Errorf("Function %s: parameter %s has 'items' but items.type is empty", 
+						t.Errorf("Function %s: parameter %s has 'items' but items.type is empty",
 							funcName, paramName)
 					}
 				}

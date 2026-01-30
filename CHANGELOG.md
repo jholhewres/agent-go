@@ -5,6 +5,46 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.2] - 2026-01-30
+
+### Fixed
+- **[CRITICAL]** Fixed `ToModelToolDefinitions()` not serializing `Items` field for array parameters
+- Array parameters now correctly include `items` schema when converted to OpenAI format
+- Skills `get_skill_script` function now generates valid OpenAI-compatible JSON schema
+- v1.1.1 only added the `Items` field to struct but didn't serialize it to JSON
+
+### Root Cause
+`ToModelToolDefinitions()` was manually building parameter schemas but only copying `type` and `description` fields, completely ignoring the `Items` field for array types.
+
+### Changes
+- Modified `ToModelToolDefinitions()` to check if parameter is type `array` and has `Items` defined
+- Added recursive serialization of `Items` schema with support for nested properties
+- Array parameters now output: `{"type": "array", "items": {"type": "string"}}`
+
+### Added
+- Comprehensive serialization tests in `pkg/agentgo/tools/toolkit/toolkit_serialization_test.go`
+- `TestToModelToolDefinitions_ArrayParameterWithItems` validates items field presence
+- `TestToModelToolDefinitions_SkillsGetScriptSchema` tests exact get_skill_script schema
+- `TestToModelToolDefinitions_NonArrayParameter` ensures non-arrays don't get items
+
+### Testing
+All tests passing:
+- ✅ Schema validation tests (3 new + 3 existing)
+- ✅ Serialization tests (3 new)
+- ✅ Skills integration tests
+- ✅ Agent integration tests
+
+OpenAI schema now correctly generated:
+```json
+{
+  "args": {
+    "type": "array",
+    "description": "Arguments to pass to the script",
+    "items": {"type": "string"}
+  }
+}
+```
+
 ## [1.1.1] - 2026-01-30
 
 ### Fixed
