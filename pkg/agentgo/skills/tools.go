@@ -224,24 +224,51 @@ func (st *SkillTools) executeScript(skill *Skill, script *Script, args []string,
 	return string(output), nil
 }
 
+// allowedInterpreters whitelist for safe script execution
+var allowedInterpreters = map[string]bool{
+	"sh":      true,
+	"bash":    true,
+	"python":  true,
+	"python3": true,
+	"node":    true,
+	"ruby":    true,
+}
+
 func (st *SkillTools) extractInterpreter(shebang string) string {
 	// Remove #! prefix
 	shebang = strings.TrimPrefix(shebang, "#!")
 	shebang = strings.TrimSpace(shebang)
 
+	var interpreterName string
+
 	// Handle /usr/bin/env python3, /usr/bin/env bash, etc
 	if strings.HasPrefix(shebang, "/usr/bin/env ") {
 		parts := strings.Fields(shebang)
 		if len(parts) >= 2 {
-			return parts[1]
+			interpreterName = parts[1]
+		}
+	} else {
+		// Handle direct paths like /bin/bash, /usr/bin/python3
+		parts := strings.Fields(shebang)
+		if len(parts) > 0 {
+			interpreterName = filepath.Base(parts[0])
 		}
 	}
 
-	// Handle direct paths like /bin/bash, /usr/bin/python3
-	parts := strings.Fields(shebang)
-	if len(parts) > 0 {
-		return parts[0]
+	if interpreterName == "" {
+		return ""
 	}
 
-	return ""
+	// Security: Validate interpreter is in whitelist
+	if !allowedInterpreters[interpreterName] {
+		return "" // Triggers error in caller
+	}
+
+	// Security: Find interpreter in system PATH (don't trust shebang paths)
+	validPath, err := exec.LookPath(interpreterName)
+	if err != nil {
+		return "" // Interpreter not found in PATH
+	}
+
+	return validPath
 }
