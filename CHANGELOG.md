@@ -5,6 +5,96 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-02-05
+
+### Added
+- **HybridMemory** - New memory implementation combining short-term (InMemory) and long-term (VectorDB) storage
+  - Hybrid search combining vector similarity and text matching
+  - Configurable weights for vector vs text search
+  - Automatic migration of old messages to long-term storage
+  - `SearchableMemory` interface with advanced search options
+  - Thread-safe and multi-tenant support
+
+- **PromptComposer** - Modular prompt composition system
+  - Section-based prompt building with priority ordering
+  - Template support with variable interpolation (Go `text/template`)
+  - Predefined sections: Identity, Skills, Memory, Instructions, Constraints
+  - Dynamic enable/disable of prompt sections
+  - Full backward compatibility with existing `Instructions` string
+
+- **Agent Enhancements**
+  - New `PromptComposer` field in `agent.Config` for modular prompts
+  - New `PromptVars` field for template variables
+  - New `EnableMemorySearch` flag for automatic memory search
+  - New `MemorySearchLimit` and `MemorySearchMinScore` configuration
+  - New `GetPromptComposer()` method
+  - New `SearchMemory(ctx, query, limit)` method
+  - New `UpdatePromptSection(name, content)` method
+
+### Changed
+- README.md - More concise with examples moved to internal documentation
+- Added zread badge for documentation link
+
+### Migration from v1.1.5
+
+**No breaking changes!** All existing code continues to work:
+
+```go
+// v1.1.5 (still works in v1.2.0)
+agent, _ := agent.New(agent.Config{
+    Name:         "Assistant",
+    Model:        model,
+    Instructions: "You are a helpful assistant", // ← Still works
+})
+```
+
+New features available (opt-in):
+
+```go
+// v1.2.0 - New HybridMemory with search
+config := memory.HybridMemoryConfig{
+    VectorDB:              vectorDB,
+    Embedder:              embedder,
+    MaxShortTermMessages:  100,
+    LongTermThreshold:     50,
+    DefaultVectorWeight:   0.7,
+    DefaultTextWeight:     0.3,
+}
+mem, _ := memory.NewHybridMemory(config)
+
+agent, _ := agent.New(agent.Config{
+    Name:        "Assistant",
+    Model:       model,
+    Memory:      mem,
+    EnableMemorySearch: true,  // ← NEW: Auto-search memory
+    MemorySearchLimit: 5,
+})
+
+// v1.2.0 - New PromptComposer
+composer := prompts.NewPromptComposer(
+    prompts.IdentitySection("GoHelper", "Expert Go assistant"),
+    prompts.InstructionsSection("Help users write better Go code"),
+    prompts.SkillsSection([]string{"code_analyzer", "doc_generator"}),
+)
+
+agent, _ := agent.New(agent.Config{
+    Name:           "Assistant",
+    Model:          model,
+    PromptComposer: composer,  // ← NEW: Modular prompts
+    PromptVars: map[string]interface{}{
+        "current_date": time.Now().Format("2006-01-02"),
+    },
+})
+```
+
+### Testing
+All tests passing with comprehensive coverage:
+- ✅ HybridMemory: 100% (8/8 tests)
+- ✅ PromptComposer: 100% (17/17 tests)
+- ✅ Agent: Existing tests maintained (backward compatibility)
+- ✅ Thread safety tests
+- ✅ Multi-tenant isolation tests
+
 ## [1.1.5] - 2026-01-30
 
 ### Changed

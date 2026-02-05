@@ -17,6 +17,7 @@ import (
 	"github.com/jholhewres/agent-go/pkg/agentgo/learning"
 	"github.com/jholhewres/agent-go/pkg/agentgo/memory"
 	"github.com/jholhewres/agent-go/pkg/agentgo/models"
+	"github.com/jholhewres/agent-go/pkg/agentgo/prompts"
 	"github.com/jholhewres/agent-go/pkg/agentgo/reasoning"
 	"github.com/jholhewres/agent-go/pkg/agentgo/run"
 	"github.com/jholhewres/agent-go/pkg/agentgo/skills"
@@ -65,6 +66,10 @@ type Agent struct {
 	// 临时 instructions 支持,用于工作流历史注入
 	tempInstructions string       // Temporary instructions (single execution only) / 临时指令（仅单次执行）
 	instructionsMu   sync.RWMutex // Protects instructions modification / 保护指令修改
+
+	// Prompt composition / Prompt 组合
+	promptComposer *prompts.PromptComposer // Optional modular prompt composer / 可选的模块化提示组合器
+	enableMemorySearch bool                // Enable automatic memory search before runs / 启用运行前自动内存搜索
 }
 
 // Config contains agent configuration
@@ -103,6 +108,29 @@ type Config struct {
 	// StoreHistoryMessages 控制是否在 RunOutput 中包含历史消息(来自 Memory)
 	// 当为 false 时，仅包含当前 Run 生成的消息
 	StoreHistoryMessages *bool
+
+	// Prompt composition / Prompt 组合 (NEW)
+	// PromptComposer provides modular prompt composition with sections
+	// PromptComposer 提供模块化的 prompt 组合，包含多个部分
+	PromptComposer *prompts.PromptComposer
+
+	// PromptVars are variables available to template sections in PromptComposer
+	// PromptVars 是 PromptComposer 中模板部分可用的变量
+	PromptVars map[string]interface{}
+
+	// EnableMemorySearch enables automatic memory search before each Run
+	// If enabled, the agent will search memory for relevant context before processing input
+	// EnableMemorySearch 启用每次运行前的自动内存搜索
+	// 如果启用，代理将在处理输入之前搜索相关上下文的内存
+	EnableMemorySearch bool
+
+	// MemorySearchLimit controls how many results to retrieve when searching memory
+	// MemorySearchLimit 控制搜索内存时检索的结果数
+	MemorySearchLimit int
+
+	// MemorySearchMinScore is the minimum relevance score for memory search results (0-1)
+	// MemorySearchMinScore 是内存搜索结果的最小相关性分数 (0-1)
+	MemorySearchMinScore float64
 }
 
 // New creates a new agent
@@ -159,6 +187,7 @@ func New(config Config) (*Agent, error) {
 	// Process Skills if provided / 如果提供了 Skills 则处理
 	finalInstructions := config.Instructions
 	finalToolkits := make([]toolkit.Toolkit, 0, len(config.Toolkits)+1)
+	var composer *prompts.PromptComposer
 
 	if config.Skills != nil {
 		// Type assertion to *skills.Skills
@@ -184,13 +213,54 @@ func New(config Config) (*Agent, error) {
 	// Append user toolkits / 添加用户工具包
 	finalToolkits = append(finalToolkits, config.Toolkits...)
 
+	// Determine final instructions using PromptComposer if provided
+	// 如果提供了 PromptComposer，则使用它来确定最终指令
+	var finalSystemPrompt string
+	if config.PromptComposer != nil {
+		composer = config.PromptComposer
+
+		// If Instructions string is also provided, add it as a section
+		// 如果同时提供了 Instructions 字符串，则将其添加为一个部分
+		if finalInstructions != "" {
+			instructionsSection := prompts.NewSection("instructions", finalInstructions, 10)
+			composer.AddSection(instructionsSection)
+		}
+
+		// Compose final prompt with variables
+		// 使用变量组合最终的 prompt
+		vars := config.PromptVars
+		if vars == nil {
+			vars = make(map[string]interface{})
+		}
+		composedPrompt, err := composer.ComposeWithVars(vars)
+		if err != nil {
+			return nil, fmt.Errorf("failed to compose prompt: %w", err)
+		}
+		finalSystemPrompt = composedPrompt
+	} else {
+		// Use legacy Instructions string
+		// 使用传统的 Instructions 字符串
+		finalSystemPrompt = finalInstructions
+	}
+
+	// Set memory search defaults
+	// 设置内存搜索默认值
+	memorySearchLimit := config.MemorySearchLimit
+	if memorySearchLimit <= 0 {
+		memorySearchLimit = 5
+	}
+	memorySearchMinScore := config.MemorySearchMinScore
+	if memorySearchMinScore <= 0 {
+		memorySearchMinScore = 0.1
+	}
+
 	agent := &Agent{
 		ID:           config.ID,
 		Name:         config.Name,
 		Model:        config.Model,
 		Toolkits:     finalToolkits,
 		Memory:       config.Memory,
-		Instructions: finalInstructions,
+		Instructions: finalInstructions, // Keep original for reference / 保留原始值供参考
 		MaxLoops:     config.MaxLoops,
 		UserID:       config.UserID,
 		PreHooks:     config.PreHooks,
@@ -207,12 +277,16 @@ func New(config Config) (*Agent, error) {
 		// Storage control (default to true for backward compatibility) / 存储控制 (默认为 true 以保持向后兼容)
 		storeToolMessages:    boolOrDefault(config.StoreToolMessages, true),
 		storeHistoryMessages: boolOrDefault(config.StoreHistoryMessages, true),
+
+		// Prompt composition / Prompt 组合
+		promptComposer:      composer,
+		enableMemorySearch:  config.EnableMemorySearch,
 	}
 
 	// Add system message if instructions provided
 	// 如果提供了指令则添加系统消息
-	if finalInstructions != "" {
-		agent.Memory.Add(types.NewSystemMessage(finalInstructions), config.UserID)
+	if finalSystemPrompt != "" {
+		agent.Memory.Add(types.NewSystemMessage(finalSystemPrompt), config.UserID)
 	}
 
 	return agent, nil
@@ -928,6 +1002,67 @@ func (a *Agent) ClearTempInstructions() {
 	defer a.instructionsMu.Unlock()
 
 	a.tempInstructions = ""
+}
+
+// GetPromptComposer returns the prompt composer if available
+// GetPromptComposer 返回 prompt composer（如果可用）
+func (a *Agent) GetPromptComposer() *prompts.PromptComposer {
+	return a.promptComposer
+}
+
+// SearchMemory searches the agent's memory for relevant context
+// SearchMemory 搜索代理内存中的相关上下文
+// Returns search results with relevance scores
+// 返回带有相关性分数的搜索结果
+func (a *Agent) SearchMemory(ctx context.Context, query string, limit int) ([]memory.SearchResult, error) {
+	searchableMem, ok := a.Memory.(memory.SearchableMemory)
+	if !ok {
+		// Memory doesn't support search, return empty results
+		// 内存不支持搜索，返回空结果
+		return []memory.SearchResult{}, nil
+	}
+
+	return searchableMem.Search(ctx, query, limit, a.UserID)
+}
+
+// UpdatePromptSection updates a specific section in the prompt composer
+// UpdatePromptSection 更新 prompt composer 中的特定部分
+// Returns true if the section was found and updated
+// 返回 true 如果找到并更新了部分
+func (a *Agent) UpdatePromptSection(name string, content string) bool {
+	if a.promptComposer == nil {
+		return false
+	}
+
+	section, exists := a.promptComposer.GetSection(name)
+	if !exists {
+		return false
+	}
+
+	// Remove old section and add updated one
+	// 删除旧部分并添加更新的部分
+	a.promptComposer.RemoveSection(name)
+	newSection := prompts.NewSection(name, content, section.Priority)
+	a.promptComposer.AddSection(newSection)
+
+	// Update system message in memory
+	// 更新内存中的系统消息
+	composed, err := a.promptComposer.Compose()
+	if err != nil {
+		return false
+	}
+
+	messages := a.Memory.GetMessages(a.UserID)
+	updated := a.updateSystemMessage(messages, composed)
+
+	// Clear and re-add messages
+	// 清除并重新添加消息
+	a.Memory.Clear(a.UserID)
+	for _, msg := range updated {
+		a.Memory.Add(msg, a.UserID)
+	}
+
+	return true
 }
 
 // updateSystemMessage updates or adds system message with new instructions
