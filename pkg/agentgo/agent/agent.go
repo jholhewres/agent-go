@@ -46,9 +46,10 @@ type Agent struct {
 	Memory       memory.Memory
 	Instructions string
 	MaxLoops     int          // Maximum tool calling loops
-	UserID       string       // User ID for multi-tenant memory isolation / 多租户内存隔离的用户ID
-	PreHooks     []hooks.Hook // Hooks executed before processing input
-	PostHooks    []hooks.Hook // Hooks executed after generating output
+	UserID       string            // User ID for multi-tenant memory isolation / 多租户内存隔离的用户ID
+	PreHooks     []hooks.Hook      // Hooks executed before processing input
+	PostHooks    []hooks.Hook      // Hooks executed after generating output
+	ToolHooks    []hooks.ToolHook  // Hooks executed around tool calls / 工具调用前后执行的钩子
 	logger       *slog.Logger
 	cache        cache.Provider
 	cacheTTL     time.Duration
@@ -81,9 +82,10 @@ type Config struct {
 	Memory        memory.Memory
 	Instructions  string
 	MaxLoops      int
-	UserID        string       // User ID for multi-tenant scenarios / 多租户场景的用户ID
-	PreHooks      []hooks.Hook // Hooks to execute before processing input
-	PostHooks     []hooks.Hook // Hooks to execute after generating output
+	UserID        string         // User ID for multi-tenant scenarios / 多租户场景的用户ID
+	PreHooks      []hooks.Hook   // Hooks to execute before processing input
+	PostHooks     []hooks.Hook   // Hooks to execute after generating output
+	ToolHooks     []hooks.ToolHook // Hooks to execute around tool calls / 工具调用前后执行的钩子
 	Logger        *slog.Logger
 	EnableCache   bool
 	CacheProvider cache.Provider
@@ -265,6 +267,7 @@ func New(config Config) (*Agent, error) {
 		UserID:       config.UserID,
 		PreHooks:     config.PreHooks,
 		PostHooks:    config.PostHooks,
+		ToolHooks:    config.ToolHooks,
 		logger:       config.Logger,
 		cache:        cacheProvider,
 		cacheTTL:     cacheTTL,
@@ -303,6 +306,7 @@ type RunOutput struct {
 	Messages           []*types.Message       `json:"messages"`
 	Metadata           map[string]interface{} `json:"metadata,omitempty"`
 	Events             run.Events             `json:"events,omitempty"`
+	ToolsExecuted      []*ToolExecutionSummary `json:"tools_executed,omitempty"` // Tool execution summaries / 工具执行摘要
 }
 
 // RunStreamDone represents the terminal result of a streaming run.
@@ -449,14 +453,8 @@ func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
 		}
 
 		a.logger.Info("executing tool calls", "count", len(resp.ToolCalls))
-		if err := a.executeToolCalls(ctx, resp.ToolCalls); err != nil {
-			if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) || ctx.Err() != nil {
-				cancelled := a.markRunCancelled(output, loopCount, cacheHit, err, initialMessageCount)
-				return cancelled, types.NewCancellationError("agent run cancelled", err)
-			}
-			a.logger.Error("tool execution failed", "error", err)
-			return nil, types.NewToolExecutionError("tool execution failed", err)
-		}
+		summaries := a.executeToolCalls(ctx, resp.ToolCalls)
+		output.ToolsExecuted = append(output.ToolsExecuted, summaries...)
 	}
 
 	if finalResponse == nil {
@@ -885,65 +883,135 @@ func attachRunContextToRequest(ctx context.Context, req *models.InvokeRequest) {
 	req.Extra["run_context"] = meta
 }
 
-// executeToolCalls executes all tool calls and adds results to memory
-func (a *Agent) executeToolCalls(ctx context.Context, toolCalls []types.ToolCall) error {
+// executeToolCalls executes all tool calls with hooks and returns execution summaries.
+// executeToolCalls 使用钩子执行所有工具调用并返回执行摘要。
+func (a *Agent) executeToolCalls(ctx context.Context, toolCalls []types.ToolCall) []*ToolExecutionSummary {
+	var summaries []*ToolExecutionSummary
+
 	for _, tc := range toolCalls {
-		// Find the toolkit that has this function
-		var targetToolkit toolkit.Toolkit
-		for _, tk := range a.Toolkits {
-			if _, exists := tk.Functions()[tc.Function.Name]; exists {
-				targetToolkit = tk
-				break
-			}
-		}
+		summary := a.executeSingleToolCall(ctx, tc)
+		summaries = append(summaries, summary)
 
-		if targetToolkit == nil {
-			errMsg := fmt.Sprintf("function %s not found in any toolkit", tc.Function.Name)
-			a.logger.Warn("tool not found", "function", tc.Function.Name)
-			a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
+		// If blocked by pre-hook, skip adding to memory
+		// 如果被前置钩子阻止，则跳过添加到内存
+		if summary.Status == ToolExecutionStatusBlocked {
 			continue
 		}
-
-		// Parse arguments
-		args, err := toolkit.ParseArguments(tc.Function.Arguments)
-		if err != nil {
-			errMsg := fmt.Sprintf("failed to parse arguments: %v", err)
-			a.logger.Error("argument parsing failed", "error", err)
-			a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
-			continue
-		}
-
-		// Execute tool
-		a.logger.Info("executing tool", "function", tc.Function.Name, "args", args)
-
-		// Get the function and execute it directly
-		fn := targetToolkit.Functions()[tc.Function.Name]
-		if fn == nil {
-			errMsg := fmt.Sprintf("function %s not found", tc.Function.Name)
-			a.logger.Error("function not found", "function", tc.Function.Name)
-			a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
-			continue
-		}
-
-		result, err := fn.Handler(ctx, args)
-		if err != nil {
-			errMsg := fmt.Sprintf("tool execution error: %v", err)
-			a.logger.Error("tool execution failed", "function", tc.Function.Name, "error", err)
-			a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
-			continue
-		}
-
-		// Format and store result
-		resultStr, err := toolkit.FormatResult(result)
-		if err != nil {
-			resultStr = fmt.Sprintf("%v", result)
-		}
-
-		a.logger.Info("tool executed successfully", "function", tc.Function.Name)
-		a.Memory.Add(types.NewToolMessage(tc.ID, resultStr), a.UserID)
 	}
 
-	return nil
+	return summaries
+}
+
+// executeSingleToolCall executes one tool call with full hook lifecycle.
+// executeSingleToolCall 使用完整的钩子生命周期执行单个工具调用。
+func (a *Agent) executeSingleToolCall(ctx context.Context, tc types.ToolCall) *ToolExecutionSummary {
+	// Find the toolkit that has this function
+	// 找到包含此函数的工具包
+	var targetToolkit toolkit.Toolkit
+	for _, tk := range a.Toolkits {
+		if _, exists := tk.Functions()[tc.Function.Name]; exists {
+			targetToolkit = tk
+			break
+		}
+	}
+
+	if targetToolkit == nil {
+		errMsg := fmt.Sprintf("function %s not found in any toolkit", tc.Function.Name)
+		a.logger.Warn("tool not found", "function", tc.Function.Name)
+		a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
+		return &ToolExecutionSummary{
+			ToolCallID:   tc.ID,
+			FunctionName: tc.Function.Name,
+			Status:       ToolExecutionStatusFailed,
+			Error:        errMsg,
+			StartTime:    time.Now(),
+			EndTime:      time.Now(),
+			Metadata:     make(map[string]interface{}),
+		}
+	}
+
+	// Parse arguments
+	// 解析参数
+	args, err := toolkit.ParseArguments(tc.Function.Arguments)
+	if err != nil {
+		errMsg := fmt.Sprintf("failed to parse arguments: %v", err)
+		a.logger.Error("argument parsing failed", "error", err)
+		a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
+		return &ToolExecutionSummary{
+			ToolCallID:   tc.ID,
+			FunctionName: tc.Function.Name,
+			Arguments:    args,
+			Status:       ToolExecutionStatusFailed,
+			Error:        errMsg,
+			StartTime:    time.Now(),
+			EndTime:      time.Now(),
+			Metadata:     make(map[string]interface{}),
+		}
+	}
+
+	// Create hook input for pre-execution
+	// 为 pre-execution 创建钩子输入
+	hookInput := hooks.NewToolHookInput(a.ID, tc.ID, tc.Function.Name, args)
+
+	// Execute pre-hooks
+	// 执行前置钩子
+	if len(a.ToolHooks) > 0 {
+		if err := hooks.ExecuteToolPreHooks(ctx, a.ToolHooks, hookInput); err != nil {
+			a.logger.Warn("tool execution blocked by pre-hook",
+				"function", tc.Function.Name,
+				"error", err)
+			return NewBlockedToolExecutionSummary(hookInput, err)
+		}
+	}
+
+	// Execute tool
+	// 执行工具
+	a.logger.Info("executing tool", "function", tc.Function.Name, "args", args)
+
+	fn := targetToolkit.Functions()[tc.Function.Name]
+	if fn == nil {
+		errMsg := fmt.Sprintf("function %s not found", tc.Function.Name)
+		a.logger.Error("function not found", "function", tc.Function.Name)
+		a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
+		hookInput.WithResult(nil, fmt.Errorf("%s", errMsg))
+		return NewToolExecutionSummary(hookInput, nil, fmt.Errorf("%s", errMsg))
+	}
+
+	startTime := time.Now()
+	result, execErr := fn.Handler(ctx, args)
+	hookInput.StartTime = startTime
+	hookInput.WithResult(result, execErr)
+
+	// Execute post-hooks
+	// 执行后置钩子
+	if len(a.ToolHooks) > 0 {
+		if err := hooks.ExecuteToolPostHooks(ctx, a.ToolHooks, hookInput); err != nil {
+			a.logger.Warn("tool post-hook error",
+				"function", tc.Function.Name,
+				"error", err)
+		}
+	}
+
+	// Handle execution result
+	// 处理执行结果
+	if execErr != nil {
+		errMsg := fmt.Sprintf("tool execution error: %v", execErr)
+		a.logger.Error("tool execution failed", "function", tc.Function.Name, "error", execErr)
+		a.Memory.Add(types.NewToolMessage(tc.ID, errMsg), a.UserID)
+		return NewToolExecutionSummary(hookInput, nil, execErr)
+	}
+
+	// Format and store result
+	// 格式化并存储结果
+	resultStr, err := toolkit.FormatResult(result)
+	if err != nil {
+		resultStr = fmt.Sprintf("%v", result)
+	}
+
+	a.logger.Info("tool executed successfully", "function", tc.Function.Name)
+	a.Memory.Add(types.NewToolMessage(tc.ID, resultStr), a.UserID)
+
+	return NewToolExecutionSummary(hookInput, result, nil)
 }
 
 // ClearMemory clears the agent's conversation history for this user
