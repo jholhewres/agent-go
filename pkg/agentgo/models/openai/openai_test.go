@@ -1,11 +1,13 @@
 package openai
 
 import (
+	"encoding/json"
 	"testing"
 	"time"
 
 	"github.com/jholhewres/agent-go/pkg/agentgo/models"
 	"github.com/jholhewres/agent-go/pkg/agentgo/types"
+	goai "github.com/sashabaranov/go-openai"
 )
 
 func TestNew(t *testing.T) {
@@ -602,4 +604,87 @@ func TestNew_WithTimeout(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestOpenAI_buildChatRequest_WithResponseFormat(t *testing.T) {
+	model, _ := New("gpt-4o", Config{APIKey: "test-key"})
+
+	t.Run("json_schema format", func(t *testing.T) {
+		req := &models.InvokeRequest{
+			Messages: []*types.Message{types.NewUserMessage("test")},
+			ResponseFormat: &models.ResponseFormat{
+				Type: "json_schema",
+				JSONSchema: map[string]interface{}{
+					"name": "TestSchema",
+					"type": "object",
+					"properties": map[string]interface{}{
+						"title": map[string]interface{}{"type": "string"},
+					},
+					"required": []string{"title"},
+				},
+			},
+		}
+
+		chatReq := model.buildChatRequest(req)
+		if chatReq.ResponseFormat == nil {
+			t.Fatal("expected ResponseFormat to be set")
+		}
+		if chatReq.ResponseFormat.Type != goai.ChatCompletionResponseFormatTypeJSONSchema {
+			t.Errorf("expected type json_schema, got %v", chatReq.ResponseFormat.Type)
+		}
+		if chatReq.ResponseFormat.JSONSchema == nil {
+			t.Fatal("expected JSONSchema to be set")
+		}
+		if chatReq.ResponseFormat.JSONSchema.Name != "TestSchema" {
+			t.Errorf("expected name 'TestSchema', got %q", chatReq.ResponseFormat.JSONSchema.Name)
+		}
+		if !chatReq.ResponseFormat.JSONSchema.Strict {
+			t.Error("expected Strict to be true")
+		}
+		// Verify schema marshals correctly
+		schemaBytes, err := json.Marshal(chatReq.ResponseFormat.JSONSchema.Schema)
+		if err != nil {
+			t.Fatalf("failed to marshal schema: %v", err)
+		}
+		var schemaMap map[string]interface{}
+		json.Unmarshal(schemaBytes, &schemaMap)
+		if schemaMap["type"] != "object" {
+			t.Errorf("expected schema type 'object', got %v", schemaMap["type"])
+		}
+		// Ensure meta keys ("name") are stripped from the schema body
+		if _, ok := schemaMap["name"]; ok {
+			t.Error("'name' should be stripped from schema body")
+		}
+	})
+
+	t.Run("json_object format", func(t *testing.T) {
+		req := &models.InvokeRequest{
+			Messages: []*types.Message{types.NewUserMessage("test")},
+			ResponseFormat: &models.ResponseFormat{
+				Type: "json_object",
+			},
+		}
+
+		chatReq := model.buildChatRequest(req)
+		if chatReq.ResponseFormat == nil {
+			t.Fatal("expected ResponseFormat to be set")
+		}
+		if chatReq.ResponseFormat.Type != goai.ChatCompletionResponseFormatTypeJSONObject {
+			t.Errorf("expected type json_object, got %v", chatReq.ResponseFormat.Type)
+		}
+		if chatReq.ResponseFormat.JSONSchema != nil {
+			t.Error("expected nil JSONSchema for json_object format")
+		}
+	})
+
+	t.Run("nil format", func(t *testing.T) {
+		req := &models.InvokeRequest{
+			Messages: []*types.Message{types.NewUserMessage("test")},
+		}
+
+		chatReq := model.buildChatRequest(req)
+		if chatReq.ResponseFormat != nil {
+			t.Error("expected nil ResponseFormat when not set")
+		}
+	})
 }

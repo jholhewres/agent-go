@@ -11,8 +11,8 @@ func TestPubMedToolkit_SearchArticles(t *testing.T) {
 
 	// Test searching for articles
 	result, err := toolkit.searchArticles(context.Background(), map[string]interface{}{
-		"query":        "cancer research",
-		"max_results":  5,
+		"query":       "cancer research",
+		"max_results": 5,
 	})
 
 	if err != nil {

@@ -10,11 +10,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/jholhewres/agent-go/pkg/agentos"
 	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
 	"github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 	"github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
 	"github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
+	"github.com/jholhewres/agent-go/pkg/agentos"
 )
 
 // This example demonstrates running multiple AgentOS instances with different route prefixes

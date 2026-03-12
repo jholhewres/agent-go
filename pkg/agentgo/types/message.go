@@ -1,7 +1,7 @@
 package types
 
 import (
-    "github.com/google/uuid"
+	"github.com/google/uuid"
 )
 
 // Role represents the role of a message sender
@@ -16,13 +16,13 @@ const (
 
 // Message represents a conversation message
 type Message struct {
-    ID         string      `json:"id"`
-    Role       Role        `json:"role"`
-    Content    string      `json:"content"`
-    Name       string      `json:"name,omitempty"`
-    ToolCallID string      `json:"tool_call_id,omitempty"`
-    ToolCalls  []ToolCall  `json:"tool_calls,omitempty"`
-    Metadata   interface{} `json:"metadata,omitempty"`
+	ID         string      `json:"id"`
+	Role       Role        `json:"role"`
+	Content    string      `json:"content"`
+	Name       string      `json:"name,omitempty"`
+	ToolCallID string      `json:"tool_call_id,omitempty"`
+	ToolCalls  []ToolCall  `json:"tool_calls,omitempty"`
+	Metadata   interface{} `json:"metadata,omitempty"`
 
 	// ReasoningContent 包含模型的推理过程(仅推理模型)
 	// ReasoningContent contains the model's reasoning process (reasoning models only)
@@ -45,11 +45,11 @@ type ToolCallFunction struct {
 
 // NewMessage creates a new message with the given role and content
 func NewMessage(role Role, content string) *Message {
-    return &Message{
-        ID:      "msg-" + uuid.NewString(),
-        Role:    role,
-        Content: content,
-    }
+	return &Message{
+		ID:      "msg-" + uuid.NewString(),
+		Role:    role,
+		Content: content,
+	}
 }
 
 // NewSystemMessage creates a system message
@@ -69,7 +69,7 @@ func NewAssistantMessage(content string) *Message {
 
 // NewToolMessage creates a tool response message
 func NewToolMessage(toolCallID, content string) *Message {
-    msg := NewMessage(RoleTool, content)
-    msg.ToolCallID = toolCallID
-    return msg
+	msg := NewMessage(RoleTool, content)
+	msg.ToolCallID = toolCallID
+	return msg
 }

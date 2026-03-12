@@ -14,24 +14,24 @@ import (
 
 // PgVector implements vectordb.VectorDB using PostgreSQL with pgvector extension
 type PgVector struct {
-	db              *sql.DB
-	tableName       string
-	dimension       int
-	indexType       string // "ivfflat" or "hnsw"
-	indexParams     map[string]interface{}
-	embedFunc       vectordb.EmbeddingFunction
-	collectionName  string
+	db             *sql.DB
+	tableName      string
+	dimension      int
+	indexType      string // "ivfflat" or "hnsw"
+	indexParams    map[string]interface{}
+	embedFunc      vectordb.EmbeddingFunction
+	collectionName string
 }
 
 // Config holds pgvector configuration
 type Config struct {
-	DB              *sql.DB
-	TableName       string
-	CollectionName  string
-	Dimension       int
-	IndexType       string                 // "ivfflat" or "hnsw" (default: "hnsw")
-	IndexParams     map[string]interface{} // Index-specific parameters
-	EmbeddingFunc   vectordb.EmbeddingFunction
+	DB             *sql.DB
+	TableName      string
+	CollectionName string
+	Dimension      int
+	IndexType      string                 // "ivfflat" or "hnsw" (default: "hnsw")
+	IndexParams    map[string]interface{} // Index-specific parameters
+	EmbeddingFunc  vectordb.EmbeddingFunction
 }
 
 // New creates a new PgVector instance

@@ -154,7 +154,7 @@ func TestPandasToolkit_DataFrameHead(t *testing.T) {
 	// Test getting head with custom n
 	result, err = toolkit.dataframeHead(context.Background(), map[string]interface{}{
 		"dataframe": dataframe,
-		"n":        2,
+		"n":         2,
 	})
 
 	if err != nil {
@@ -203,7 +203,7 @@ func TestPandasToolkit_DataFrameFilter(t *testing.T) {
 	}
 
 	result, err := toolkit.dataframeFilter(context.Background(), map[string]interface{}{
-		"dataframe": dataframe,
+		"dataframe":  dataframe,
 		"conditions": conditions,
 	})
 
@@ -241,8 +241,8 @@ func TestPandasToolkit_DataFrameDescribe(t *testing.T) {
 
 	// Create a DataFrame with numeric data
 	data := map[string]interface{}{
-		"name": []interface{}{"John", "Jane", "Bob", "Alice"},
-		"age":  []interface{}{30, 25, 35, 28},
+		"name":   []interface{}{"John", "Jane", "Bob", "Alice"},
+		"age":    []interface{}{30, 25, 35, 28},
 		"salary": []interface{}{50000, 60000, 70000, 55000},
 	}
 
@@ -313,7 +313,7 @@ func TestPandasToolkit_DataFrameGroupBy(t *testing.T) {
 	// Test grouping DataFrame
 	result, err := toolkit.dataframeGroupBy(context.Background(), map[string]interface{}{
 		"dataframe": dataframe,
-		"by":       []interface{}{"department"},
+		"by":        []interface{}{"department"},
 		"agg": map[string]interface{}{
 			"salary": "mean",
 		},

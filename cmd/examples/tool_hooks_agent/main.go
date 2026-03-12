@@ -65,9 +65,9 @@ func (h *RateLimitToolHook) OnToolPost(ctx context.Context, input *hooks.ToolHoo
 
 // MetricsToolHook collects metrics about tool usage
 type MetricsToolHook struct {
-	callCount   map[string]int
-	totalTime   map[string]time.Duration
-	errorCount  map[string]int
+	callCount  map[string]int
+	totalTime  map[string]time.Duration
+	errorCount map[string]int
 }
 
 func NewMetricsToolHook() *MetricsToolHook {
@@ -129,8 +129,8 @@ func main() {
 		Model:    model,
 		Toolkits: []toolkit.Toolkit{calculator.New()},
 		ToolHooks: []hooks.ToolHook{
-			loggingHook,  // Log all tool executions
-			metricsHook,  // Collect metrics
+			loggingHook, // Log all tool executions
+			metricsHook, // Collect metrics
 		},
 	})
 	if err != nil {
@@ -139,7 +139,7 @@ func main() {
 	}
 
 	// Run agent
-	fmt.Println("Running agent with tool hooks...\n")
+	fmt.Println("Running agent with tool hooks...")
 	output, err := ag.Run(context.Background(), "What is 25 * 4 + 10?")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)

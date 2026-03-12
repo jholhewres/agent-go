@@ -12,7 +12,7 @@ func main() {
 	ctx := context.Background()
 
 	fmt.Println("🚀 AgentGo Knowledge Loaders Demo")
-	fmt.Println("===================================\n")
+	fmt.Println("===================================")
 
 	// Demonstração de cada loader
 	demoTextLoader()

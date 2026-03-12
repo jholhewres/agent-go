@@ -6,14 +6,22 @@ import (
 	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 )
 
+// ResponseFormat specifies the format constraint for model output.
+// Used to request structured JSON output from models that support it.
+type ResponseFormat struct {
+	Type       string                 `json:"type"`                  // "json_object" or "json_schema"
+	JSONSchema map[string]interface{} `json:"json_schema,omitempty"` // Schema when Type == "json_schema"
+}
+
 // InvokeRequest contains parameters for model invocation
 type InvokeRequest struct {
-	Messages    []*types.Message
-	Tools       []ToolDefinition
-	Temperature float64
-	MaxTokens   int
-	Stream      bool
-	Extra       map[string]interface{}
+	Messages       []*types.Message
+	Tools          []ToolDefinition
+	Temperature    float64
+	MaxTokens      int
+	Stream         bool
+	Extra          map[string]interface{}
+	ResponseFormat *ResponseFormat // Optional: structured output constraint
 }
 
 // ToolDefinition defines a tool that can be called by the model

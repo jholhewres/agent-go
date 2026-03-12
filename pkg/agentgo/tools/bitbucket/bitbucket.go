@@ -161,22 +161,22 @@ func (b *BitbucketToolkit) listRepositories(ctx context.Context, args map[string
 	// For now, return a mock response
 	mockRepositories := []map[string]interface{}{
 		{
-			"uuid":       "{repo-uuid-1}",
-			"slug":       "example-repo",
-			"name":       "Example Repository",
-			"full_name":  fmt.Sprintf("%s/example-repo", workspace),
+			"uuid":        "{repo-uuid-1}",
+			"slug":        "example-repo",
+			"name":        "Example Repository",
+			"full_name":   fmt.Sprintf("%s/example-repo", workspace),
 			"description": "An example repository",
-			"is_private": true,
-			"language":   "Go",
+			"is_private":  true,
+			"language":    "Go",
 		},
 		{
-			"uuid":       "{repo-uuid-2}",
-			"slug":       "another-repo",
-			"name":       "Another Repository",
-			"full_name":  fmt.Sprintf("%s/another-repo", workspace),
+			"uuid":        "{repo-uuid-2}",
+			"slug":        "another-repo",
+			"name":        "Another Repository",
+			"full_name":   fmt.Sprintf("%s/another-repo", workspace),
 			"description": "Another example repository",
-			"is_private": false,
-			"language":   "Python",
+			"is_private":  false,
+			"language":    "Python",
 		},
 	}
 
@@ -257,11 +257,11 @@ func (b *BitbucketToolkit) listPullRequests(ctx context.Context, args map[string
 	}
 
 	return map[string]interface{}{
-		"workspace":      workspace,
-		"repository":     repository,
+		"workspace":     workspace,
+		"repository":    repository,
 		"pull_requests": mockPullRequests,
-		"count":          len(mockPullRequests),
-		"note":           "This is a placeholder implementation. Integrate with Bitbucket API for real pull request data.",
+		"count":         len(mockPullRequests),
+		"note":          "This is a placeholder implementation. Integrate with Bitbucket API for real pull request data.",
 	}, nil
 }
 

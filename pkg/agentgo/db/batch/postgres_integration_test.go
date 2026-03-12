@@ -9,8 +9,8 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/lib/pq"
 	"github.com/jholhewres/agent-go/pkg/agentgo/session"
+	_ "github.com/lib/pq"
 )
 
 func TestIntegration_PostgresBatchWriter_UpsertSessions(t *testing.T) {

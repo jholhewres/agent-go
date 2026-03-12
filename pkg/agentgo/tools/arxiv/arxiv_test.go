@@ -11,8 +11,8 @@ func TestArXivToolkit_SearchPapers(t *testing.T) {
 
 	// Test searching for papers
 	result, err := toolkit.searchPapers(context.Background(), map[string]interface{}{
-		"query":        "machine learning",
-		"max_results":  5,
+		"query":       "machine learning",
+		"max_results": 5,
 	})
 
 	if err != nil {

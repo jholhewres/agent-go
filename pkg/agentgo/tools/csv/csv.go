@@ -278,10 +278,10 @@ func (c *CSVToolkit) analyzeCSV(ctx context.Context, args map[string]interface{}
 
 	if len(allRows) == 0 {
 		return map[string]interface{}{
-			"file_path": filePath,
-			"row_count": 0,
+			"file_path":    filePath,
+			"row_count":    0,
 			"column_count": 0,
-			"empty": true,
+			"empty":        true,
 		}, nil
 	}
 
@@ -311,12 +311,12 @@ func (c *CSVToolkit) analyzeCSV(ctx context.Context, args map[string]interface{}
 	}
 
 	return map[string]interface{}{
-		"file_path":         filePath,
-		"row_count":         rowCount,
-		"column_count":      columnCount,
+		"file_path":          filePath,
+		"row_count":          rowCount,
+		"column_count":       columnCount,
 		"consistent_columns": consistentColumns,
-		"sample_rows":       sampleRows,
-		"has_header":        rowCount > 0,
+		"sample_rows":        sampleRows,
+		"has_header":         rowCount > 0,
 	}, nil
 }
 
@@ -355,12 +355,12 @@ func (c *CSVToolkit) filterCSV(ctx context.Context, args map[string]interface{})
 	}
 
 	return map[string]interface{}{
-		"file_path":       filePath,
-		"original_count":  len(rows),
-		"filtered_count":  len(filteredRows),
-		"filtered_rows":   filteredRows,
-		"headers":         headers,
-		"conditions":      conditions,
+		"file_path":      filePath,
+		"original_count": len(rows),
+		"filtered_count": len(filteredRows),
+		"filtered_rows":  filteredRows,
+		"headers":        headers,
+		"conditions":     conditions,
 	}, nil
 }
 

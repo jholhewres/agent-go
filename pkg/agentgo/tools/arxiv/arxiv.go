@@ -161,24 +161,24 @@ func (a *ArXivToolkit) searchPapers(ctx context.Context, args map[string]interfa
 		}
 
 		result := map[string]interface{}{
-			"paper_id":   paperID,
-			"title":      strings.TrimSpace(entry.Title),
-			"summary":    strings.TrimSpace(entry.Summary),
-			"authors":    authorNames,
-			"published":  entry.Published,
-			"updated":    entry.Updated,
-			"category":   entry.Category.Term,
-			"url":        entry.ID,
+			"paper_id":  paperID,
+			"title":     strings.TrimSpace(entry.Title),
+			"summary":   strings.TrimSpace(entry.Summary),
+			"authors":   authorNames,
+			"published": entry.Published,
+			"updated":   entry.Updated,
+			"category":  entry.Category.Term,
+			"url":       entry.ID,
 		}
 
 		results = append(results, result)
 	}
 
 	return map[string]interface{}{
-		"query":        query,
-		"results":      results,
-		"total_found":  len(results),
-		"max_results":  maxResults,
+		"query":       query,
+		"results":     results,
+		"total_found": len(results),
+		"max_results": maxResults,
 	}, nil
 }
 
@@ -240,15 +240,15 @@ func (a *ArXivToolkit) getPaperDetails(ctx context.Context, args map[string]inte
 	}
 
 	result := map[string]interface{}{
-		"paper_id":   paperID,
-		"title":      strings.TrimSpace(entry.Title),
-		"summary":    strings.TrimSpace(entry.Summary),
-		"authors":    authorNames,
-		"published":  entry.Published,
-		"updated":    entry.Updated,
-		"category":   entry.Category.Term,
-		"url":        entry.ID,
-		"pdf_url":    pdfURL,
+		"paper_id":  paperID,
+		"title":     strings.TrimSpace(entry.Title),
+		"summary":   strings.TrimSpace(entry.Summary),
+		"authors":   authorNames,
+		"published": entry.Published,
+		"updated":   entry.Updated,
+		"category":  entry.Category.Term,
+		"url":       entry.ID,
+		"pdf_url":   pdfURL,
 	}
 
 	return map[string]interface{}{

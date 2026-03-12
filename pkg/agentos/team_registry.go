@@ -81,4 +81,3 @@ func (r *TeamRegistry) Clear() {
 	defer r.mu.Unlock()
 	r.teams = make(map[string]*team.Team)
 }
-

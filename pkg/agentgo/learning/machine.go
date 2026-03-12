@@ -61,7 +61,7 @@ func (m *Machine) Learn(ctx context.Context, userID string, messages []types.Mes
 			return ctx.Err()
 		default:
 		}
-		
+
 		if err := m.storage.SaveUserMemory(ctx, &memory); err != nil {
 			return fmt.Errorf("failed to save memory: %w", err)
 		}
@@ -76,7 +76,7 @@ func (m *Machine) Learn(ctx context.Context, userID string, messages []types.Mes
 			return ctx.Err()
 		default:
 		}
-		
+
 		if err := m.storage.SaveKnowledge(ctx, &k); err != nil {
 			return fmt.Errorf("failed to save knowledge: %w", err)
 		}
@@ -90,12 +90,12 @@ func (m *Machine) Learn(ctx context.Context, userID string, messages []types.Mes
 
 	// Log learning event
 	event := &LearningEvent{
-		ID:     uuid.New().String(),
-		UserID: userID,
+		ID:        uuid.New().String(),
+		UserID:    userID,
 		EventType: "learning_session",
 		Data: map[string]interface{}{
-			"message_count":  len(messages),
-			"memories_count": len(memories),
+			"message_count":   len(messages),
+			"memories_count":  len(memories),
 			"knowledge_count": len(knowledge),
 		},
 		OccurredAt: time.Now(),
@@ -126,12 +126,12 @@ func (m *Machine) GetLearnedKnowledge(ctx context.Context, topic string, limit i
 	if limit <= 0 {
 		limit = 10
 	}
-	
+
 	topic = strings.TrimSpace(strings.ToLower(topic))
 	if topic == "" {
 		return nil, fmt.Errorf("topic is required")
 	}
-	
+
 	return m.storage.GetKnowledge(ctx, topic, limit)
 }
 

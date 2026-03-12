@@ -7,14 +7,14 @@ import (
 
 // Prompt represents a prompt template
 type Prompt struct {
-	ID          string                 `json:"id" yaml:"id"`
-	Name        string                 `json:"name" yaml:"name"`
-	Template    string                 `json:"template" yaml:"template"`
-	Variables   []Variable             `json:"variables,omitempty" yaml:"variables,omitempty"`
-	Examples    []Example              `json:"examples,omitempty" yaml:"examples,omitempty"`
-	Version     string                 `json:"version,omitempty" yaml:"version,omitempty"`
-	Metadata    map[string]interface{} `json:"metadata,omitempty" yaml:"metadata,omitempty"`
-	CreatedAt   time.Time              `json:"created_at,omitempty" yaml:"created_at,omitempty"`
+	ID        string                 `json:"id" yaml:"id"`
+	Name      string                 `json:"name" yaml:"name"`
+	Template  string                 `json:"template" yaml:"template"`
+	Variables []Variable             `json:"variables,omitempty" yaml:"variables,omitempty"`
+	Examples  []Example              `json:"examples,omitempty" yaml:"examples,omitempty"`
+	Version   string                 `json:"version,omitempty" yaml:"version,omitempty"`
+	Metadata  map[string]interface{} `json:"metadata,omitempty" yaml:"metadata,omitempty"`
+	CreatedAt time.Time              `json:"created_at,omitempty" yaml:"created_at,omitempty"`
 }
 
 // Variable represents a template variable

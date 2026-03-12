@@ -195,22 +195,22 @@ func (o *OpenWeatherToolkit) getCurrentWeather(ctx context.Context, args map[str
 	}
 
 	result := map[string]interface{}{
-		"location":          weatherResponse.Name,
-		"country":           weatherResponse.Sys.Country,
-		"coordinates":       fmt.Sprintf("%.4f, %.4f", weatherResponse.Coord.Lat, weatherResponse.Coord.Lon),
-		"temperature":       weatherResponse.Main.Temp,
-		"feels_like":        weatherResponse.Main.FeelsLike,
-		"temperature_min":   weatherResponse.Main.TempMin,
-		"temperature_max":   weatherResponse.Main.TempMax,
-		"pressure":          weatherResponse.Main.Pressure,
-		"humidity":          weatherResponse.Main.Humidity,
-		"weather":           weatherDescription,
-		"wind_speed":        weatherResponse.Wind.Speed,
-		"wind_direction":    weatherResponse.Wind.Deg,
-		"cloudiness":        weatherResponse.Clouds.All,
-		"units":             units,
-		"sunrise":           weatherResponse.Sys.Sunrise,
-		"sunset":            weatherResponse.Sys.Sunset,
+		"location":        weatherResponse.Name,
+		"country":         weatherResponse.Sys.Country,
+		"coordinates":     fmt.Sprintf("%.4f, %.4f", weatherResponse.Coord.Lat, weatherResponse.Coord.Lon),
+		"temperature":     weatherResponse.Main.Temp,
+		"feels_like":      weatherResponse.Main.FeelsLike,
+		"temperature_min": weatherResponse.Main.TempMin,
+		"temperature_max": weatherResponse.Main.TempMax,
+		"pressure":        weatherResponse.Main.Pressure,
+		"humidity":        weatherResponse.Main.Humidity,
+		"weather":         weatherDescription,
+		"wind_speed":      weatherResponse.Wind.Speed,
+		"wind_direction":  weatherResponse.Wind.Deg,
+		"cloudiness":      weatherResponse.Clouds.All,
+		"units":           units,
+		"sunrise":         weatherResponse.Sys.Sunrise,
+		"sunset":          weatherResponse.Sys.Sunset,
 	}
 
 	return map[string]interface{}{
@@ -294,12 +294,12 @@ func (o *OpenWeatherToolkit) getWeatherForecast(ctx context.Context, args map[st
 	}
 
 	result := map[string]interface{}{
-		"location":  forecastResponse.City.Name,
-		"country":   forecastResponse.City.Country,
-		"coordinates": fmt.Sprintf("%.4f, %.4f", forecastResponse.City.Coord.Lat, forecastResponse.City.Coord.Lon),
+		"location":      forecastResponse.City.Name,
+		"country":       forecastResponse.City.Country,
+		"coordinates":   fmt.Sprintf("%.4f, %.4f", forecastResponse.City.Coord.Lat, forecastResponse.City.Coord.Lon),
 		"forecast_days": days,
-		"units":        units,
-		"forecasts":    forecasts,
+		"units":         units,
+		"forecasts":     forecasts,
 	}
 
 	return map[string]interface{}{

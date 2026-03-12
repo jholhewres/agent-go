@@ -85,16 +85,16 @@ func (w *WebSearchToolkit) webSearch(ctx context.Context, args map[string]interf
 	// In a real implementation, this would call SerpAPI, Tavily, or other search APIs
 	mockResults := []map[string]interface{}{
 		{
-			"title":     "Example Search Result 1",
-			"url":       "https://example.com/result1",
-			"snippet":   fmt.Sprintf("This is a mock result for query: %s", query),
-			"position":  1,
+			"title":    "Example Search Result 1",
+			"url":      "https://example.com/result1",
+			"snippet":  fmt.Sprintf("This is a mock result for query: %s", query),
+			"position": 1,
 		},
 		{
-			"title":     "Example Search Result 2",
-			"url":       "https://example.com/result2",
-			"snippet":   fmt.Sprintf("Another mock result for: %s", query),
-			"position":  2,
+			"title":    "Example Search Result 2",
+			"url":      "https://example.com/result2",
+			"snippet":  fmt.Sprintf("Another mock result for: %s", query),
+			"position": 2,
 		},
 	}
 

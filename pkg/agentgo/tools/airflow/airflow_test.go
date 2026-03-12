@@ -34,15 +34,15 @@ func TestAirflowToolkit_ListDAGs(t *testing.T) {
 		t.Error("Expected at least one DAG")
 	}
 
-    // Check total_entries field (Airflow API schema)
-    total, ok := resultMap["total_entries"].(int)
-    if !ok {
-        t.Fatalf("Expected total_entries integer, got: %T", resultMap["total_entries"])
-    }
+	// Check total_entries field (Airflow API schema)
+	total, ok := resultMap["total_entries"].(int)
+	if !ok {
+		t.Fatalf("Expected total_entries integer, got: %T", resultMap["total_entries"])
+	}
 
-    if total != len(dags) {
-        t.Errorf("total_entries mismatch: expected %d, got %d", len(dags), total)
-    }
+	if total != len(dags) {
+		t.Errorf("total_entries mismatch: expected %d, got %d", len(dags), total)
+	}
 }
 
 func TestAirflowToolkit_TriggerDAGRun(t *testing.T) {
@@ -53,7 +53,7 @@ func TestAirflowToolkit_TriggerDAGRun(t *testing.T) {
 		"base_url": "http://localhost:8080",
 		"username": "admin",
 		"password": "admin",
-		"dag_id":  "example_dag",
+		"dag_id":   "example_dag",
 	})
 
 	if err != nil {
@@ -75,15 +75,15 @@ func TestAirflowToolkit_TriggerDAGRun(t *testing.T) {
 		t.Errorf("Expected dag_id 'example_dag', got '%s'", dagID)
 	}
 
-    // Check dag_run_id
-    dagRunID, ok := resultMap["dag_run_id"].(string)
-    if !ok {
-        t.Fatalf("Expected dag_run_id string, got: %T", resultMap["dag_run_id"])
-    }
+	// Check dag_run_id
+	dagRunID, ok := resultMap["dag_run_id"].(string)
+	if !ok {
+		t.Fatalf("Expected dag_run_id string, got: %T", resultMap["dag_run_id"])
+	}
 
-    if dagRunID == "" {
-        t.Error("Expected non-empty dag_run_id")
-    }
+	if dagRunID == "" {
+		t.Error("Expected non-empty dag_run_id")
+	}
 
 	// Check state
 	state, ok := resultMap["state"].(string)
@@ -109,8 +109,8 @@ func TestAirflowToolkit_TriggerDAGRun_WithConf(t *testing.T) {
 		"base_url": "http://localhost:8080",
 		"username": "admin",
 		"password": "admin",
-		"dag_id":  "example_dag",
-		"conf":    conf,
+		"dag_id":   "example_dag",
+		"conf":     conf,
 	})
 
 	if err != nil {
@@ -137,13 +137,13 @@ func TestAirflowToolkit_GetDAGRunStatus(t *testing.T) {
 	toolkit := New()
 
 	// Test with valid parameters
-    result, err := toolkit.getDAGRunStatus(context.Background(), map[string]interface{}{
-        "base_url": "http://localhost:8080",
-        "username": "admin",
-        "password": "admin",
-        "dag_id":  "example_dag",
-        "dag_run_id":  "manual__2024-01-15T10:00:00",
-    })
+	result, err := toolkit.getDAGRunStatus(context.Background(), map[string]interface{}{
+		"base_url":   "http://localhost:8080",
+		"username":   "admin",
+		"password":   "admin",
+		"dag_id":     "example_dag",
+		"dag_run_id": "manual__2024-01-15T10:00:00",
+	})
 
 	if err != nil {
 		t.Fatalf("Expected no error, got: %v", err)

@@ -9,8 +9,8 @@ import (
 	"fmt"
 	"sort"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/jholhewres/agent-go/pkg/agentgo/vectordb"
+	"github.com/redis/go-redis/v9"
 )
 
 // Config for Redis VectorDB provider

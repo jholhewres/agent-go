@@ -8,7 +8,7 @@ import (
 func TestToModelToolDefinitions_ArrayParameterWithItems(t *testing.T) {
 	// Create a toolkit with an array parameter
 	tk := NewBaseToolkit("test-toolkit")
-	
+
 	tk.RegisterFunction(&Function{
 		Name:        "test_function",
 		Description: "Test function with array parameter",
@@ -91,7 +91,7 @@ func TestToModelToolDefinitions_ArrayParameterWithItems(t *testing.T) {
 	funcProps := funcParams["properties"].(map[string]interface{})
 	funcItems := funcProps["items"].(map[string]interface{})
 	funcItemsItems, hasItemsItems := funcItems["items"]
-	
+
 	if !hasItemsItems {
 		t.Fatal("CRITICAL: After JSON serialization, 'items.items' field is missing!")
 	}
@@ -102,7 +102,7 @@ func TestToModelToolDefinitions_ArrayParameterWithItems(t *testing.T) {
 func TestToModelToolDefinitions_SkillsGetScriptSchema(t *testing.T) {
 	// Simulate the exact get_skill_script function
 	tk := NewBaseToolkit("skills")
-	
+
 	tk.RegisterFunction(&Function{
 		Name:        "get_skill_script",
 		Description: "Read or execute a script from a skill",
@@ -189,7 +189,7 @@ func TestToModelToolDefinitions_SkillsGetScriptSchema(t *testing.T) {
 func TestToModelToolDefinitions_NonArrayParameter(t *testing.T) {
 	// Test that non-array parameters don't get items field
 	tk := NewBaseToolkit("test")
-	
+
 	tk.RegisterFunction(&Function{
 		Name:        "test_func",
 		Description: "Test",

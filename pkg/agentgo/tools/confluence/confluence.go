@@ -139,19 +139,19 @@ func (c *ConfluenceToolkit) listSpaces(ctx context.Context, args map[string]inte
 	// In a real implementation, this would call the Confluence API
 	mockSpaces := []map[string]interface{}{
 		{
-			"id":    "12345",
-			"key":   "DS",
-			"name":  "Documentation Space",
-			"type":  "global",
+			"id":   "12345",
+			"key":  "DS",
+			"name": "Documentation Space",
+			"type": "global",
 			"_links": map[string]interface{}{
 				"webui": "/spaces/DS",
 			},
 		},
 		{
-			"id":    "67890",
-			"key":   "DEV",
-			"name":  "Development Space",
-			"type":  "global",
+			"id":   "67890",
+			"key":  "DEV",
+			"name": "Development Space",
+			"type": "global",
 			"_links": map[string]interface{}{
 				"webui": "/spaces/DEV",
 			},
@@ -195,8 +195,8 @@ func (c *ConfluenceToolkit) searchPages(ctx context.Context, args map[string]int
 	// For now, return a mock response
 	mockPages := []map[string]interface{}{
 		{
-			"id":      "123456",
-			"title":   "Getting Started Guide",
+			"id":    "123456",
+			"title": "Getting Started Guide",
 			"space": map[string]interface{}{
 				"key":  "DS",
 				"name": "Documentation Space",
@@ -209,8 +209,8 @@ func (c *ConfluenceToolkit) searchPages(ctx context.Context, args map[string]int
 			},
 		},
 		{
-			"id":      "789012",
-			"title":   "API Documentation",
+			"id":    "789012",
+			"title": "API Documentation",
 			"space": map[string]interface{}{
 				"key":  "DEV",
 				"name": "Development Space",
@@ -267,7 +267,7 @@ func (c *ConfluenceToolkit) getPageContent(ctx context.Context, args map[string]
 		},
 		"body": map[string]interface{}{
 			"storage": map[string]interface{}{
-				"value": "<p>This is example page content for page " + pageID + ".</p><p>In a real implementation, this would contain the actual Confluence page content.</p>",
+				"value":          "<p>This is example page content for page " + pageID + ".</p><p>In a real implementation, this would contain the actual Confluence page content.</p>",
 				"representation": "storage",
 			},
 		},

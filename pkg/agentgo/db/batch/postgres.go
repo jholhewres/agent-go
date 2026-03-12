@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/lib/pq"
 	"github.com/jholhewres/agent-go/pkg/agentgo/session"
+	"github.com/lib/pq"
 )
 
 // PostgresBatchWriter PostgreSQL 批量写入器

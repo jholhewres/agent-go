@@ -63,7 +63,7 @@ type SearchOptions struct {
 // SearchResult 表示带有相关性分数的内存搜索结果
 type SearchResult struct {
 	Message     *types.Message `json:"message"`
-	Score       float64        `json:"score"`       // Combined relevance score (0-1)
+	Score       float64        `json:"score"`        // Combined relevance score (0-1)
 	VectorScore float64        `json:"vector_score"` // Vector similarity score
 	TextScore   float64        `json:"text_score"`   // Text similarity score
 	Source      string         `json:"source"`       // "short_term" or "long_term"

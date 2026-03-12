@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"log/slog"
@@ -37,6 +38,23 @@ const (
 	RunStatusError     RunStatus = "error"
 )
 
+// SessionPersister is the interface for persisting run outputs to session storage.
+// This interface is defined in the agent package to avoid import cycles with the
+// session package. Use session.NewPersister() to create an adapter from session.Storage.
+type SessionPersister interface {
+	// PersistRun saves a completed run output to the session identified by sessionID.
+	PersistRun(ctx context.Context, sessionID, agentID, userID string, output *RunOutput) error
+}
+
+// HistoryProvider retrieves previous run history for context injection.
+// Implementations should return a formatted string suitable for inclusion
+// in the system prompt. Use session.NewHistoryProvider() to create one.
+type HistoryProvider interface {
+	// GetHistory returns a formatted history context string for the given session.
+	// maxRuns limits the number of previous runs to include.
+	GetHistory(ctx context.Context, sessionID string, maxRuns int) (string, error)
+}
+
 // Agent represents an AI agent
 type Agent struct {
 	ID           string
@@ -45,11 +63,11 @@ type Agent struct {
 	Toolkits     []toolkit.Toolkit
 	Memory       memory.Memory
 	Instructions string
-	MaxLoops     int          // Maximum tool calling loops
-	UserID       string            // User ID for multi-tenant memory isolation / 多租户内存隔离的用户ID
-	PreHooks     []hooks.Hook      // Hooks executed before processing input
-	PostHooks    []hooks.Hook      // Hooks executed after generating output
-	ToolHooks    []hooks.ToolHook  // Hooks executed around tool calls / 工具调用前后执行的钩子
+	MaxLoops     int              // Maximum tool calling loops
+	UserID       string           // User ID for multi-tenant memory isolation / 多租户内存隔离的用户ID
+	PreHooks     []hooks.Hook     // Hooks executed before processing input
+	PostHooks    []hooks.Hook     // Hooks executed after generating output
+	ToolHooks    []hooks.ToolHook // Hooks executed around tool calls / 工具调用前后执行的钩子
 	logger       *slog.Logger
 	cache        cache.Provider
 	cacheTTL     time.Duration
@@ -69,8 +87,22 @@ type Agent struct {
 	instructionsMu   sync.RWMutex // Protects instructions modification / 保护指令修改
 
 	// Prompt composition / Prompt 组合
-	promptComposer *prompts.PromptComposer // Optional modular prompt composer / 可选的模块化提示组合器
-	enableMemorySearch bool                // Enable automatic memory search before runs / 启用运行前自动内存搜索
+	promptComposer     *prompts.PromptComposer // Optional modular prompt composer / 可选的模块化提示组合器
+	enableMemorySearch bool                    // Enable automatic memory search before runs / 启用运行前自动内存搜索
+
+	// Structured output / 结构化输出
+	responseFormat *models.ResponseFormat // Optional: constrain model output to JSON schema / 约束模型输出为 JSON schema
+
+	// Session persistence / 会话持久化
+	sessionPersister SessionPersister // Persists runs to session storage / 将运行持久化到会话存储
+	sessionID        string           // Session identifier / 会话标识符
+
+	// History injection / 历史注入
+	historyProvider HistoryProvider // Provides previous run history / 提供历史运行记录
+	historyMaxRuns  int             // Max runs to inject (default: 5) / 最大注入运行数
+
+	// learningSem limits concurrent learning goroutines to prevent unbounded growth.
+	learningSem chan struct{}
 }
 
 // Config contains agent configuration
@@ -82,9 +114,9 @@ type Config struct {
 	Memory        memory.Memory
 	Instructions  string
 	MaxLoops      int
-	UserID        string         // User ID for multi-tenant scenarios / 多租户场景的用户ID
-	PreHooks      []hooks.Hook   // Hooks to execute before processing input
-	PostHooks     []hooks.Hook   // Hooks to execute after generating output
+	UserID        string           // User ID for multi-tenant scenarios / 多租户场景的用户ID
+	PreHooks      []hooks.Hook     // Hooks to execute before processing input
+	PostHooks     []hooks.Hook     // Hooks to execute after generating output
 	ToolHooks     []hooks.ToolHook // Hooks to execute around tool calls / 工具调用前后执行的钩子
 	Logger        *slog.Logger
 	EnableCache   bool
@@ -133,6 +165,30 @@ type Config struct {
 	// MemorySearchMinScore is the minimum relevance score for memory search results (0-1)
 	// MemorySearchMinScore 是内存搜索结果的最小相关性分数 (0-1)
 	MemorySearchMinScore float64
+
+	// ResponseFormat constrains the model output to structured JSON.
+	// When set, the model is instructed to produce JSON matching the given schema.
+	// ResponseFormat 约束模型输出为结构化 JSON。
+	ResponseFormat *models.ResponseFormat
+
+	// SessionPersister persists run outputs to session storage after each Run/RunStream.
+	// When set (along with SessionID), runs are automatically persisted.
+	// Use session.NewPersister() to create one from a session.Storage.
+	// SessionPersister 在每次 Run/RunStream 后将运行输出持久化到会话存储。
+	SessionPersister SessionPersister
+
+	// SessionID identifies the session for run persistence and history injection.
+	// SessionID 标识用于运行持久化和历史注入的会话。
+	SessionID string
+
+	// HistoryProvider loads previous session runs into context before each Run.
+	// Use session.NewHistoryProvider() to create one from a session.Storage.
+	// HistoryProvider 在每次 Run 前将之前的会话运行加载到上下文中。
+	HistoryProvider HistoryProvider
+
+	// HistoryMaxRuns limits the number of previous runs to include in context (default: 5).
+	// HistoryMaxRuns 限制上下文中包含的先前运行的最大数量（默认值：5）。
+	HistoryMaxRuns int
 }
 
 // New creates a new agent
@@ -256,6 +312,12 @@ func New(config Config) (*Agent, error) {
 		memorySearchMinScore = 0.1
 	}
 
+	// Set history injection defaults
+	historyMaxRuns := config.HistoryMaxRuns
+	if historyMaxRuns <= 0 {
+		historyMaxRuns = 5
+	}
+
 	agent := &Agent{
 		ID:           config.ID,
 		Name:         config.Name,
@@ -282,8 +344,22 @@ func New(config Config) (*Agent, error) {
 		storeHistoryMessages: boolOrDefault(config.StoreHistoryMessages, true),
 
 		// Prompt composition / Prompt 组合
-		promptComposer:      composer,
-		enableMemorySearch:  config.EnableMemorySearch,
+		promptComposer:     composer,
+		enableMemorySearch: config.EnableMemorySearch,
+
+		// Structured output / 结构化输出
+		responseFormat: config.ResponseFormat,
+
+		// Session persistence / 会话持久化
+		sessionPersister: config.SessionPersister,
+		sessionID:        config.SessionID,
+
+		// History injection / 历史注入
+		historyProvider: config.HistoryProvider,
+		historyMaxRuns:  historyMaxRuns,
+
+		// Bound concurrent learning goroutines.
+		learningSem: make(chan struct{}, 3),
 	}
 
 	// Add system message if instructions provided
@@ -297,15 +373,15 @@ func New(config Config) (*Agent, error) {
 
 // RunOutput contains the result of agent execution
 type RunOutput struct {
-	RunID              string                 `json:"run_id,omitempty"`
-	Status             RunStatus              `json:"status"`
-	StartedAt          time.Time              `json:"started_at"`
-	CompletedAt        time.Time              `json:"completed_at"`
-	CancellationReason string                 `json:"cancellation_reason,omitempty"`
-	Content            string                 `json:"content"`
-	Messages           []*types.Message       `json:"messages"`
-	Metadata           map[string]interface{} `json:"metadata,omitempty"`
-	Events             run.Events             `json:"events,omitempty"`
+	RunID              string                  `json:"run_id,omitempty"`
+	Status             RunStatus               `json:"status"`
+	StartedAt          time.Time               `json:"started_at"`
+	CompletedAt        time.Time               `json:"completed_at"`
+	CancellationReason string                  `json:"cancellation_reason,omitempty"`
+	Content            string                  `json:"content"`
+	Messages           []*types.Message        `json:"messages"`
+	Metadata           map[string]interface{}  `json:"metadata,omitempty"`
+	Events             run.Events              `json:"events,omitempty"`
 	ToolsExecuted      []*ToolExecutionSummary `json:"tools_executed,omitempty"` // Tool execution summaries / 工具执行摘要
 }
 
@@ -376,6 +452,22 @@ func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
 		Metadata:  map[string]interface{}{},
 	}
 
+	// Inject session history if configured.
+	if a.historyProvider != nil && a.sessionID != "" {
+		if histCtx, err := a.historyProvider.GetHistory(ctx, a.sessionID, a.historyMaxRuns); err == nil && histCtx != "" {
+			currentInstructions += "\n\n" + histCtx
+		}
+	}
+
+	// Inject learned context if learning is enabled.
+	if a.learning && a.learningMachine != nil && a.UserID != "" {
+		if learnedCtx := a.buildLearnedContext(ctx); learnedCtx != "" {
+			currentInstructions += "\n\n" + learnedCtx
+		}
+	}
+
+	instructionsModified := currentInstructions != a.Instructions && currentInstructions != ""
+
 	var finalResponse *types.ModelResponse
 	loopCount := 0
 	cacheHit := false
@@ -389,13 +481,16 @@ func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
 		loopCount++
 
 		messages := a.Memory.GetMessages(a.UserID)
-		if currentInstructions != a.Instructions && currentInstructions != "" {
+		if instructionsModified {
 			messages = a.updateSystemMessage(messages, currentInstructions)
 		}
 
 		req := &models.InvokeRequest{Messages: messages}
 		if len(a.Toolkits) > 0 {
 			req.Tools = toolkit.ToModelToolDefinitions(a.Toolkits)
+		}
+		if a.responseFormat != nil {
+			req.ResponseFormat = a.responseFormat
 		}
 		attachRunContextToRequest(ctx, req)
 
@@ -478,6 +573,28 @@ func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
 		}
 	}
 
+	// Trigger async learning if enabled (bounded by semaphore).
+	if a.learning && a.learningMachine != nil && a.UserID != "" {
+		msgs := a.Memory.GetMessages(a.UserID)
+		learnMsgs := make([]types.Message, len(msgs))
+		for i, m := range msgs {
+			learnMsgs[i] = *m
+		}
+		select {
+		case a.learningSem <- struct{}{}:
+			go func() {
+				defer func() { <-a.learningSem }()
+				learnCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				defer cancel()
+				if err := a.learningMachine.Learn(learnCtx, a.UserID, learnMsgs); err != nil {
+					a.logger.Warn("learning failed", "error", err)
+				}
+			}()
+		default:
+			a.logger.Debug("learning skipped: concurrency limit reached")
+		}
+	}
+
 	a.logger.Info("agent run completed", "agent_id", a.ID)
 
 	output.Status = RunStatusCompleted
@@ -487,6 +604,10 @@ func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
 	output.Metadata["loops"] = loopCount
 	output.Metadata["usage"] = finalResponse.Usage
 	output.Metadata["cache_hit"] = cacheHit
+	// Propagate model-level extra metadata (e.g., fallback_model, fallback_index).
+	for k, v := range finalResponse.Metadata.Extra {
+		output.Metadata[k] = v
+	}
 	addRunContextMetadata(output, runCtx)
 
 	sequence := len(output.Events)
@@ -498,7 +619,64 @@ func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
 
 	a.scrubRunOutputWithContext(output, initialMessageCount)
 
+	// Persist run to session storage if configured.
+	a.persistRunToSession(ctx, output)
+
 	return output, nil
+}
+
+// RunTyped runs the agent and parses the response content into a typed struct.
+// The agent should have a ResponseFormat configured to guarantee JSON output.
+// Returns the parsed result, the full RunOutput, and any error.
+func RunTyped[T any](ctx context.Context, a *Agent, input string) (*T, *RunOutput, error) {
+	output, err := a.Run(ctx, input)
+	if err != nil {
+		return nil, nil, err
+	}
+	var result T
+	if err := json.Unmarshal([]byte(output.Content), &result); err != nil {
+		return nil, output, fmt.Errorf("failed to parse structured output: %w", err)
+	}
+	return &result, output, nil
+}
+
+// persistRunToSession saves the run output to session storage if configured.
+// Errors are logged but do not fail the run.
+func (a *Agent) persistRunToSession(ctx context.Context, output *RunOutput) {
+	if a.sessionPersister == nil || a.sessionID == "" || output == nil {
+		return
+	}
+	if err := a.sessionPersister.PersistRun(ctx, a.sessionID, a.ID, a.UserID, output); err != nil {
+		a.logger.Warn("failed to persist run to session", "session_id", a.sessionID, "error", err)
+	}
+}
+
+// buildLearnedContext retrieves user profile and memories from the learning system
+// and formats them as a context string to inject into the system prompt.
+func (a *Agent) buildLearnedContext(ctx context.Context) string {
+	if a.learningMachine == nil || a.UserID == "" {
+		return ""
+	}
+
+	var parts []string
+
+	profile, err := a.learningMachine.GetUserProfile(ctx, a.UserID)
+	if err == nil && profile != nil && profile.Name != "" {
+		parts = append(parts, fmt.Sprintf("User: %s", profile.Name))
+	}
+
+	memories, err := a.learningMachine.GetUserMemories(ctx, a.UserID, 10)
+	if err == nil && len(memories) > 0 {
+		parts = append(parts, "Learned context:")
+		for _, mem := range memories {
+			parts = append(parts, fmt.Sprintf("- %s", mem.Content))
+		}
+	}
+
+	if len(parts) == 0 {
+		return ""
+	}
+	return "[Learned Context]\n" + strings.Join(parts, "\n")
 }
 
 func (a *Agent) tryCacheGet(ctx context.Context, req *models.InvokeRequest) (*types.ModelResponse, string, bool, error) {
@@ -570,10 +748,12 @@ func (output *RunOutput) appendEvent(evt run.BaseRunOutputEvent) {
 // a pair of channels: one for incremental content events and one that carries
 // the final RunOutput once aggregation completes.
 //
-// The initial behaviour focuses on single-pass streaming responses:
+// The streaming run supports multi-pass tool execution:
 // - Pre-hooks, memory, run-context and post-hooks are honoured.
 // - Model.InvokeStream is used to stream content chunks.
-// - Tool calls present in streaming chunks are aggregated but not executed.
+// - Tool calls present in streaming chunks are aggregated and executed.
+// - After tool execution, a new streaming invocation is started with updated messages.
+// - The loop continues until no tool calls remain or MaxLoops is reached.
 // - Cache is bypassed for streaming runs.
 func (a *Agent) RunStream(ctx context.Context, input string) (*RunStreamResult, error) {
 	defer a.ClearTempInstructions()
@@ -608,6 +788,20 @@ func (a *Agent) RunStream(ctx context.Context, input string) (*RunStreamResult, 
 	userMsg := types.NewUserMessage(input)
 	a.Memory.Add(userMsg, a.UserID)
 
+	// Inject session history if configured.
+	if a.historyProvider != nil && a.sessionID != "" {
+		if histCtx, err := a.historyProvider.GetHistory(ctx, a.sessionID, a.historyMaxRuns); err == nil && histCtx != "" {
+			currentInstructions += "\n\n" + histCtx
+		}
+	}
+
+	// Inject learned context if learning is enabled.
+	if a.learning && a.learningMachine != nil && a.UserID != "" {
+		if learnedCtx := a.buildLearnedContext(ctx); learnedCtx != "" {
+			currentInstructions += "\n\n" + learnedCtx
+		}
+	}
+
 	output := &RunOutput{
 		RunID:     runID,
 		Status:    RunStatusRunning,
@@ -615,65 +809,18 @@ func (a *Agent) RunStream(ctx context.Context, input string) (*RunStreamResult, 
 		Metadata:  map[string]interface{}{},
 	}
 
-	// Prepare messages and request for streaming invocation (single-pass).
-	messages := a.Memory.GetMessages(a.UserID)
-	if currentInstructions != a.Instructions && currentInstructions != "" {
-		messages = a.updateSystemMessage(messages, currentInstructions)
-	}
-
-	req := &models.InvokeRequest{Messages: messages}
-	if len(a.Toolkits) > 0 {
-		req.Tools = toolkit.ToModelToolDefinitions(a.Toolkits)
-	}
-	attachRunContextToRequest(ctx, req)
-
-	stream, err := a.Model.InvokeStream(ctx, req)
-	if err != nil {
-		if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) || ctx.Err() != nil {
-			cancelled := a.markRunCancelled(output, 0, false, err, initialMessageCount)
-			return &RunStreamResult{
-				Events: nil,
-				Done:   singleDoneChannel(cancelled, types.NewCancellationError("agent run cancelled", err)),
-			}, nil
-		}
-		a.logger.Error("model streaming invocation failed", "error", err)
-		return nil, types.NewAPIError("model streaming invocation failed", err)
-	}
-
 	eventsCh := make(chan run.BaseRunOutputEvent)
 	doneCh := make(chan RunStreamDone, 1)
 
+	instructionsModified := currentInstructions != a.Instructions && currentInstructions != ""
+
 	go func() {
 		defer close(eventsCh)
-		aggregatorCh := make(chan types.ResponseChunk)
-		doneAgg := make(chan struct{})
-
-		var (
-			resp   *types.ModelResponse
-			aggErr error
-		)
-
-		go func() {
-			defer close(doneAgg)
-			// Aggregate the same chunks we stream out so we can build
-			// a final ModelResponse bound to this run.
-			resp, aggErr = AggregateResponseStream(ctx, aggregatorCh)
-		}()
-
-		aggregatorClosed := false
-		closeAggregator := func() {
-			if !aggregatorClosed {
-				close(aggregatorCh)
-				aggregatorClosed = true
-			}
-		}
-
 		sequence := 0
+		loopCount := 0
 
 		finishCancelled := func(reason error) {
-			closeAggregator()
-			<-doneAgg
-			cancelled := a.markRunCancelled(output, 0, false, reason, initialMessageCount)
+			cancelled := a.markRunCancelled(output, loopCount, false, reason, initialMessageCount)
 			doneCh <- RunStreamDone{
 				Output: cancelled,
 				Err:    types.NewCancellationError("agent run cancelled", reason),
@@ -681,124 +828,215 @@ func (a *Agent) RunStream(ctx context.Context, input string) (*RunStreamResult, 
 		}
 
 		finishError := func(err error) {
-			closeAggregator()
-			<-doneAgg
 			doneCh <- RunStreamDone{
 				Output: nil,
 				Err:    err,
 			}
 		}
 
-		for {
-			select {
-			case <-ctx.Done():
+		for loopCount < a.MaxLoops {
+			if ctx.Err() != nil {
 				finishCancelled(ctx.Err())
 				return
+			}
 
-			case chunk, ok := <-stream:
-				if !ok {
-					// Streaming complete; finalise aggregation.
+			loopCount++
+
+			// Build request from current memory state.
+			messages := a.Memory.GetMessages(a.UserID)
+			if instructionsModified {
+				messages = a.updateSystemMessage(messages, currentInstructions)
+			}
+
+			req := &models.InvokeRequest{Messages: messages}
+			if len(a.Toolkits) > 0 {
+				req.Tools = toolkit.ToModelToolDefinitions(a.Toolkits)
+			}
+			if a.responseFormat != nil {
+				req.ResponseFormat = a.responseFormat
+			}
+			attachRunContextToRequest(ctx, req)
+
+			stream, err := a.Model.InvokeStream(ctx, req)
+			if err != nil {
+				if errors.Is(err, context.Canceled) || errors.Is(err, context.DeadlineExceeded) || ctx.Err() != nil {
+					finishCancelled(err)
+				} else {
+					a.logger.Error("model streaming invocation failed", "error", err)
+					finishError(types.NewAPIError("model streaming invocation failed", err))
+				}
+				return
+			}
+
+			// Set up aggregator for this pass.
+			aggregatorCh := make(chan types.ResponseChunk)
+			doneAgg := make(chan struct{})
+			var (
+				resp   *types.ModelResponse
+				aggErr error
+			)
+
+			go func() {
+				defer close(doneAgg)
+				resp, aggErr = AggregateResponseStream(ctx, aggregatorCh)
+			}()
+
+			aggregatorClosed := false
+			closeAggregator := func() {
+				if !aggregatorClosed {
+					close(aggregatorCh)
+					aggregatorClosed = true
+				}
+			}
+
+			// Consume the stream for this pass.
+			var streamErr error
+			streamDone := false
+
+		streamLoop:
+			for {
+				select {
+				case <-ctx.Done():
 					closeAggregator()
 					<-doneAgg
+					finishCancelled(ctx.Err())
+					return
 
-					if aggErr != nil {
-						if errors.Is(aggErr, context.Canceled) || errors.Is(aggErr, context.DeadlineExceeded) {
-							finishCancelled(aggErr)
-						} else {
-							finishError(aggErr)
-						}
-						return
+				case chunk, ok := <-stream:
+					if !ok {
+						streamDone = true
+						break streamLoop
 					}
 
-					if resp == nil {
-						resp = &types.ModelResponse{}
-					}
-
-					// Attach reasoning (if any) and store assistant message.
-					reasoningContent := a.extractReasoning(ctx, resp)
-					assistantMsg := &types.Message{
-						Role:             types.RoleAssistant,
-						Content:          resp.Content,
-						ToolCalls:        resp.ToolCalls,
-						ReasoningContent: reasoningContent,
-					}
-					a.Memory.Add(assistantMsg, a.UserID)
-
-					if len(a.PostHooks) > 0 {
-						a.logger.Debug("executing post-hooks (stream)", "count", len(a.PostHooks))
-						hookInput := hooks.NewHookInput(input).
-							WithOutput(resp.Content).
-							WithAgentID(a.ID).
-							WithMessages([]interface{}{})
-
-						if err := hooks.ExecuteHooks(ctx, a.PostHooks, hookInput); err != nil {
-							a.logger.Error("post-hook failed (stream)", "error", err)
-							doneCh <- RunStreamDone{
-								Output: nil,
-								Err:    types.NewOutputCheckError("post-hook validation failed", err),
-							}
+					// Forward to aggregator.
+					if !aggregatorClosed {
+						select {
+						case aggregatorCh <- chunk:
+						case <-ctx.Done():
+							closeAggregator()
+							<-doneAgg
+							finishCancelled(ctx.Err())
 							return
 						}
 					}
 
-					a.logger.Info("agent run (stream) completed", "agent_id", a.ID)
-
-					output.Status = RunStatusCompleted
-					output.CompletedAt = time.Now().UTC()
-					output.Content = resp.Content
-					output.Messages = a.Memory.GetMessages(a.UserID)
-					output.Metadata["loops"] = 1
-					output.Metadata["usage"] = resp.Usage
-					output.Metadata["cache_hit"] = false
-					addRunContextMetadata(output, runCtx)
-
-					// Append terminal completion event (incremental content events
-					// were recorded as chunks arrived).
-					completed := run.NewRunCompletedEvent(runID, a.ID, "", string(output.Status), output.Content)
-					output.appendEvent(completed)
-
-					a.scrubRunOutputWithContext(output, initialMessageCount)
-
-					doneCh <- RunStreamDone{
-						Output: output,
-						Err:    nil,
+					if chunk.Error != nil {
+						streamErr = chunk.Error
+						break streamLoop
 					}
-					return
-				}
 
-				// Forward chunk to aggregator so we can reconstruct a final response.
-				if !aggregatorClosed {
-					select {
-					case aggregatorCh <- chunk:
-					case <-ctx.Done():
-						finishCancelled(ctx.Err())
-						return
-					}
-				}
+					if chunk.Content != "" {
+						evt := run.NewRunContentEvent(runID, a.ID, string(types.RoleAssistant), chunk.Content, sequence)
+						sequence++
+						output.appendEvent(evt)
 
-				if chunk.Error != nil {
-					if errors.Is(chunk.Error, context.Canceled) || errors.Is(chunk.Error, context.DeadlineExceeded) || ctx.Err() != nil {
-						finishCancelled(chunk.Error)
-					} else {
-						finishError(chunk.Error)
-					}
-					return
-				}
-
-				if chunk.Content != "" {
-					evt := run.NewRunContentEvent(runID, a.ID, string(types.RoleAssistant), chunk.Content, sequence)
-					sequence++
-					output.appendEvent(evt)
-
-					select {
-					case eventsCh <- evt:
-					case <-ctx.Done():
-						finishCancelled(ctx.Err())
-						return
+						select {
+						case eventsCh <- evt:
+						case <-ctx.Done():
+							closeAggregator()
+							<-doneAgg
+							finishCancelled(ctx.Err())
+							return
+						}
 					}
 				}
 			}
+
+			// Finalize aggregation for this pass.
+			closeAggregator()
+			<-doneAgg
+
+			if streamErr != nil {
+				if errors.Is(streamErr, context.Canceled) || errors.Is(streamErr, context.DeadlineExceeded) || ctx.Err() != nil {
+					finishCancelled(streamErr)
+				} else {
+					finishError(streamErr)
+				}
+				return
+			}
+
+			if !streamDone {
+				finishError(types.NewAPIError("unexpected stream termination", nil))
+				return
+			}
+
+			if aggErr != nil {
+				if errors.Is(aggErr, context.Canceled) || errors.Is(aggErr, context.DeadlineExceeded) {
+					finishCancelled(aggErr)
+				} else {
+					finishError(aggErr)
+				}
+				return
+			}
+
+			if resp == nil {
+				resp = &types.ModelResponse{}
+			}
+
+			// Store assistant message.
+			reasoningContent := a.extractReasoning(ctx, resp)
+			assistantMsg := &types.Message{
+				Role:             types.RoleAssistant,
+				Content:          resp.Content,
+				ToolCalls:        resp.ToolCalls,
+				ReasoningContent: reasoningContent,
+			}
+			a.Memory.Add(assistantMsg, a.UserID)
+
+			// If no tool calls, finalize.
+			if !resp.HasToolCalls() {
+				if len(a.PostHooks) > 0 {
+					a.logger.Debug("executing post-hooks (stream)", "count", len(a.PostHooks))
+					hookInput := hooks.NewHookInput(input).
+						WithOutput(resp.Content).
+						WithAgentID(a.ID).
+						WithMessages([]interface{}{})
+
+					if err := hooks.ExecuteHooks(ctx, a.PostHooks, hookInput); err != nil {
+						a.logger.Error("post-hook failed (stream)", "error", err)
+						doneCh <- RunStreamDone{
+							Output: nil,
+							Err:    types.NewOutputCheckError("post-hook validation failed", err),
+						}
+						return
+					}
+				}
+
+				a.logger.Info("agent run (stream) completed", "agent_id", a.ID)
+
+				output.Status = RunStatusCompleted
+				output.CompletedAt = time.Now().UTC()
+				output.Content = resp.Content
+				output.Messages = a.Memory.GetMessages(a.UserID)
+				output.Metadata["loops"] = loopCount
+				output.Metadata["usage"] = resp.Usage
+				output.Metadata["cache_hit"] = false
+				addRunContextMetadata(output, runCtx)
+
+				completed := run.NewRunCompletedEvent(runID, a.ID, "", string(output.Status), output.Content)
+				output.appendEvent(completed)
+
+				a.scrubRunOutputWithContext(output, initialMessageCount)
+
+				// Persist run to session storage if configured.
+				a.persistRunToSession(ctx, output)
+
+				doneCh <- RunStreamDone{
+					Output: output,
+					Err:    nil,
+				}
+				return
+			}
+
+			// Execute tool calls and loop for next streaming pass.
+			a.logger.Info("executing tool calls (stream)", "count", len(resp.ToolCalls))
+			summaries := a.executeToolCalls(ctx, resp.ToolCalls)
+			output.ToolsExecuted = append(output.ToolsExecuted, summaries...)
 		}
+
+		// Max loops reached.
+		a.logger.Warn("max loops reached (stream)", "max_loops", a.MaxLoops)
+		finishError(types.NewError(types.ErrCodeUnknown, "max tool calling loops reached", nil))
 	}()
 
 	return &RunStreamResult{

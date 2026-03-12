@@ -11,16 +11,16 @@ import (
 type LearningMachine interface {
 	// Learn extracts information from messages and stores it
 	Learn(ctx context.Context, userID string, messages []types.Message) error
-	
+
 	// GetUserProfile returns the profile for a user
 	GetUserProfile(ctx context.Context, userID string) (*UserProfile, error)
-	
+
 	// GetUserMemories returns memories for a user
 	GetUserMemories(ctx context.Context, userID string, limit int) ([]UserMemory, error)
-	
+
 	// GetLearnedKnowledge returns learned knowledge on a topic
 	GetLearnedKnowledge(ctx context.Context, topic string, limit int) ([]Knowledge, error)
-	
+
 	// DeleteUserData removes all data for a user (GDPR compliance)
 	DeleteUserData(ctx context.Context, userID string) error
 }
@@ -80,24 +80,24 @@ type Storage interface {
 	// User Profiles
 	SaveUserProfile(ctx context.Context, profile *UserProfile) error
 	GetUserProfile(ctx context.Context, userID string) (*UserProfile, error)
-	
+
 	// User Memories
 	SaveUserMemory(ctx context.Context, memory *UserMemory) error
 	GetUserMemories(ctx context.Context, userID string, limit int) ([]UserMemory, error)
 	DeleteUserMemories(ctx context.Context, userID string) error
-	
+
 	// Learned Knowledge
 	SaveKnowledge(ctx context.Context, knowledge *Knowledge) error
 	GetKnowledge(ctx context.Context, topic string, limit int) ([]Knowledge, error)
 	SearchKnowledge(ctx context.Context, query string, limit int) ([]Knowledge, error)
-	
+
 	// Learning Events
 	SaveLearningEvent(ctx context.Context, event *LearningEvent) error
 	GetLearningEvents(ctx context.Context, userID string, limit int) ([]LearningEvent, error)
-	
+
 	// Cleanup
 	DeleteUserData(ctx context.Context, userID string) error
-	
+
 	// Close closes the storage connection
 	Close() error
 }

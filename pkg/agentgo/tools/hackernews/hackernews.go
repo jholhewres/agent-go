@@ -16,7 +16,7 @@ import (
 // HackerNewsToolkit provides Hacker News capabilities
 type HackerNewsToolkit struct {
 	*toolkit.BaseToolkit
-	client *http.Client
+	client  *http.Client
 	baseURL string
 }
 

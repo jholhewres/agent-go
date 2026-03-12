@@ -79,8 +79,8 @@ type PubMedSummaryResponse struct {
 }
 
 type Doc struct {
-	ID    string   `xml:"Id,attr"`
-	Items []Item   `xml:"Item"`
+	ID    string `xml:"Id,attr"`
+	Items []Item `xml:"Item"`
 }
 
 type Item struct {

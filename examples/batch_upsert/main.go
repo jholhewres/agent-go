@@ -7,9 +7,9 @@ import (
 	"log"
 	"time"
 
-	_ "github.com/lib/pq"
 	"github.com/jholhewres/agent-go/pkg/agentgo/db/batch"
 	"github.com/jholhewres/agent-go/pkg/agentgo/session"
+	_ "github.com/lib/pq"
 )
 
 func main() {

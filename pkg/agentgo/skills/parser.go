@@ -12,7 +12,7 @@ import (
 // ParseSkillMD parses a SKILL.md file with YAML frontmatter
 func ParseSkillMD(content []byte) (*Skill, error) {
 	scanner := bufio.NewScanner(bytes.NewReader(content))
-	
+
 	// Check for frontmatter start
 	if !scanner.Scan() || strings.TrimSpace(scanner.Text()) != "---" {
 		return nil, fmt.Errorf("SKILL.md must start with YAML frontmatter (---)")

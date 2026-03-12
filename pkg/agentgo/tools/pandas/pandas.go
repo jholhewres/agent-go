@@ -201,7 +201,7 @@ func (p *PandasToolkit) dataframeInfo(ctx context.Context, args map[string]inter
 	columnInfo := make([]map[string]interface{}, len(columns))
 	for i, column := range columns {
 		info := map[string]interface{}{
-			"column": column,
+			"column":         column,
 			"non_null_count": 0,
 			"null_count":     0,
 			"dtype":          "object", // Default to object type
@@ -304,7 +304,7 @@ func (p *PandasToolkit) dataframeFilter(ctx context.Context, args map[string]int
 	}
 
 	return map[string]interface{}{
-		"columns":        dataframe["columns"],
+		"columns":       dataframe["columns"],
 		"data":          filteredData,
 		"shape":         []int{len(filteredData), len(dataframe["columns"].([]string))},
 		"original_rows": len(data),
@@ -359,7 +359,7 @@ func (p *PandasToolkit) dataframeDescribe(ctx context.Context, args map[string]i
 	}
 
 	return map[string]interface{}{
-		"statistics": stats,
+		"statistics":      stats,
 		"numeric_columns": len(stats),
 	}, nil
 }

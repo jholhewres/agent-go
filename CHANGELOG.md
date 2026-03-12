@@ -5,6 +5,176 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-03-12
+
+### Added
+
+#### Model Fallback Chain
+- **`pkg/agentgo/models/fallback/`** - Chain multiple LLM models with automatic fallback
+  - Iterates through a chain of models, retrying each on retryable errors (API errors, rate limits, timeouts)
+  - Non-retryable errors (invalid input, config) stop immediately without fallback
+  - `WithMaxRetries(n)` and `WithRetryDelay(d)` options for per-model retry behavior
+  - Streaming support (falls back only on stream open failure, not mid-stream)
+  - Response metadata includes `fallback_model` and `fallback_index` to track which model responded
+  - 13 tests covering all failure/retry/cancellation scenarios
+
+#### Structured Output
+- **`pkg/agentgo/structured/`** - Generate JSON Schema from Go structs and parse typed responses
+  - `SchemaFromType()` generates JSON Schema via reflection (supports nested structs, slices, optional fields, descriptions)
+  - `ParseResponse()` unmarshals `ModelResponse.Content` into typed structs
+  - `ToResponseFormat()` converts schema to `models.ResponseFormat` with name/description metadata
+- **`agent.RunTyped[T]()`** - Generic helper to run an agent and unmarshal the response into a typed struct
+- **`agent.Config.ResponseFormat`** - New config field to constrain model output to JSON schema
+- **OpenAI provider** maps `ResponseFormat` to `ChatCompletionResponseFormatJSONSchema` via go-openai SDK
+- 15 tests for schema generation + 4 tests for agent integration
+
+#### Human-in-the-Loop (Approval Hook)
+- **`pkg/agentgo/hooks/approval.go`** - Gate tool execution behind an approval function
+  - `NewApprovalHook(fn, tools...)` creates a hook that calls a user-provided `ApprovalFunc` before tool execution
+  - Optional `ToolFilter` restricts which tools require approval (nil = all tools)
+  - Integrates with existing `ToolHooker` interface — blocked tools get `ToolExecutionStatusBlocked`
+  - 9 tests including context cancellation and filter behavior
+
+#### Streaming with Tool Calls
+- **Complete rewrite of `RunStream()` goroutine** to support multi-pass tool execution
+  - Outer loop: `for loopCount < MaxLoops` enables iterative tool call → response cycles
+  - Inner stream loop: consumes chunks, forwards content events, aggregates response
+  - After stream completion: checks `HasToolCalls()`, executes tools, starts new stream with updated messages
+  - Max loops reached produces a proper error event
+  - 3 new tests: tool calls in stream, max loops, content flow during tool loop
+
+#### SubAgent Spawner
+- **`pkg/agentgo/agent/subagent.go`** - Run child agents with linked contexts
+  - `Spawn(ctx, child, input)` runs a child agent with `ParentRunID` linked from the parent context
+  - `SpawnAll(ctx, configs)` runs multiple children concurrently via goroutines + WaitGroup
+  - Context cancellation propagates from parent to all children
+  - 9 tests covering parent-child linking, concurrency, cancellation, and partial failures
+
+#### Agent as Tool
+- **`pkg/agentgo/tools/agenttool/`** - Wrap an agent as a toolkit for use by other agents
+  - `New(agent, description)` creates a toolkit with a single `ask_<agent_name>` function
+  - Handler delegates to `agent.Spawn()` and returns the child agent's content
+  - Enables orchestrator-specialist patterns where a parent agent delegates to specialist sub-agents
+  - 6 tests
+
+#### Session Persistence
+- **`agent.Config.SessionPersister` + `agent.Config.SessionID`** - Automatic run persistence
+  - Runs are persisted to session storage after both `Run()` and `RunStream()` completion
+  - `SessionPersister` interface defined in agent package to avoid import cycles with session package
+  - `session.NewPersister(storage)` creates an adapter from `session.Storage`
+  - Persistence errors are logged but do not fail the run
+  - 3 tests for session persistence + 3 tests for the persister adapter
+
+#### User Memory/Learning Integration
+- **Learning context injection** in `Run()` — fetches user profile and memories before model invoke
+  - `buildLearnedContext()` retrieves `GetUserProfile()` + `GetUserMemories()` and formats as `[Learned Context]`
+  - Injected as prefix to agent instructions when available
+- **Async learning** after `Run()` — calls `LearningMachine.Learn()` in a background goroutine with 10s timeout
+  - Failures logged, never block or fail the run
+- 4 tests covering learn calls, context injection, disabled state, and missing UserID
+
+#### History Context Injection
+- **`agent.Config.HistoryProvider` + `agent.Config.HistoryMaxRuns`** - Load previous session runs into context
+  - `HistoryProvider` interface defined in agent package to avoid import cycles
+  - `session.NewHistoryProvider(storage)` creates an implementation that formats run history
+  - History injected before learned context in `Run()`, prepended to agent instructions
+  - Default `HistoryMaxRuns`: 5
+  - 3 agent tests + 5 session history provider tests
+
+### New Examples
+- **`cmd/examples/structured_output/`** - Demonstrates `RunTyped[T]` and `ParseResponse` with JSON schema
+- **`cmd/examples/fallback_chain/`** - Demonstrates model fallback chain with multiple OpenAI models
+- **`cmd/examples/subagent_demo/`** - Demonstrates `Agent as Tool` and `SpawnAll` concurrent execution
+
+### New Files (12)
+| File | Feature |
+|------|---------|
+| `pkg/agentgo/models/fallback/fallback.go` | Model Fallback Chain |
+| `pkg/agentgo/models/fallback/fallback_test.go` | Model Fallback Chain |
+| `pkg/agentgo/structured/structured.go` | Structured Output |
+| `pkg/agentgo/structured/structured_test.go` | Structured Output |
+| `pkg/agentgo/hooks/approval.go` | Human-in-the-Loop |
+| `pkg/agentgo/hooks/approval_test.go` | Human-in-the-Loop |
+| `pkg/agentgo/agent/subagent.go` | SubAgent Spawner |
+| `pkg/agentgo/agent/subagent_test.go` | SubAgent Spawner |
+| `pkg/agentgo/tools/agenttool/agenttool.go` | Agent as Tool |
+| `pkg/agentgo/tools/agenttool/agenttool_test.go` | Agent as Tool |
+| `pkg/agentgo/session/persister.go` | Session Persistence |
+| `pkg/agentgo/session/persister_test.go` | Session Persistence |
+| `pkg/agentgo/session/history_provider.go` | History Context Injection |
+| `pkg/agentgo/session/history_provider_test.go` | History Context Injection |
+
+### Modified Files (4)
+| File | Changes |
+|------|---------|
+| `pkg/agentgo/agent/agent.go` | Structured Output, Streaming Tool Calls, Session Persistence, Learning, History |
+| `pkg/agentgo/agent/agent_test.go` | Tests for all agent-level features |
+| `pkg/agentgo/models/base.go` | `ResponseFormat` struct + field on `InvokeRequest` |
+| `pkg/agentgo/models/openai/openai.go` | ResponseFormat mapping to go-openai SDK |
+
+### Fixed
+
+#### Code Review Fixes (26 issues resolved)
+
+**HIGH severity:**
+- Fixed race condition in `session.Persister.PersistRun()` — added `sync.Mutex` to serialize concurrent calls
+- Fixed `RunTyped[T]()` parameter order — `ctx context.Context` now comes first, following Go conventions
+- Fixed unbounded learning goroutines — added semaphore (buffered channel, size 3) to cap concurrent learn calls
+- Fixed `session.Persister` error masking — now checks `ErrSessionNotFound` explicitly before falling back to Create
+
+**MEDIUM severity:**
+- Fixed data race in `fallback_test.go` mock counters — switched to `atomic.Int32`
+- Added defensive slice copy in `fallback.New()` to prevent mutation of caller's chain slice
+- Added `reflect.Interface` → empty schema `{}` in structured output schema generation
+- Added `time.Time` → `{"type": "string", "format": "date-time"}` mapping in schema generation
+- Added agent name sanitization in `agenttool.New()` for safe function names
+- Added history + learned context injection to `RunStream()` (was only in `Run()`)
+- Added fallback metadata propagation to `RunOutput.Metadata` in agent
+- Extracted `instructionsModified` flag to eliminate redundant `updateSystemMessage` calls
+
+**LOW severity:**
+- Fixed `time.After` leak in fallback retry loops — switched to `time.NewTimer` with explicit `Stop()`
+- Fixed `WithMaxRetries(0)` being rejected — now accepts `n >= 0`
+- Added self-referencing struct cycle detection in `SchemaFromType` via guarded recursion with `seen` map
+- Added nil/non-pointer validation in `ParseResponse` target parameter
+- Added nil guard panic in `NewApprovalHook` when approval function is nil
+- Added nil guard error in `Spawn()` when child agent is nil
+- Made content truncation length configurable in `HistoryProvider` via `WithMaxContentLen()` option
+- Made truncation unicode-safe using `utf8.RuneCountInString` instead of `len()`
+- Fixed redundant newlines in `fmt.Println` calls in example programs
+
+### Backward Compatibility
+- **No breaking changes.** All new Config fields use zero-value defaults that preserve existing behavior.
+- Existing agents continue to work without modification.
+- All new features are opt-in.
+- `RunTyped[T]()` parameter order changed (`ctx` first) — callers need to update.
+
+### Testing
+- ~77 new tests across all features, all passing
+- All existing `pkg/agentgo/` tests continue to pass
+
+---
+
+## [1.3.0] - 2026-02-28
+
+### Added
+
+#### Tool Execution Hooks
+- **Pre/Post hooks for tool calls** via `ToolHooker` interface
+  - `OnToolPre` can inspect and block tool calls before execution
+  - `OnToolPost` can inspect results after tool execution
+  - Blocked tools produce `ToolExecutionStatusBlocked` summaries
+- **Guardrails system** (`pkg/agentgo/guardrails/`) for input/output validation
+  - Prompt injection detection guardrail
+  - PII detection guardrail
+  - Content moderation guardrail
+  - Custom guardrail support via `GuardrailFunc`
+
+### Backward Compatibility
+- No breaking changes. Hooks and guardrails are opt-in via `agent.Config`.
+
+---
+
 ## [1.2.0] - 2026-02-05
 
 ### Added

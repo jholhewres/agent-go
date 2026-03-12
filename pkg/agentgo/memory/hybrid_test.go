@@ -12,14 +12,14 @@ import (
 
 // mockVectorDB is a simple in-memory vector DB for testing
 type mockVectorDB struct {
-	mu       sync.RWMutex
-	docs     map[string]vectordb.Document
+	mu          sync.RWMutex
+	docs        map[string]vectordb.Document
 	collections map[string]bool
 }
 
 func newMockVectorDB() *mockVectorDB {
 	return &mockVectorDB{
-		docs:     make(map[string]vectordb.Document),
+		docs:        make(map[string]vectordb.Document),
 		collections: make(map[string]bool),
 	}
 }
@@ -166,12 +166,12 @@ func TestNewHybridMemory(t *testing.T) {
 		{
 			name: "valid config",
 			config: HybridMemoryConfig{
-				VectorDB:              newMockVectorDB(),
-				Embedder:              newMockEmbedder(),
-				MaxShortTermMessages:  50,
-				LongTermThreshold:     100,
-				DefaultVectorWeight:   0.7,
-				DefaultTextWeight:     0.3,
+				VectorDB:             newMockVectorDB(),
+				Embedder:             newMockEmbedder(),
+				MaxShortTermMessages: 50,
+				LongTermThreshold:    100,
+				DefaultVectorWeight:  0.7,
+				DefaultTextWeight:    0.3,
 			},
 			wantErr: false,
 		},
@@ -385,7 +385,7 @@ func TestHybridMemorySearchWithOptions(t *testing.T) {
 
 	// Test role filter
 	options := SearchOptions{
-		Limit:       10,
+		Limit:        10,
 		FilterByRole: []types.Role{types.RoleUser},
 	}
 	results, err := mem.SearchWithOptions(ctx, "message", options, userID)
@@ -487,11 +487,11 @@ func TestHybridMemoryConcurrentAccess(t *testing.T) {
 // TestCalculateTextSimilarity tests text similarity calculation
 func TestCalculateTextSimilarity(t *testing.T) {
 	tests := []struct {
-		name     string
-		query    string
-		text     string
-		wantMin  float64
-		wantMax  float64
+		name    string
+		query   string
+		text    string
+		wantMin float64
+		wantMax float64
 	}{
 		{
 			name:    "exact match",

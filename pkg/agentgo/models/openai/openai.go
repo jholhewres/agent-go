@@ -242,7 +242,39 @@ func (o *OpenAI) buildChatRequest(req *models.InvokeRequest) openai.ChatCompleti
 		chatReq.MaxTokens = o.config.MaxTokens
 	}
 
+	// Set response format (structured output)
+	if req.ResponseFormat != nil {
+		chatReq.ResponseFormat = &openai.ChatCompletionResponseFormat{
+			Type: openai.ChatCompletionResponseFormatType(req.ResponseFormat.Type),
+		}
+		if req.ResponseFormat.JSONSchema != nil {
+			name, _ := req.ResponseFormat.JSONSchema["name"].(string)
+			desc, _ := req.ResponseFormat.JSONSchema["description"].(string)
+			// Remove meta keys from schema before sending
+			schema := make(map[string]interface{})
+			for k, v := range req.ResponseFormat.JSONSchema {
+				if k != "name" && k != "description" {
+					schema[k] = v
+				}
+			}
+			chatReq.ResponseFormat.JSONSchema = &openai.ChatCompletionResponseFormatJSONSchema{
+				Name:        name,
+				Description: desc,
+				Schema:      jsonSchemaMarshaler(schema),
+				Strict:      true,
+			}
+		}
+	}
+
 	return chatReq
+}
+
+// jsonSchemaMarshaler wraps a map so it satisfies json.Marshaler,
+// which is required by go-openai's ChatCompletionResponseFormatJSONSchema.Schema.
+type jsonSchemaMarshaler map[string]interface{}
+
+func (j jsonSchemaMarshaler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(map[string]interface{}(j))
 }
 
 // ValidateConfig validates the OpenAI configuration

@@ -6,6 +6,9 @@
 *.dylib
 bin/
 dist/
+fallback_chain
+structured_output
+subagent_demo
 
 # Test binary, built with `go test -c`
 *.test

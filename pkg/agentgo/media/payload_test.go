@@ -26,22 +26,22 @@ func TestNormalize(t *testing.T) {
 			wantLen: 1,
 			wantErr: false,
 		},
-	{
-		name: "map slice",
-		input: []map[string]interface{}{
-			{"type": "file", "path": "/tmp/report.pdf"},
+		{
+			name: "map slice",
+			input: []map[string]interface{}{
+				{"type": "file", "path": "/tmp/report.pdf"},
+			},
+			wantLen: 1,
+			wantErr: false,
 		},
-		wantLen: 1,
-		wantErr: false,
-	},
-	{
-		name: "interface slice",
-		input: []interface{}{
-			map[string]interface{}{"type": "image", "url": "https://example.com"},
+		{
+			name: "interface slice",
+			input: []interface{}{
+				map[string]interface{}{"type": "image", "url": "https://example.com"},
+			},
+			wantLen: 1,
+			wantErr: false,
 		},
-		wantLen: 1,
-		wantErr: false,
-	},
 		{
 			name:    "single map",
 			input:   map[string]interface{}{"type": "image", "url": "https://example.com"},
