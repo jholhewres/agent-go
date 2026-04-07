@@ -371,6 +371,11 @@ func loadRawFixture(t *testing.T, name string) []byte {
 	t.Helper()
 	_, currentFile, _, _ := runtime.Caller(0)
 	fixturesDir := filepath.Join(filepath.Dir(currentFile), "../../../../contract-fixtures")
+	if _, err := os.Stat(fixturesDir); os.IsNotExist(err) {
+		t.Skipf("contract-fixtures directory not found at %s — "+
+			"checkout the Python contract fixtures repo alongside agent-go "+
+			"to run this parity test", fixturesDir)
+	}
 	data, err := os.ReadFile(filepath.Join(fixturesDir, name))
 	require.NoError(t, err)
 	return data

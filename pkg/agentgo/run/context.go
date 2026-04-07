@@ -32,18 +32,30 @@ func NewContext() *RunContext {
 }
 
 // Clone performs a shallow copy of the run context including metadata map.
+// The internal mutex is NOT copied: the returned RunContext gets a fresh
+// zero-valued one, and we hold the source's read lock while snapshotting
+// the fields so concurrent callers see a consistent view.
 func (rc *RunContext) Clone() *RunContext {
 	if rc == nil {
 		return nil
 	}
-	copyCtx := *rc
+	rc.mu.RLock()
+	defer rc.mu.RUnlock()
+	copyCtx := &RunContext{
+		RunID:       rc.RunID,
+		ParentRunID: rc.ParentRunID,
+		SessionID:   rc.SessionID,
+		UserID:      rc.UserID,
+		WorkflowID:  rc.WorkflowID,
+		TeamID:      rc.TeamID,
+	}
 	if rc.Metadata != nil {
 		copyCtx.Metadata = make(map[string]interface{}, len(rc.Metadata))
 		for k, v := range rc.Metadata {
 			copyCtx.Metadata[k] = v
 		}
 	}
-	return &copyCtx
+	return copyCtx
 }
 
 // EnsureRunID initialises the run identifier when absent and returns it.
