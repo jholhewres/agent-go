@@ -38,6 +38,10 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
+        with:
+          # Auto-enable GitHub Pages via API on first run so forks do not
+          # need a manual settings toggle before the workflow succeeds.
+          enablement: true
 
       - name: Install dependencies
         run: |

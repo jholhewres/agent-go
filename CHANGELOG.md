@@ -5,6 +5,144 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-04-07
+
+### Summary
+
+Sprint 0 "Stabilization" release. No new framework features — this release
+hardens the open-source foundation so that v1.6.0+ feature work can land
+safely: green test suite across the board, documented packages, working
+examples, proper CI, and a revised developer-facing README.
+
+### Added
+
+#### Examples — EvoLink media pipeline
+- **`cmd/examples/evolink_media_pipeline/`** — Runnable three-step workflow
+  that composes EvoLink's text, image, and video models via
+  `workflow.Workflow` with custom `imageNode`/`videoNode` wrappers.
+- Smoke test mocks all three EvoLink endpoints with `httptest` and asserts
+  the full text → image → video chain succeeds.
+
+#### Examples — Recovered from `.gitignore` shadow bug
+- **`cmd/examples/fallback_chain/`** — Model fallback chain demo
+- **`cmd/examples/structured_output/`** — `RunTyped[T]` demo
+- **`cmd/examples/subagent_demo/`** — Sub-agent spawn + Agent-as-Tool demo
+
+  These three examples were added in v1.4.0 but were silently shadowed by
+  unanchored `.gitignore` patterns intended for stray root-level binaries.
+  Now anchored correctly and committed.
+
+#### Tests — Centralized example smoke test
+- **`test/smoke/examples_build_test.go`** — `TestExamplesBuild` discovers
+  every `cmd/examples/<name>/` with a `main.go`, runs `go build` for each
+  via `exec.Command` with up to 4 parallel builds. No API keys required.
+  30/31 examples build; `logfire_observability` is skipped (requires the
+  `logfire` build tag and external OTEL deps). Runs in ~5s standalone.
+
+#### Documentation — README restructure
+- Rewrote root `README.md` from 131 lines to 214 lines across 14 sections:
+  tagline, features (categorized), installation, runnable Quick Start
+  without API keys, examples table, supported models table, architecture
+  diagram, performance benchmarks, development guide, help, status, docs,
+  license.
+
+#### Documentation — Community files
+- `CONTRIBUTING.md` — development setup, project structure, commit/PR
+  conventions, testing expectations, guides for adding models and tools.
+- `CODE_OF_CONDUCT.md` — adapted from Contributor Covenant v2.1.
+- `.github/ISSUE_TEMPLATE/bug_report.yml` — structured bug form.
+- `.github/ISSUE_TEMPLATE/feature_request.yml` — structured feature form.
+- `.github/ISSUE_TEMPLATE/config.yml` — redirects questions to Discussions.
+- `.github/PULL_REQUEST_TEMPLATE.md` — PR checklist and change types.
+- `.github/FUNDING.yml` — GitHub Sponsor button for @jholhewres.
+- `.github/SECURITY.md` — vulnerability reporting policy with SLA.
+- `docs/PACKAGES.md` — single index of all 28 `pkg/agentgo/` packages
+  with stable/beta/experimental/planned status badges.
+- 19 previously-undocumented examples now have their own `README.md`.
+
+#### CI/CD — GitHub Actions hardening
+- **`.github/workflows/ci.yml`** — added Go version matrix (1.24.1 +
+  stable), `go vet` step, Codecov upload via `codecov/codecov-action@v4`,
+  per-matrix coverage artifact names.
+- **`.github/dependabot.yml`** — weekly gomod + github-actions updates,
+  grouped as "go-dependencies", max 5 open PRs.
+- **`.github/workflows/security.yml`** — `gosec` (SARIF upload to GitHub
+  code scanning) + `govulncheck`, triggered on push/PR/weekly cron.
+- **`.github/workflows/release.yml`** — tag-triggered release pipeline
+  that runs tests then `goreleaser release --clean`.
+- **`.goreleaser.yaml`** — multi-platform builds (linux/darwin/windows,
+  amd64/arm64), tar.gz/zip archives, conventional-commits changelog,
+  GitHub Releases with docs header.
+
+### Changed
+
+#### Repository — Rebrand `agno-Go` → `agent-go`
+- Updated ~185 files: Go import paths (`rexleimo/agno-Go` →
+  `jholhewres/agent-go`), project name (`Agno-Go` → `AgentGo`), VitePress
+  base (`/agno-Go/` → `/agent-go/`), sitemap + GitHub Pages URLs, docs
+  in English + zh + ja + ko locales.
+
+#### Repository — Archive obsolete docs
+- Moved 11 obsolete migration/release docs to `docs/archive/` subtree
+  (release notes, session-service migration plans, early design docs).
+  History preserved; `git log --follow` still works.
+
+#### Packages — Vague packages consolidation
+- Moved to `pkg/agentgo/experimental/` (API may change without notice):
+  `cloud`, `culture`, `eval`, `integrations`. None had external consumers.
+- Added stable READMEs for `learning` and `media` (both actively used by
+  `agent.go`, `workflow`, `pkg/agentos`).
+- Each experimental package has a README with an `⚠️ Experimental` warning.
+
+#### Makefile — Targets restructure
+- `make test` — unit tests only (fast, no Docker / external deps).
+- `make test-integration` — opt-in, runs tests tagged `integration`
+  (Docker required).
+- `make test-contract` — opt-in, runs tests tagged `contract` (skips
+  gracefully if the Python parity fixtures repo is not checked out
+  alongside agent-go).
+- `make test-all` — runs unit + integration + contract.
+- `make build-all` — builds every `cmd/examples/*/` binary into `bin/`.
+- `make install-tools` — also installs `gosec` and `govulncheck`.
+
+### Fixed
+
+- **`pkg/agentos` — `TestAgentRun_StreamEvents`**: `simpleModel.InvokeStream`
+  returned an empty channel, so the handler never emitted `token` events.
+  Mock now emits an actual content chunk, restoring end-to-end streaming
+  coverage.
+- **`pkg/agentgo/workflow` — `TestExecutionContext_RunContextMetadata`**:
+  `NewExecutionContext` initialises `Metadata` as an empty map by default;
+  the test now forces nil explicitly to exercise the defensive branch in
+  `SetRunContextMetadata`.
+- **`pkg/agentgo/run/context.go` — `RunContext.Clone`**: no longer copies
+  the embedded `sync.RWMutex` by value (`go vet` lock copy warning). Clone
+  now holds the source's read lock while snapshotting fields into a fresh
+  struct with a zero-valued mutex.
+- **`pkg/agentgo/models/openai/openai_integration_test.go`** — added a
+  `defer cancel()` so the `TestOpenAI_Stream_Cancel` early-return path
+  does not leak the cancel func (`go vet -lostcancel`).
+- **`internal/session/contract/contract_test.go`** — `loadRawFixture`
+  now calls `t.Skipf` when the external `contract-fixtures` directory is
+  missing, instead of hard-failing.
+- **`internal/session/contract`** and **`internal/session/store/postgres`**
+  — both gated behind build tags (`contract` and `integration`
+  respectively) so `make test` on a fresh checkout is green without
+  requiring the Python fixtures repo or Docker.
+- **`CREDITS.md`** — reverted an accidental truncation that removed the
+  "AgentGo Enhancements" section documenting fork-specific features
+  (Learning System, Agent Skills, Advanced Reasoning, pgvector, Prompt
+  Engineering).
+- **`.gitignore`** — anchored stray-binary patterns to the repo root
+  (`/fallback_chain`, `/structured_output`, `/subagent_demo`,
+  `/evolink_media_pipeline`). The unanchored form was silently shadowing
+  the matching `cmd/examples/<name>/` directories.
+
+### OpenSpec
+
+- Closed `add-evolink-media-agents` tasks 1.3 and 2.2. Task 2.3
+  (`npm run docs:build`) deferred to the docs deploy workflow.
+
 ## [1.4.0] - 2026-03-12
 
 ### Added
