@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
 	"github.com/testcontainers/testcontainers-go/modules/postgres"
@@ -19,28 +18,6 @@ import (
 	"github.com/jholhewres/agent-go/internal/session/dto"
 	"github.com/jholhewres/agent-go/internal/session/store"
 )
-
-const sessionTableDDL = `
-CREATE TABLE IF NOT EXISTS agno_sessions (
-    session_id TEXT PRIMARY KEY,
-    session_type TEXT NOT NULL,
-    agent_id TEXT,
-    team_id TEXT,
-    workflow_id TEXT,
-    user_id TEXT,
-    session_data JSONB,
-    agent_data JSONB,
-    team_data JSONB,
-    workflow_data JSONB,
-    metadata JSONB,
-    runs JSONB,
-    summary JSONB,
-    created_at BIGINT NOT NULL,
-    updated_at BIGINT
-);
-CREATE INDEX IF NOT EXISTS idx_agno_sessions_type ON agno_sessions(session_type);
-CREATE INDEX IF NOT EXISTS idx_agno_sessions_created_at ON agno_sessions(created_at);
-`
 
 var errDockerUnavailable = errors.New("docker unavailable")
 
@@ -67,7 +44,7 @@ func setupTestStore(t *testing.T) (*Store, func()) {
 		t.Fatalf("failed to create store: %v", err)
 	}
 
-	require.NoError(t, bootstrapSessionTable(ctx, st.pool))
+	require.NoError(t, Migrate(ctx, st.pool))
 
 	cleanup := func() {
 		st.Close()
@@ -76,11 +53,6 @@ func setupTestStore(t *testing.T) (*Store, func()) {
 	}
 
 	return st, cleanup
-}
-
-func bootstrapSessionTable(ctx context.Context, pool *pgxpool.Pool) error {
-	_, err := pool.Exec(ctx, sessionTableDDL)
-	return err
 }
 
 func startPostgresContainer(ctx context.Context) (container *postgres.PostgresContainer, err error) {

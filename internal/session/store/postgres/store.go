@@ -23,10 +23,58 @@ type Config struct {
 	DSN string
 	// TableName allows overriding the default table used to store sessions.
 	TableName string
-	// MaxConnLifeTime configures the connection lifetime on the pool. Optional.
-	MaxConnLifeTime time.Duration
-	// MaxConns optionally caps the total connections in the pool.
+
+	// Pool tuning — all fields are optional; zero values use sensible defaults.
+
+	// MaxConns caps the total connections in the pool (default: 10).
 	MaxConns int32
+	// MinConns keeps at least this many connections open (default: 2).
+	MinConns int32
+	// MaxConnLifetime caps how long a connection may be reused (default: 30m).
+	MaxConnLifetime time.Duration
+	// MaxConnIdleTime closes connections idle longer than this (default: 5m).
+	MaxConnIdleTime time.Duration
+	// HealthCheckPeriod controls how often idle connections are health-checked
+	// (default: 1m).
+	HealthCheckPeriod time.Duration
+	// ConnectTimeout is the maximum time allowed to establish a new connection
+	// (default: 5s).
+	ConnectTimeout time.Duration
+
+	// Deprecated: use MaxConnLifetime. Kept for backwards compatibility.
+	MaxConnLifeTime time.Duration
+}
+
+// defaults returns a copy of cfg with zero-value pool fields filled in with
+// production-ready defaults.
+func (c Config) defaults() Config {
+	// Backwards-compat alias.
+	if c.MaxConnLifetime == 0 && c.MaxConnLifeTime > 0 {
+		c.MaxConnLifetime = c.MaxConnLifeTime
+	}
+
+	if c.MaxConns == 0 {
+		c.MaxConns = 10
+	}
+	if c.MinConns == 0 {
+		c.MinConns = 2
+	}
+	if c.MaxConnLifetime == 0 {
+		c.MaxConnLifetime = 30 * time.Minute
+	}
+	if c.MaxConnIdleTime == 0 {
+		c.MaxConnIdleTime = 5 * time.Minute
+	}
+	if c.HealthCheckPeriod == 0 {
+		c.HealthCheckPeriod = time.Minute
+	}
+	if c.ConnectTimeout == 0 {
+		c.ConnectTimeout = 5 * time.Second
+	}
+	if c.TableName == "" {
+		c.TableName = "agno_sessions"
+	}
+	return c
 }
 
 // Store implements the session Store interface backed by Postgres.
@@ -37,29 +85,35 @@ type Store struct {
 
 // New constructs a new Postgres backed session store.
 func New(ctx context.Context, cfg Config) (*Store, error) {
+	cfg = cfg.defaults()
+
 	if strings.TrimSpace(cfg.DSN) == "" {
 		return nil, errors.New("postgres store requires a DSN")
 	}
-	config, err := pgxpool.ParseConfig(cfg.DSN)
+	poolCfg, err := pgxpool.ParseConfig(cfg.DSN)
 	if err != nil {
 		return nil, fmt.Errorf("parse postgres dsn: %w", err)
 	}
-	if cfg.MaxConnLifeTime > 0 {
-		config.MaxConnLifetime = cfg.MaxConnLifeTime
-	}
-	if cfg.MaxConns > 0 {
-		config.MaxConns = cfg.MaxConns
-	}
-	pool, err := pgxpool.NewWithConfig(ctx, config)
+	poolCfg.MaxConns = cfg.MaxConns
+	poolCfg.MinConns = cfg.MinConns
+	poolCfg.MaxConnLifetime = cfg.MaxConnLifetime
+	poolCfg.MaxConnIdleTime = cfg.MaxConnIdleTime
+	poolCfg.HealthCheckPeriod = cfg.HealthCheckPeriod
+	poolCfg.ConnConfig.ConnectTimeout = cfg.ConnectTimeout
+
+	pool, err := pgxpool.NewWithConfig(ctx, poolCfg)
 	if err != nil {
 		return nil, fmt.Errorf("create postgres pool: %w", err)
 	}
+	return &Store{pool: pool, tableName: cfg.TableName}, nil
+}
 
-	tableName := cfg.TableName
-	if tableName == "" {
-		tableName = "agno_sessions"
-	}
-	return &Store{pool: pool, tableName: tableName}, nil
+// NewStore constructs a Postgres backed session store from a plain DSN string
+// and a Config. The DSN is set on cfg before calling New, making it convenient
+// when callers want to separate connection string from pool tuning.
+func NewStore(ctx context.Context, dsn string, cfg Config) (*Store, error) {
+	cfg.DSN = dsn
+	return New(ctx, cfg)
 }
 
 // Close terminates the underlying connection pool.
@@ -67,6 +121,12 @@ func (s *Store) Close() {
 	if s.pool != nil {
 		s.pool.Close()
 	}
+}
+
+// Pool returns the underlying pgxpool.Pool. Callers may use it to run
+// migrations (Migrate) or execute custom queries outside of the store API.
+func (s *Store) Pool() *pgxpool.Pool {
+	return s.pool
 }
 
 // UpsertSession inserts or updates a session record in the database.
@@ -390,6 +450,33 @@ RETURNING
 		return nil, store.ErrNotFound
 	}
 	return record, err
+}
+
+// ListByTenantOptions controls filtering and pagination for ListByTenant.
+type ListByTenantOptions struct {
+	// SessionType restricts results to a single session category. Required.
+	SessionType dto.SessionType
+	// Limit is the maximum number of records per page (default: 50).
+	Limit int
+	// Page is 1-based page number (default: 1).
+	Page int
+}
+
+// ListByTenant returns sessions belonging to the given tenant (user_id),
+// ordered by updated_at DESC. It is a thin convenience wrapper over
+// ListSessions that enforces the user_id filter.
+func (s *Store) ListByTenant(ctx context.Context, tenantID string, opts ListByTenantOptions) ([]*dto.SessionRecord, int, error) {
+	if tenantID == "" {
+		return nil, 0, errors.New("tenantID is required")
+	}
+	return s.ListSessions(ctx, store.ListSessionsOptions{
+		SessionType: opts.SessionType,
+		UserID:      tenantID,
+		Limit:       opts.Limit,
+		Page:        opts.Page,
+		SortBy:      "updated_at",
+		SortOrder:   "DESC",
+	})
 }
 
 func scanRecord(row pgx.Row) (*dto.SessionRecord, error) {
