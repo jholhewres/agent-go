@@ -1,14 +1,21 @@
 name: Deploy VitePress Docs to GitHub Pages
 
+# NOTE: This workflow requires GitHub Pages to be enabled manually in
+# repository Settings -> Pages -> "Build and deployment" source set to
+# "GitHub Actions". The default GITHUB_TOKEN cannot auto-provision Pages
+# on the first run (it lacks the admin:repo scope), so pushing with
+# Pages still disabled produces a red CI check. Until Pages is enabled,
+# this workflow only runs on manual dispatch — re-enable the push
+# trigger once the site is live.
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'website/**'
-      - 'package.json'
-      - '.github/workflows/deploy-docs.yml'
   workflow_dispatch:
+  # Re-enable after Pages is turned on in repo settings:
+  # push:
+  #   branches: [main]
+  #   paths:
+  #     - 'website/**'
+  #     - 'package.json'
+  #     - '.github/workflows/deploy-docs.yml'
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
@@ -38,10 +45,6 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
-        with:
-          # Auto-enable GitHub Pages via API on first run so forks do not
-          # need a manual settings toggle before the workflow succeeds.
-          enablement: true
 
       - name: Install dependencies
         run: |
