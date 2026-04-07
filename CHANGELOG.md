@@ -5,6 +5,157 @@ All notable changes to AgentGo will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0] - 2026-04-07
+
+### Summary
+
+Sprint 1 "Production Ready I" release. Five new feature areas land
+together so agent-go can be operated as a production service rather
+than a developer demo: a hardened PostgreSQL session backend, native
+OpenTelemetry tracing, a stable evaluation framework, automatic
+conversation summarization for long-running sessions, and a complete
+production deployment guide.
+
+### Added
+
+#### Storage — production-ready PostgreSQL backend (S1.1)
+- **`internal/session/store/postgres/migrate.go`** — In-house, ~100-line
+  schema migrator built on `embed.FS` + `pgxpool`. Idempotent,
+  transactional, tracks versions in `agno_schema_migrations`. No
+  `golang-migrate` dependency added.
+- **`internal/session/store/postgres/migrations/001_init.{up,down}.sql`** —
+  Initial schema with three production indexes:
+  `(user_id, updated_at DESC)`, `(session_type, agent_id)`, and a
+  partial `(workflow_id) WHERE workflow_id IS NOT NULL`.
+- **`Config` struct** — full pool tuning: `MaxConns`, `MinConns`,
+  `MaxConnLifetime`, `MaxConnIdleTime`, `HealthCheckPeriod`,
+  `ConnectTimeout`, `TableName`, all with production defaults via
+  `defaults()`. Backwards-compatible alias for the old
+  `MaxConnLifeTime` field.
+- **`NewStore(ctx, dsn, cfg)`** convenience constructor.
+- **`Store.Pool()`** accessor for callers that need to run `Migrate`
+  or custom queries.
+- **`Store.ListByTenant(ctx, tenantID, opts)`** — multi-tenant helper
+  that pins `user_id` and orders by `updated_at DESC`.
+- **`pkg/agentgo/storage/postgres/README.md`** — schema diagram, index
+  table, pool tuning guide, migration workflow, init example, and
+  backup/restore strategies.
+- **`cmd/examples/postgres_storage/`** — runnable end-to-end demo that
+  skips gracefully when `DATABASE_URL` is unset.
+- **`test/smoke/postgres_storage_smoke_test.go`** — compile-only smoke
+  test, picked up by the centralized example smoke test.
+
+#### Observability — native OpenTelemetry tracing (S1.2)
+- **`pkg/agentgo/observability/otel/tracer.go`** — `Config` +
+  `NewTracerProvider` using the `otlptracehttp` exporter,
+  `ParentBased(TraceIDRatioBased(SamplingRate))` sampler, and
+  resource attributes (`service.name`, `service.version`, plus
+  caller-supplied extras).
+- **`pkg/agentgo/observability/otel/hooks.go`** — three hooks that
+  plug into the existing agent hook API:
+  `ToolTracingHook` (implements `hooks.ToolHooker`, span per tool
+  execution with `tool.name`, `tool.args`, `tool.status`,
+  `tool.duration_ms`),
+  `AgentTracingPreHook` + `AgentTracingPostHook` (paired
+  `hooks.HookFunc` values that emit a span per agent run with
+  `agent.id`, `agent.name`, status, duration, and error attributes).
+- **`pkg/agentgo/observability/otel/stdout.go`** —
+  `NewStdoutTracerProvider` for tests and local dev.
+- **`pkg/agentgo/observability/otel/tracer_test.go`** — 5 tests using
+  in-memory `tracetest.SpanRecorder`, no Docker, no network.
+- **`pkg/agentgo/observability/otel/README.md`** — usage guide,
+  attribute tables, sampling strategy, exporter selection.
+- **`cmd/examples/otlp_tracing_agent/`** — runnable demo that uses the
+  stdout exporter so it works without a collector.
+- Tracing is **opt-in** and integrated entirely via the existing
+  hook API — `pkg/agentgo/agent/agent.go` was not modified.
+
+#### Eval framework — promoted from experimental (S1.3)
+- **`pkg/agentgo/eval/`** — new stable package with four evaluators:
+  - `AccuracyEvaluator` (`MatchExact`, `MatchContains`, `MatchRegexp`)
+  - `PerformanceEvaluator` (p50/p95/p99 latency, token totals,
+    optional `MaxLatencyMs` threshold)
+  - `ReliabilityEvaluator` (`error_rate`, `retry_attempts_total`,
+    `fallback_used_count` from `RunOutput.Metadata`)
+  - `JudgeEvaluator` (LLM-as-judge using another `*agent.Agent` and
+    a criteria string; parses the first `{"pass":bool,"reason":...}`
+    JSON block from the judge response)
+- **`Suite` + `RunSuite(ctx, agent, suite)`** — compose test cases,
+  run them through the agent, and apply each evaluator.
+- **`WriteJSON` + `WriteJUnit`** — deterministic JSON (sorted keys)
+  and JUnit XML reports for CI integration.
+- **21 unit tests, 82.7% coverage**, all using `MockModel` —
+  no network or API keys.
+- **`cmd/examples/eval_demo/`** — runnable demo that builds an Agent
+  with a `MockModel`, defines a 5-case suite, runs all four
+  evaluators, and prints JSON + JUnit reports.
+- **`docs/PACKAGES.md`** — `eval` row promoted from `experimental`
+  to `stable`. The old `pkg/agentgo/experimental/eval/` skeleton is
+  removed.
+
+#### Memory — SummarizingMemory wrapper (S1.4)
+- **`pkg/agentgo/memory/summarizing.go`** — `SummarizingMemory` wraps
+  any `Memory` implementation (including `InMemory` and
+  `HybridMemory`) and triggers synchronous LLM compaction once the
+  buffer crosses `Threshold`. The synthesized summary becomes a new
+  System message tagged with `SummaryTag`, prepended to the last
+  `PreserveLast` messages.
+- **`SummarizingConfig`** — `Inner`, `Model`, `Threshold` (default 50),
+  `PreserveLast` (default 10), `MaxSummaryTokens` (default 500),
+  `SummaryPrompt`, `SummaryTag` (default `[Conversation Summary]`).
+- **8 unit tests, 89.9% coverage**, including a non-destructive-on-
+  failure test that verifies the original buffer is preserved when
+  the summarizer model errors.
+- **`pkg/agentgo/memory/README.md`** — comparison table for
+  `InMemory`, `HybridMemory`, and `SummarizingMemory` plus a usage
+  example.
+- **`cmd/examples/summarizing_memory_agent/`** — standalone demo that
+  uses a `MockModel` to compact 60 turns into ~11 messages.
+
+#### Documentation — Production Deployment Guide (S1.5)
+- **`website/advanced/production-deployment.md`** (1021 lines, EN)
+- **`website/zh/advanced/production-deployment.md`** (1020 lines, ZH)
+- 13 sections covering: reference architecture, PostgreSQL pool
+  tuning, OTLP wiring, memory strategy selection, eval CI gates,
+  full env-var table, secrets management, complete Docker Compose
+  example (agent-os + postgres + otel-collector + jaeger),
+  scaling considerations, common pitfalls, and a 15+ item
+  pre-flight checklist.
+- VitePress sidebar (EN + ZH) updated to surface the new page.
+- README's documentation table linked.
+
+### Changed
+
+- Bumped OpenTelemetry stack to v1.43.0 (otel core + sdk + trace +
+  otlptrace + otlptracehttp) so the new
+  `go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.43.0`
+  dependency aligns.
+- `internal/session/store/postgres/store_test.go` now uses
+  `Migrate(ctx, st.pool)` instead of inline DDL bootstrapping.
+- `.gitignore` anchors four new stray-binary names from the new
+  examples (`/eval_demo`, `/otlp_tracing_agent`, `/postgres_storage`,
+  `/summarizing_memory_agent`).
+
+### Removed
+
+- `pkg/agentgo/experimental/eval/` skeleton (superseded by the new
+  stable `pkg/agentgo/eval/` package — see S1.3).
+
+### Known Follow-Ups
+
+- `TODO(sprint-1.x)` — `AgentTracingHook` currently bridges pre/post
+  via `sync.Map[agentID → span]`. Concurrent runs of the same
+  agentID can race. Replace once the hook API can carry context
+  across pre/post boundaries.
+- `TODO(sprint-1.x)` — `SummarizingMemory.compact()` is synchronous;
+  add an async/worker-pool variant for very chatty sessions.
+- `TODO(sprint-1.x)` — `SummarizingMemory` triggers on message count
+  only; add a token-count trigger once a shared tokenizer abstraction
+  lands.
+- `TODO(sprint-1.x)` — `PerformanceEvaluator` reads tokens from
+  `RunOutput.Metadata["total_tokens"]`. Promote it to a first-class
+  field on `RunOutput`.
+
 ## [1.5.0] - 2026-04-07
 
 ### Summary
