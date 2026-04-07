@@ -54,3 +54,8 @@ jobs:
           # what CI actually ships with. Must be >= 1.25 (earlier 1.24.x
           # patches have standard-library CVEs in os and crypto/x509).
           go-version-file: go.mod
+          # We already checked out the repo in the step above via
+          # actions/checkout@v6; tell the action to reuse it instead
+          # of attempting its own clone (which fails with HTTP 400
+          # against the actions-provided transient token).
+          repo-checkout: false
