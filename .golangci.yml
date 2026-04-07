@@ -131,6 +131,26 @@ issues:
     - linters: [unused]
       path: pkg/agentgo/tools/(confluence|airflow|bitbucket)/
 
+    # SA1019 deprecation warnings surfaced when bumping deps in v1.5.0:
+    #   - lib/pq 1.12.3: pq.CopyIn is deprecated in favour of the
+    #     built-in query builder (migrating means rewriting the
+    #     batch insert path in pkg/agentgo/db/batch/postgres.go).
+    #   - google.golang.org/api 0.274.0: google.CredentialsFromJSON
+    #     is deprecated in favour of constructors that validate the
+    #     credential configuration.
+    # Both are pre-existing call sites that still work correctly;
+    # migration is tracked for Sprint 1.x so the release pipeline
+    # is not blocked on incidental refactors.
+    #
+    # TODO(sprint-1.x): migrate off pq.CopyIn and
+    # google.CredentialsFromJSON, remove these exclusions.
+    - linters: [staticcheck]
+      path: pkg/agentgo/db/batch/postgres\.go
+      text: "SA1019.*pq\\.CopyIn"
+    - linters: [staticcheck]
+      path: pkg/agentgo/tools/googlesheets/googlesheets\.go
+      text: "SA1019.*CredentialsFromJSON"
+
     # SA4010 flags "result of append is never used", which fires on
     # test helpers that collect events into a slice purely to count or
     # iterate over — common in streaming tests where the test asserts
