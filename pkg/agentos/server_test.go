@@ -25,7 +25,9 @@ func (m *simpleModel) Invoke(ctx context.Context, req *models.InvokeRequest) (*t
 }
 
 func (m *simpleModel) InvokeStream(ctx context.Context, req *models.InvokeRequest) (<-chan types.ResponseChunk, error) {
-	ch := make(chan types.ResponseChunk)
+	ch := make(chan types.ResponseChunk, 2)
+	ch <- types.ResponseChunk{Content: "OK"}
+	ch <- types.ResponseChunk{Done: true}
 	close(ch)
 	return ch, nil
 }

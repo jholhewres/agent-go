@@ -316,9 +316,9 @@ func TestExecutionContext_NewExecutionContextWithSession(t *testing.T) {
 func TestExecutionContext_RunContextMetadata(t *testing.T) {
 	execCtx := NewExecutionContext("test")
 
-	if execCtx.Metadata != nil {
-		t.Fatal("expected Metadata to be nil before setting run context")
-	}
+	// Force Metadata to nil to exercise the defensive initialisation branch
+	// in SetRunContextMetadata (constructor initialises it by default).
+	execCtx.Metadata = nil
 
 	rcMeta := map[string]interface{}{
 		"run_id":      "run-123",
