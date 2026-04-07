@@ -6,9 +6,12 @@
 *.dylib
 bin/
 dist/
-fallback_chain
-structured_output
-subagent_demo
+# Stray binaries at repo root from `go run`/`go build` without -o flag.
+# Anchored to root (leading /) so they do not shadow cmd/examples/<name>/ dirs.
+/fallback_chain
+/structured_output
+/subagent_demo
+/evolink_media_pipeline
 
 # Test binary, built with `go test -c`
 *.test
