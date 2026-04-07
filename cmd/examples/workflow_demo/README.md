@@ -1,6 +1,6 @@
 # Workflow Demo
 
-This example demonstrates the **Workflow** functionality of agno-Go, showing how to build complex multi-step processes with control flow.
+This example demonstrates the **Workflow** functionality of AgentGo, showing how to build complex multi-step processes with control flow.
 
 ## Workflow Primitives Demonstrated
 

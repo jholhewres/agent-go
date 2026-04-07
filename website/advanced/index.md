@@ -1,6 +1,6 @@
 # Advanced Topics
 
-Deep dive into advanced concepts, performance optimization, deployment strategies, and testing best practices for Agno-Go.
+Deep dive into advanced concepts, performance optimization, deployment strategies, and testing best practices for AgentGo.
 
 ## Overview
 
@@ -15,7 +15,7 @@ This section covers advanced topics for developers who want to:
 
 ### [Architecture](/advanced/architecture)
 
-Learn about Agno-Go's modular architecture and design philosophy:
+Learn about AgentGo's modular architecture and design philosophy:
 
 - Core interfaces (Model, Toolkit, Memory)
 - Abstraction patterns (Agent, Team, Workflow)
@@ -126,7 +126,7 @@ Current test coverage by package:
 
 ### KISS (Keep It Simple, Stupid)
 
-Agno-Go embraces simplicity:
+AgentGo embraces simplicity:
 
 - **Focused scope**: 3 LLM providers (OpenAI, Anthropic, Ollama) instead of 8+
 - **Essential tools**: 5 core tools instead of 15+
@@ -154,25 +154,25 @@ Built for real-world deployments:
 
 ## Contributing
 
-Interested in contributing to Agno-Go? Check out:
+Interested in contributing to AgentGo? Check out:
 
 - [Architecture documentation](/advanced/architecture) - Understand the codebase
 - [Testing guide](/advanced/testing) - Learn testing standards
-- [GitHub repository](https://github.com/rexleimo/agno-Go) - Submit PRs
-- [Development guide](https://github.com/rexleimo/agno-Go/blob/main/CLAUDE.md) - Development setup
+- [GitHub repository](https://github.com/jholhewres/agent-go) - Submit PRs
+- [Development guide](https://github.com/jholhewres/agent-go/blob/main/CLAUDE.md) - Development setup
 
 ## Additional Resources
 
 ### Documentation
 
-- [Go package documentation](https://pkg.go.dev/github.com/rexleimo/agno-Go)
+- [Go package documentation](https://pkg.go.dev/github.com/jholhewres/agent-go)
 - [Python Agno framework](https://github.com/agno-agi/agno) (inspiration)
-- [VitePress documentation source](https://github.com/rexleimo/agno-Go/tree/main/website)
+- [VitePress documentation source](https://github.com/jholhewres/agent-go/tree/main/website)
 
 ### Community
 
-- [GitHub Issues](https://github.com/rexleimo/agno-Go/issues)
-- [GitHub Discussions](https://github.com/rexleimo/agno-Go/discussions)
+- [GitHub Issues](https://github.com/jholhewres/agent-go/issues)
+- [GitHub Discussions](https://github.com/jholhewres/agent-go/discussions)
 - [Release Notes](/release-notes)
 
 ## Next Steps
@@ -184,4 +184,4 @@ Interested in contributing to Agno-Go? Check out:
 
 ---
 
-**Note**: This section assumes familiarity with basic Agno-Go concepts. If you're new, start with the [Guide](/guide/) section.
+**Note**: This section assumes familiarity with basic AgentGo concepts. If you're new, start with the [Guide](/guide/) section.

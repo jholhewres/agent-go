@@ -1,6 +1,6 @@
 # Team Demo
 
-This example demonstrates the **Team** functionality of agno-Go, showing how multiple agents can collaborate using different coordination modes.
+This example demonstrates the **Team** functionality of AgentGo, showing how multiple agents can collaborate using different coordination modes.
 
 ## Team Modes Demonstrated
 

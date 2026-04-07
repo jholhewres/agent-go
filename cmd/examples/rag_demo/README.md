@@ -1,6 +1,6 @@
 # RAG (Retrieval-Augmented Generation) Demo
 
-A comprehensive example demonstrating the complete RAG pipeline in Agno-Go.
+A comprehensive example demonstrating the complete RAG pipeline in AgentGo.
 
 ## What is RAG?
 
@@ -357,4 +357,4 @@ Warning: No relevant documents found
 
 ## License
 
-Same as Agno-Go (MIT License)
+Same as AgentGo (MIT License)

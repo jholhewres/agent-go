@@ -2,19 +2,19 @@
 layout: home
 
 hero:
-  name: "Agno-Go"
+  name: "AgentGo"
   text: "High-Performance Multi-Agent Framework"
   tagline: "16x faster than Python | 180ns instantiation | 1.2KB memory per agent"
   image:
     src: /logo.png
-    alt: Agno-Go
+    alt: AgentGo
   actions:
     - theme: brand
       text: Get Started
       link: /guide/quick-start
     - theme: alt
       text: View on GitHub
-      link: https://github.com/rexleimo/agno-Go
+      link: https://github.com/jholhewres/agent-go
 
 features:
   - icon: 🚀
@@ -90,13 +90,13 @@ func main() {
 
 ## Performance Comparison
 
-| Metric | Python Agno | Agno-Go | Improvement |
+| Metric | Python Agno | AgentGo | Improvement |
 |--------|-------------|---------|-------------|
 | Agent Creation | ~3μs | ~180ns | **16x faster** |
 | Memory/Agent | ~6.5KB | ~1.2KB | **5.4x less** |
 | Concurrency | GIL limited | Native goroutines | **Unlimited** |
 
-## Why Agno-Go?
+## Why AgentGo?
 ### What's New in v1.2.9
 
 - **EvoLink Media Agents** – First-class EvoLink provider under `pkg/agentgo/providers/evolink` and `pkg/agentgo/models/evolink/*` for text, image, and video generation, with end-to-end examples in the EvoLink Media Agents docs.
@@ -105,7 +105,7 @@ func main() {
 
 ### Built for Production
 
-Agno-Go isn't just a framework—it's a complete production system. The included **AgentOS** server provides:
+AgentGo isn't just a framework—it's a complete production system. The included **AgentOS** server provides:
 
 - RESTful API with OpenAPI 3.0 specification
 - Session management for multi-turn conversations
@@ -132,8 +132,8 @@ Following the **Keep It Simple, Stupid** philosophy:
 
 ```bash
 # Clone repository
-git clone https://github.com/rexleimo/agno-Go.git
-cd agno-Go
+git clone https://github.com/jholhewres/agent-go.git
+cd agent-go
 
 # Set API key
 export OPENAI_API_KEY=sk-your-key-here
@@ -159,12 +159,12 @@ curl http://localhost:8080/health
 
 ## Community
 
-- **GitHub**: [rexleimo/agno-Go](https://github.com/rexleimo/agno-Go)
-- **Issues**: [Report bugs and request features](https://github.com/rexleimo/agno-Go/issues)
-- **Discussions**: [Ask questions and share ideas](https://github.com/rexleimo/agno-Go/discussions)
+- **GitHub**: [jholhewres/agent-go](https://github.com/jholhewres/agent-go)
+- **Issues**: [Report bugs and request features](https://github.com/jholhewres/agent-go/issues)
+- **Discussions**: [Ask questions and share ideas](https://github.com/jholhewres/agent-go/discussions)
 
 ## License
 
-Agno-Go is released under the [MIT License](https://github.com/rexleimo/agno-Go/blob/main/LICENSE).
+AgentGo is released under the [MIT License](https://github.com/jholhewres/agent-go/blob/main/LICENSE).
 
 Inspired by [Agno (Python)](https://github.com/agno-agi/agno) framework.

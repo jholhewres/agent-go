@@ -1,45 +1,45 @@
 # Groq Model Integration
 
-Groq 超快速 LLM 推理集成 - 为 Agno-Go 提供业界领先的推理速度。
+Ultra-fast LLM inference integration for AgentGo, delivering industry-leading inference speeds via Groq.
 
-## 特性
+## Features
 
-- ⚡ **超快推理**: 利用 Groq 的 LPU (Language Processing Unit) 实现 10x 更快的推理速度
-- 🔧 **OpenAI 兼容**: 使用 OpenAI API 格式,易于集成
-- 🛠️ **工具支持**: 完整支持函数调用 (Function Calling)
-- 📡 **流式响应**: 支持流式和非流式推理模式
-- 🎯 **多模型**: 支持 LLaMA 3.1, Mixtral, Gemma 等模型
+- **Ultra-Fast Inference**: Leverages Groq's LPU (Language Processing Unit) for up to 10x faster inference
+- **OpenAI Compatible**: Uses the OpenAI API format for easy integration
+- **Tool Support**: Full support for Function Calling
+- **Streaming Responses**: Supports both streaming and non-streaming inference modes
+- **Multiple Models**: Supports LLaMA 3.1, Mixtral, Gemma, and more
 
-## 支持的模型
+## Supported Models
 
-### LLaMA 模型 (Meta)
-- `llama-3.1-8b-instant` - 最快的推理速度 (推荐)
-- `llama-3.1-70b-versatile` - 最强大的性能
-- `llama-3.3-70b-versatile` - 最新版本
+### LLaMA Models (Meta)
+- `llama-3.1-8b-instant` - Fastest inference speed (recommended)
+- `llama-3.1-70b-versatile` - Most powerful performance
+- `llama-3.3-70b-versatile` - Latest version
 
-### Mixtral 模型 (Mistral AI)
-- `mixtral-8x7b-32768` - Mixture of Experts 架构
+### Mixtral Models (Mistral AI)
+- `mixtral-8x7b-32768` - Mixture of Experts architecture
 
-### Gemma 模型 (Google)
-- `gemma2-9b-it` - 紧凑但强大
+### Gemma Models (Google)
+- `gemma2-9b-it` - Compact but powerful
 
-### 特殊模型
-- `whisper-large-v3` - 语音识别
-- `llama-guard-3-8b` - 内容审核
+### Special Purpose Models
+- `whisper-large-v3` - Speech recognition
+- `llama-guard-3-8b` - Content moderation
 
-## 快速开始
+## Quick Start
 
-### 1. 获取 API 密钥
+### 1. Get an API Key
 
-访问 [Groq Console](https://console.groq.com/keys) 获取免费 API 密钥。
+Visit [Groq Console](https://console.groq.com/keys) to obtain a free API key.
 
-### 2. 设置环境变量
+### 2. Set Environment Variable
 
 ```bash
 export GROQ_API_KEY=gsk-...
 ```
 
-### 3. 使用示例
+### 3. Usage Example
 
 ```go
 package main
@@ -56,7 +56,7 @@ import (
 )
 
 func main() {
-    // 创建 Groq 模型
+    // Create Groq model
     model, err := groq.New(groq.ModelLlama38B, groq.Config{
         APIKey:      "gsk-...",
         Temperature: 0.7,
@@ -66,7 +66,7 @@ func main() {
         log.Fatal(err)
     }
 
-    // 创建 Agent
+    // Create Agent
     agent, err := agent.New(agent.Config{
         Name:         "Groq Agent",
         Model:        model,
@@ -77,7 +77,7 @@ func main() {
         log.Fatal(err)
     }
 
-    // 运行 Agent
+    // Run Agent
     output, err := agent.Run(context.Background(), "Calculate 123 + 456")
     if err != nil {
         log.Fatal(err)
@@ -87,27 +87,27 @@ func main() {
 }
 ```
 
-## 配置选项
+## Configuration Options
 
 ```go
 type Config struct {
-    APIKey      string        // Groq API 密钥 (必需)
-    BaseURL     string        // API 基础 URL (默认: https://api.groq.com/openai/v1)
-    Temperature float64       // 温度参数 (0.0-2.0)
-    MaxTokens   int           // 最大生成 token 数
-    Timeout     time.Duration // 请求超时时间 (默认: 60s)
+    APIKey      string        // Groq API key (required)
+    BaseURL     string        // API base URL (default: https://api.groq.com/openai/v1)
+    Temperature float64       // Temperature parameter (0.0-2.0)
+    MaxTokens   int           // Maximum number of tokens to generate
+    Timeout     time.Duration // Request timeout (default: 60s)
 }
 ```
 
-## 性能
+## Performance
 
-Groq 的 LPU 架构提供:
+Groq's LPU architecture delivers:
 
-- **推理速度**: 高达 10x 于传统云 LLM 提供商
-- **延迟**: 极低的首 token 延迟
-- **吞吐量**: 高并发请求支持
+- **Inference Speed**: Up to 10x faster than traditional cloud LLM providers
+- **Latency**: Extremely low time-to-first-token latency
+- **Throughput**: High concurrent request support
 
-### 基准测试示例
+### Benchmark Example
 
 ```
 Model: llama-3.1-8b-instant
@@ -116,38 +116,38 @@ Output tokens: 100
 Time: ~0.5s (vs ~5s for traditional providers)
 ```
 
-## 运行示例
+## Running Examples
 
 ```bash
-# 设置 API 密钥
+# Set API key
 export GROQ_API_KEY=gsk-your-api-key
 
-# 运行示例程序
+# Run the example program
 go run cmd/examples/groq_agent/main.go
 ```
 
-## 测试
+## Testing
 
 ```bash
-# 运行单元测试
+# Run unit tests
 go test ./pkg/agentgo/models/groq/
 
-# 运行测试并查看覆盖率
+# Run tests with coverage report
 go test -v -coverprofile=coverage.out ./pkg/agentgo/models/groq/
 go tool cover -html=coverage.out
 ```
 
-**当前测试覆盖率**: 52.4%
+**Current test coverage**: 52.4%
 
-## API 文档
+## API Documentation
 
-### 创建模型
+### Creating a Model
 
 ```go
 model, err := groq.New(modelID string, config Config) (*Groq, error)
 ```
 
-### 模型信息查询
+### Querying Model Information
 
 ```go
 info, found := groq.GetModelInfo(groq.ModelLlama38B)
@@ -158,16 +158,16 @@ if found {
 }
 ```
 
-### 调用模型
+### Invoking the Model
 
 ```go
-// 同步调用
+// Synchronous invocation
 response, err := model.Invoke(ctx, &models.InvokeRequest{
     Messages: messages,
     Tools:    tools,
 })
 
-// 流式调用
+// Streaming invocation
 chunks, err := model.InvokeStream(ctx, &models.InvokeRequest{
     Messages: messages,
 })
@@ -176,36 +176,36 @@ for chunk := range chunks {
 }
 ```
 
-## 优势
+## Advantages
 
 ### vs OpenAI
-- ✅ 10x 更快的推理速度
-- ✅ 免费额度更高
-- ✅ 开源模型选择
+- 10x faster inference speed
+- Higher free tier limits
+- Open-source model options
 
 ### vs Anthropic
-- ✅ 更低的延迟
-- ✅ 更高的吞吐量
-- ✅ 相似的质量 (LLaMA 3.1 70B)
+- Lower latency
+- Higher throughput
+- Comparable quality (LLaMA 3.1 70B)
 
-### vs 本地部署
-- ✅ 无需硬件投资
-- ✅ 自动扩展
-- ✅ 更好的性能
+### vs Self-Hosted
+- No hardware investment required
+- Automatic scaling
+- Better performance
 
-## 限制
+## Limitations
 
-- 需要互联网连接
-- 免费层有速率限制
-- 模型选择相比 OpenAI 较少
+- Requires internet connection
+- Free tier has rate limits
+- Fewer model choices compared to OpenAI
 
-## 参考资源
+## Resources
 
-- [Groq 官网](https://groq.com/)
-- [API 文档](https://console.groq.com/docs)
-- [获取 API 密钥](https://console.groq.com/keys)
-- [模型列表](https://console.groq.com/docs/models)
+- [Groq Website](https://groq.com/)
+- [API Documentation](https://console.groq.com/docs)
+- [Get API Key](https://console.groq.com/keys)
+- [Model List](https://console.groq.com/docs/models)
 
-## 许可
+## License
 
-本集成遵循 Agno-Go 项目许可。Groq API 使用需遵循 Groq 的服务条款。
+This integration follows the AgentGo project license. Groq API usage is subject to Groq's Terms of Service.

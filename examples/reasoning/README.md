@@ -1,8 +1,8 @@
 # Reasoning Model Example / 推理模型示例
 
-演示如何在 agno-Go 中使用推理模型。
+演示如何在 agent-go 中使用推理模型。
 
-Demonstrates how to use reasoning models in agno-Go.
+Demonstrates how to use reasoning models in agent-go.
 
 ## 支持的推理模型 / Supported Reasoning Models
 

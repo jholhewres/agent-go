@@ -1,6 +1,6 @@
 # SurrealDB Session Demo
 
-This example shows how to plug **Agno-Go** session storage into a SurrealDB cluster.
+This example shows how to plug **AgentGo** session storage into a SurrealDB cluster.
 
 ## Prerequisites
 

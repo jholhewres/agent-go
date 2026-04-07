@@ -8,8 +8,8 @@ Complete guide for deploying AgentOS in production environments.
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/rexleimo/agno-Go.git
-cd agno-Go
+git clone https://github.com/jholhewres/agent-go.git
+cd agent-go
 
 # 2. Configure environment
 cp .env.example .env
@@ -312,7 +312,7 @@ Use reverse proxy or API gateway for rate limiting.
 Use built-in guardrails:
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/guardrails"
+import "github.com/jholhewres/agent-go/pkg/agentgo/guardrails"
 
 promptGuard := guardrails.NewPromptInjectionGuardrail()
 agent.PreHooks = []hooks.Hook{promptGuard}
@@ -438,4 +438,4 @@ export LOG_LEVEL=debug
 - [Performance](/advanced/performance)
 - [API Reference](/api/)
 - [Examples](/examples/)
-- [GitHub Repository](https://github.com/rexleimo/agno-Go)
+- [GitHub Repository](https://github.com/jholhewres/agent-go)

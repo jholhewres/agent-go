@@ -1,6 +1,6 @@
 # サンプル
 
-Agno-Goのすべての機能を実演する実用的なサンプル。
+AgentGoのすべての機能を実演する実用的なサンプル。
 
 ## 利用可能なサンプル
 
@@ -21,7 +21,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/simple_agent/main.go
 ```
 
-[ソースを表示](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/simple_agent)
+[ソースを表示](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/simple_agent)
 
 ---
 
@@ -42,7 +42,7 @@ export ANTHROPIC_API_KEY=sk-ant-your-key
 go run cmd/examples/claude_agent/main.go
 ```
 
-[ソースを表示](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/claude_agent)
+[ソースを表示](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/claude_agent)
 
 ---
 
@@ -69,7 +69,7 @@ ollama pull llama3
 go run cmd/examples/ollama_agent/main.go
 ```
 
-[ソースを表示](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/ollama_agent)
+[ソースを表示](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/ollama_agent)
 
 ---
 
@@ -90,7 +90,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/team_demo/main.go
 ```
 
-[ソースを表示](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/team_demo)
+[ソースを表示](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/team_demo)
 
 ---
 
@@ -111,7 +111,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/workflow_demo/main.go
 ```
 
-[ソースを表示](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/workflow_demo)
+[ソースを表示](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/workflow_demo)
 
 ---
 
@@ -139,7 +139,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/rag_demo/main.go
 ```
 
-[ソースを表示](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/rag_demo)
+[ソースを表示](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/rag_demo)
 
 ---
 
@@ -155,11 +155,11 @@ import (
     "fmt"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/http"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/toolkit"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/http"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {
@@ -193,9 +193,9 @@ import (
     "fmt"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/team"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/team"
 )
 
 func main() {
@@ -238,9 +238,9 @@ import (
     "os"
     "strings"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/workflow"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 )
 
 func main() {
@@ -303,4 +303,4 @@ func main() {
 3. 説明と使用方法を含むREADME.mdを追加
 4. プルリクエストを提出
 
-[コントリビューションガイドライン](https://github.com/rexleimo/agno-Go/blob/main/CONTRIBUTING.md)
+[コントリビューションガイドライン](https://github.com/jholhewres/agent-go/blob/main/CONTRIBUTING.md)

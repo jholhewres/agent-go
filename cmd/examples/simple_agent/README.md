@@ -1,6 +1,6 @@
 # Simple Agent Example
 
-This example demonstrates the basic usage of Agno-Go framework with an agent that can perform mathematical calculations using tools.
+This example demonstrates the basic usage of AgentGo framework with an agent that can perform mathematical calculations using tools.
 
 ## Prerequisites
 

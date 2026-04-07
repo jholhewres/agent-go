@@ -1,6 +1,6 @@
 # ChromaDB Vector Database Integration
 
-ChromaDB implementation for Agno-Go vector database interface.
+ChromaDB implementation for AgentGo vector database interface.
 
 ## Features
 
@@ -326,4 +326,4 @@ Error: collection not initialized
 
 ## License
 
-Same as Agno-Go (MIT License)
+Same as AgentGo (MIT License)

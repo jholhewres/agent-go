@@ -1,6 +1,6 @@
 # Ollama Agent Example
 
-This example demonstrates how to use Ollama local models with the Agno-Go framework.
+This example demonstrates how to use Ollama local models with the AgentGo framework.
 
 ## Features
 

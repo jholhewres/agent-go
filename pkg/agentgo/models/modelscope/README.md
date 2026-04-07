@@ -1,16 +1,16 @@
 # ModelScope Provider
 
-ModelScope (魔搭社区) API integration for Agno-Go, providing access to Alibaba Cloud's Qwen and other Chinese models.
+ModelScope API integration for AgentGo, providing access to Alibaba Cloud's Qwen and other models.
 
 ## Features
 
-- ✅ OpenAI-compatible API format via DashScope
-- ✅ Synchronous API calls (Invoke)
-- ✅ Streaming responses (InvokeStream)
-- ✅ Function calling / Tool use
-- ✅ Excellent Chinese language support
-- ✅ Comprehensive error handling
-- ✅ 78.9% test coverage
+- OpenAI-compatible API format via DashScope
+- Synchronous API calls (Invoke)
+- Streaming responses (InvokeStream)
+- Function calling / Tool use
+- Excellent Chinese language support
+- Comprehensive error handling
+- 78.9% test coverage
 
 ## Supported Models
 
@@ -20,7 +20,7 @@ ModelScope provides access to various models through Alibaba Cloud's DashScope s
 - **qwen-plus** - Balanced performance and quality
 - **qwen-max** - Maximum capability
 - **qwen-long** - Extended context window
-- And many more Chinese-optimized models
+- And many more models optimized for Chinese
 
 ## Installation
 
@@ -79,7 +79,7 @@ func main() {
     // Create request
     req := &models.InvokeRequest{
         Messages: []*types.Message{
-            {Role: types.RoleUser, Content: "介绍一下北京"},
+            {Role: types.RoleUser, Content: "Tell me about Beijing"},
         },
     }
 
@@ -98,7 +98,7 @@ func main() {
 ```go
 req := &models.InvokeRequest{
     Messages: []*types.Message{
-        {Role: types.RoleUser, Content: "写一首关于AI的诗"},
+        {Role: types.RoleUser, Content: "Write a poem about AI"},
     },
 }
 
@@ -139,14 +139,14 @@ model, err := modelscope.New("qwen-plus", modelscope.Config{
 
 // Create agent
 ag, err := agent.New(agent.Config{
-    Name:         "智能助手",
+    Name:         "Smart Assistant",
     Model:        model,
-    Instructions: "你是一个有帮助的AI助手",
+    Instructions: "You are a helpful AI assistant",
     Toolkits:     []toolkit.Toolkit{calculator.New()},
 })
 
 // Run agent
-output, err := ag.Run(context.Background(), "计算 123 * 456")
+output, err := ag.Run(context.Background(), "Calculate 123 * 456")
 fmt.Println(output.Content)
 ```
 
@@ -201,10 +201,10 @@ clientConfig.BaseURL = "https://api-inference.modelscope.cn/v1"
 ```
 
 This provides:
-- ✅ Access to Qwen and other Chinese models
-- ✅ OpenAI-compatible interface
-- ✅ Excellent Chinese language understanding
-- ✅ Integration with Alibaba Cloud ecosystem
+- Access to Qwen and other models
+- OpenAI-compatible interface
+- Excellent Chinese language understanding
+- Integration with Alibaba Cloud ecosystem
 
 ## Testing
 

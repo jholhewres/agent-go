@@ -1,6 +1,6 @@
 # 빠른 시작
 
-5분 이내에 Agno-Go를 시작하세요!
+5분 이내에 AgentGo를 시작하세요!
 
 ## 전제 조건
 
@@ -13,14 +13,14 @@
 ### 옵션 1: Go Get 사용
 
 ```bash
-go get github.com/rexleimo/agno-Go
+go get github.com/jholhewres/agent-go
 ```
 
 ### 옵션 2: 리포지토리 복제
 
 ```bash
-git clone https://github.com/rexleimo/agno-Go.git
-cd agno-Go
+git clone https://github.com/jholhewres/agent-go.git
+cd agent-go
 go mod download
 ```
 
@@ -39,8 +39,8 @@ import (
     "log"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -104,10 +104,10 @@ import (
     "log"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/toolkit"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {
@@ -167,8 +167,8 @@ import (
     "os"
     "strings"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -381,12 +381,12 @@ export LOG_LEVEL=debug
 
 ```go
 import (
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/team"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/workflow"
-    "github.com/rexleimo/agno-Go/pkg/agentos"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/team"
+    "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
+    "github.com/jholhewres/agent-go/pkg/agentos"
 )
 ```
 

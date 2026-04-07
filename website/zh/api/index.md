@@ -1,6 +1,6 @@
 # API 参考 / API Reference
 
-Agno-Go v1.0 的完整 API 参考文档。
+AgentGo v1.0 的完整 API 参考文档。
 
 ## 核心模块 / Core Modules
 
@@ -18,7 +18,7 @@ Agno-Go v1.0 的完整 API 参考文档。
 ### Agent
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
+import "github.com/jholhewres/agent-go/pkg/agentgo/agent"
 
 agent.New(config) (*Agent, error)
 agent.Run(ctx, input) (*RunOutput, error)
@@ -30,7 +30,7 @@ agent.ClearMemory()
 ### Team
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/team"
+import "github.com/jholhewres/agent-go/pkg/agentgo/team"
 
 team.New(config) (*Team, error)
 team.Run(ctx, input) (*RunOutput, error)
@@ -43,7 +43,7 @@ team.Run(ctx, input) (*RunOutput, error)
 ### Workflow
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/workflow"
+import "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 
 workflow.New(config) (*Workflow, error)
 workflow.Run(ctx, input) (*RunOutput, error)
@@ -57,9 +57,9 @@ workflow.Run(ctx, input) (*RunOutput, error)
 
 ```go
 import (
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/anthropic"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/ollama"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/anthropic"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/ollama"
 )
 
 openai.New(modelID, config) (*OpenAI, error)
@@ -73,9 +73,9 @@ ollama.New(modelID, config) (*Ollama, error)
 
 ```go
 import (
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/http"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/file"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/http"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/file"
 )
 
 calculator.New() *Calculator
@@ -90,7 +90,7 @@ file.New(config) *File
 ### 错误处理 / Error Handling
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/types"
+import "github.com/jholhewres/agent-go/pkg/agentgo/types"
 
 output, err := agent.Run(ctx, input)
 if err != nil {
@@ -208,20 +208,20 @@ GET /api/v1/sessions/{session_id}/history
 
 完整的 OpenAPI 3.0 规范文档 / Complete OpenAPI 3.0 specification available:
 
-- [OpenAPI YAML](https://github.com/rexleimo/agno-Go/blob/main/pkg/agentos/openapi.yaml)
-- [Swagger UI](https://github.com/rexleimo/agno-Go/tree/main/pkg/agentos#api-documentation)
+- [OpenAPI YAML](https://github.com/jholhewres/agent-go/blob/main/pkg/agentos/openapi.yaml)
+- [Swagger UI](https://github.com/jholhewres/agent-go/tree/main/pkg/agentos#api-documentation)
 
 ## 示例 / Examples
 
 查看仓库中的工作示例 / See working examples in the repository:
 
-- [Simple Agent](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/simple_agent)
-- [Team Demo](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/team_demo)
-- [Workflow Demo](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/workflow_demo)
-- [RAG Demo](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/rag_demo)
+- [Simple Agent](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/simple_agent)
+- [Team Demo](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/team_demo)
+- [Workflow Demo](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/workflow_demo)
+- [RAG Demo](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/rag_demo)
 
 ## 包文档 / Package Documentation
 
 完整的 Go 包文档可在 pkg.go.dev 上查看 / Full Go package documentation is available on pkg.go.dev:
 
-[pkg.go.dev/github.com/rexleimo/agno-Go](https://pkg.go.dev/github.com/rexleimo/agno-Go)
+[pkg.go.dev/github.com/jholhewres/agent-go](https://pkg.go.dev/github.com/jholhewres/agent-go)

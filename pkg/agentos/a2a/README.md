@@ -1,20 +1,18 @@
 # A2A (Agent-to-Agent) Interface
 
-A2A 接口为 Agno Go 提供标准化的 Agent 间通信协议，基于 JSON-RPC 2.0。
+The A2A interface provides standardized agent-to-agent communication for AgentGo, based on JSON-RPC 2.0.
 
-The A2A interface provides standardized agent-to-agent communication for Agno Go, based on JSON-RPC 2.0.
+## Features
 
-## 特性 / Features
+- **JSON-RPC 2.0** - Standardized protocol
+- **REST API** - HTTP endpoints
+- **Streaming Support** - Server-Sent Events
+- **Multimedia Support** - Text, images, files
+- **Simple Integration** - Expose agents in a few lines of code
 
-- ✅ **JSON-RPC 2.0** - 标准化协议 / Standardized protocol
-- ✅ **REST API** - HTTP 端点 / HTTP endpoints  
-- ✅ **流式支持** - Server-Sent Events / Server-Sent Events
-- ✅ **多媒体支持** - 文本、图片、文件 / Text, images, files
-- ✅ **简单集成** - 几行代码即可暴露 Agent / Expose agents in few lines
+## Quick Start
 
-## 快速开始 / Quick Start
-
-### 1. 创建 Agent / Create an Agent
+### 1. Create an Agent
 
 ```go
 type MyAgent struct {
@@ -32,7 +30,7 @@ func (a *MyAgent) GetID() string { return a.ID }
 func (a *MyAgent) GetName() string { return a.Name }
 ```
 
-### 2. 创建 A2A 接口 / Create A2A Interface
+### 2. Create A2A Interface
 
 ```go
 a2aInterface, err := a2a.New(a2a.Config{
@@ -41,7 +39,7 @@ a2aInterface, err := a2a.New(a2a.Config{
 })
 ```
 
-### 3. 注册路由 / Register Routes
+### 3. Register Routes
 
 ```go
 router := gin.Default()
@@ -49,7 +47,7 @@ a2aInterface.RegisterRoutes(router)
 router.Run(":7777")
 ```
 
-### 4. 调用 Agent / Call the Agent
+### 4. Call the Agent
 
 ```bash
 curl -X POST http://localhost:7777/a2a/message/send \
@@ -70,13 +68,13 @@ curl -X POST http://localhost:7777/a2a/message/send \
   }'
 ```
 
-## API 端点 / API Endpoints
+## API Endpoints
 
 ### POST /a2a/message/send
 
-发送消息到 Agent（非流式）/ Send message to agent (non-streaming)
+Send message to agent (non-streaming).
 
-**请求 / Request**:
+**Request**:
 ```json
 {
   "jsonrpc": "2.0",
@@ -96,7 +94,7 @@ curl -X POST http://localhost:7777/a2a/message/send \
 }
 ```
 
-**响应 / Response**:
+**Response**:
 ```json
 {
   "jsonrpc": "2.0",
@@ -114,24 +112,22 @@ curl -X POST http://localhost:7777/a2a/message/send \
 
 ### POST /a2a/message/stream
 
-发送消息到 Agent（流式）/ Send message to agent (streaming)
-
-使用 Server-Sent Events 返回实时响应。
+Send message to agent (streaming).
 
 Uses Server-Sent Events for real-time responses.
 
-## 消息部分类型 / Message Part Types
+## Message Part Types
 
-### Text / 文本
+### Text
 
 ```json
 {
   "kind": "text",
-  "text": "消息内容"
+  "text": "Message content"
 }
 ```
 
-### File (URI) / 文件（URI）
+### File (URI)
 
 ```json
 {
@@ -144,7 +140,7 @@ Uses Server-Sent Events for real-time responses.
 }
 ```
 
-### File (Bytes) / 文件（字节）
+### File (Bytes)
 
 ```json
 {
@@ -157,7 +153,7 @@ Uses Server-Sent Events for real-time responses.
 }
 ```
 
-### Data / 数据
+### Data
 
 ```json
 {
@@ -169,22 +165,20 @@ Uses Server-Sent Events for real-time responses.
 }
 ```
 
-## 错误处理 / Error Handling
-
-A2A 使用标准 JSON-RPC 2.0 错误码：
+## Error Handling
 
 A2A uses standard JSON-RPC 2.0 error codes:
 
-| 错误码 / Code | 含义 / Meaning |
-|--------------|----------------|
-| -32700 | 解析错误 / Parse error |
-| -32600 | 无效请求 / Invalid request |
-| -32601 | 方法未找到 / Method not found |
-| -32602 | 无效参数 / Invalid params |
-| -32603 | 内部错误 / Internal error |
-| -32000 | 服务器错误 / Server error |
+| Code   | Meaning            |
+|--------|--------------------|
+| -32700 | Parse error        |
+| -32600 | Invalid request    |
+| -32601 | Method not found   |
+| -32602 | Invalid params     |
+| -32603 | Internal error     |
+| -32000 | Server error       |
 
-**错误响应示例 / Error Response Example**:
+**Error Response Example**:
 ```json
 {
   "jsonrpc": "2.0",
@@ -196,13 +190,11 @@ A2A uses standard JSON-RPC 2.0 error codes:
 }
 ```
 
-## 完整示例 / Complete Example
-
-查看 `cmd/examples/a2a_server/main.go` 获取完整的工作示例。
+## Complete Example
 
 See `cmd/examples/a2a_server/main.go` for a complete working example.
 
-## 架构 / Architecture
+## Architecture
 
 ```
 ┌─────────────┐
@@ -233,12 +225,10 @@ See `cmd/examples/a2a_server/main.go` for a complete working example.
      JSON-RPC 2.0 Response
 ```
 
-## 兼容性 / Compatibility
+## Compatibility
 
-兼容 Python Agno 的 A2A 实现，可以与 Python Agent 互操作。
+Compatible with Python Agno's A2A implementation; can interoperate with Python agents.
 
-Compatible with Python Agno's A2A implementation, can interoperate with Python agents.
-
-## 许可证 / License
+## License
 
 Apache License 2.0

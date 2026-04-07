@@ -1,6 +1,6 @@
 # インストール
 
-このガイドでは、Agno-Goをインストールおよびセットアップするさまざまな方法について説明します。
+このガイドでは、AgentGoをインストールおよびセットアップするさまざまな方法について説明します。
 
 ## 前提条件
 
@@ -10,18 +10,18 @@
 
 ## 方法1: Go Get（推奨）
 
-Agno-GoをGoモジュールの依存関係としてインストール：
+AgentGoをGoモジュールの依存関係としてインストール：
 
 ```bash
-go get github.com/rexleimo/agno-Go
+go get github.com/jholhewres/agent-go
 ```
 
 次にコードでインポート：
 
 ```go
 import (
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 ```
 
@@ -31,8 +31,8 @@ import (
 
 ```bash
 # Clone repository
-git clone https://github.com/rexleimo/agno-Go.git
-cd agno-Go
+git clone https://github.com/jholhewres/agent-go.git
+cd agent-go
 
 # Download dependencies
 go mod download
@@ -127,8 +127,8 @@ import (
     "log"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -318,13 +318,13 @@ AGENTOS_ADDRESS=:9090
 
 問題が発生した場合：
 
-1. [GitHub Issues](https://github.com/rexleimo/agno-Go/issues)を確認
-2. [Discussions](https://github.com/rexleimo/agno-Go/discussions)で質問
+1. [GitHub Issues](https://github.com/jholhewres/agent-go/issues)を確認
+2. [Discussions](https://github.com/jholhewres/agent-go/discussions)で質問
 3. [ドキュメント](/guide/)を確認
 
 ## 次のステップ
 
-Agno-Goがインストールされたので：
+AgentGoがインストールされたので：
 
 1. [クイックスタート](/guide/quick-start) - 最初のエージェントを構築
 2. [コアコンセプト](/guide/agent) - Agent、Team、Workflowについて学ぶ

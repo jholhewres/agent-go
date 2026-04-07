@@ -1,6 +1,6 @@
 # パフォーマンス
 
-Agno-Goは極限のパフォーマンスを目指して設計されており、Python Agnoと比較してエージェント インスタンス化が16倍高速です。
+AgentGoは極限のパフォーマンスを目指して設計されており、Python Agnoと比較してエージェント インスタンス化が16倍高速です。
 
 ## エグゼクティブサマリー
 
@@ -288,7 +288,7 @@ go test -race ./...
 
 ## 結論
 
-Agno-Goは**パフォーマンス目標を超えています**:
+AgentGoは**パフォーマンス目標を超えています**:
 
 - ✅ 目標の5倍高速（180ns vs 1μs）
 - ✅ 目標の60%少ないメモリ（1.2KB vs 3KB）
@@ -304,4 +304,4 @@ Agno-Goは**パフォーマンス目標を超えています**:
 
 - [アーキテクチャ](/advanced/architecture)
 - [デプロイメント](/advanced/deployment)
-- [ベンチマークコード](https://github.com/rexleimo/agno-Go/tree/main/pkg/agentgo/agent/agent_bench_test.go)
+- [ベンチマークコード](https://github.com/jholhewres/agent-go/tree/main/pkg/agentgo/agent/agent_bench_test.go)

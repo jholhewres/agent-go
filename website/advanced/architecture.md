@@ -1,6 +1,6 @@
 # Architecture
 
-Agno-Go follows a clean, modular architecture designed for simplicity, efficiency, and extensibility.
+AgentGo follows a clean, modular architecture designed for simplicity, efficiency, and extensibility.
 
 ## Core Philosophy
 
@@ -389,4 +389,4 @@ Follow the KISS principle - don't over-engineer.
 - [Performance Benchmarks](/advanced/performance)
 - [Deployment Guide](/advanced/deployment)
 - [API Reference](/api/)
-- [Source Code](https://github.com/rexleimo/agno-Go)
+- [Source Code](https://github.com/jholhewres/agent-go)

@@ -1,6 +1,6 @@
 # Examples
 
-Working examples demonstrating all features of Agno-Go.
+Working examples demonstrating all features of AgentGo.
 
 ## Available Examples
 
@@ -21,7 +21,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/simple_agent/main.go
 ```
 
-[View Source](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/simple_agent)
+[View Source](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/simple_agent)
 
 ---
 
@@ -42,7 +42,7 @@ export ANTHROPIC_API_KEY=sk-ant-your-key
 go run cmd/examples/claude_agent/main.go
 ```
 
-[View Source](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/claude_agent)
+[View Source](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/claude_agent)
 
 ---
 
@@ -69,7 +69,7 @@ ollama pull llama3
 go run cmd/examples/ollama_agent/main.go
 ```
 
-[View Source](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/ollama_agent)
+[View Source](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/ollama_agent)
 
 ---
 
@@ -90,7 +90,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/team_demo/main.go
 ```
 
-[View Source](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/team_demo)
+[View Source](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/team_demo)
 
 ---
 
@@ -111,7 +111,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/workflow_demo/main.go
 ```
 
-[View Source](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/workflow_demo)
+[View Source](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/workflow_demo)
 
 ---
 
@@ -139,7 +139,7 @@ export OPENAI_API_KEY=sk-your-key
 go run cmd/examples/rag_demo/main.go
 ```
 
-[View Source](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/rag_demo)
+[View Source](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/rag_demo)
 
 ---
 
@@ -161,7 +161,7 @@ export LOGFIRE_WRITE_TOKEN=lf_your_token
 go run -tags logfire cmd/examples/logfire_observability/main.go
 ```
 
-[View Source](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/logfire_observability)
+[View Source](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/logfire_observability)
 
 ---
 
@@ -177,11 +177,11 @@ import (
     "fmt"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/http"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/toolkit"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/http"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/toolkit"
 )
 
 func main() {
@@ -215,9 +215,9 @@ import (
     "fmt"
     "os"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/team"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/team"
 )
 
 func main() {
@@ -260,9 +260,9 @@ import (
     "os"
     "strings"
 
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/workflow"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 )
 
 func main() {
@@ -325,4 +325,4 @@ Have an interesting example? Contribute to the repository:
 3. Add README.md with description and usage
 4. Submit a pull request
 
-[Contribution Guidelines](https://github.com/rexleimo/agno-Go/blob/main/CONTRIBUTING.md)
+[Contribution Guidelines](https://github.com/jholhewres/agent-go/blob/main/CONTRIBUTING.md)

@@ -1,6 +1,6 @@
 # Models - LLM Providers
 
-Agno-Go supports multiple LLM providers with a unified interface.
+AgentGo supports multiple LLM providers with a unified interface.
 
 ---
 
@@ -282,7 +282,7 @@ This is handled automatically by the SDK.
 
 1. Install Ollama: https://ollama.ai
 2. Pull a model: `ollama pull llama2`
-3. Use in Agno-Go:
+3. Use in AgentGo:
 
 ```go
 import "github.com/jholhewres/agent-go/pkg/agentgo/models/ollama"
@@ -597,7 +597,7 @@ func init() {
 
 ## Reasoning Model Support ⭐ NEW
 
-Agno-Go v1.2.1 adds reasoning support for advanced models:
+AgentGo v1.2.1 adds reasoning support for advanced models:
 
 ### Supported Models
 - **Gemini** - Advanced reasoning capabilities

@@ -1,6 +1,6 @@
 # OpenAI Embeddings
 
-OpenAI embeddings implementation for Agno-Go.
+OpenAI embeddings implementation for AgentGo.
 
 ## Features
 
@@ -375,4 +375,4 @@ fmt.Printf("Most relevant: %s (score: %.4f)\n", docs[bestIdx], bestScore)
 
 ## License
 
-Same as Agno-Go (MIT License)
+Same as AgentGo (MIT License)

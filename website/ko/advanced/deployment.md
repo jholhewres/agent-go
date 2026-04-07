@@ -8,8 +8,8 @@
 
 ```bash
 # 1. 저장소 클론
-git clone https://github.com/rexleimo/agno-Go.git
-cd agno-Go
+git clone https://github.com/jholhewres/agent-go.git
+cd agent-go
 
 # 2. 환경 설정
 cp .env.example .env
@@ -312,7 +312,7 @@ aws secretsmanager create-secret \
 내장 가드레일 사용:
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/guardrails"
+import "github.com/jholhewres/agent-go/pkg/agentgo/guardrails"
 
 promptGuard := guardrails.NewPromptInjectionGuardrail()
 agent.PreHooks = []hooks.Hook{promptGuard}
@@ -438,4 +438,4 @@ export LOG_LEVEL=debug
 - [성능](/advanced/performance)
 - [API 참조](/api/)
 - [예제](/examples/)
-- [GitHub 저장소](https://github.com/rexleimo/agno-Go)
+- [GitHub 저장소](https://github.com/jholhewres/agent-go)

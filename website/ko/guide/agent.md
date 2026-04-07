@@ -5,7 +5,7 @@
 ## 개요
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
+import "github.com/jholhewres/agent-go/pkg/agentgo/agent"
 
 agent, err := agent.New(agent.Config{
     Name:         "My Agent",
@@ -56,8 +56,8 @@ package main
 import (
     "context"
     "fmt"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/agent"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/models/openai"
+    "github.com/jholhewres/agent-go/pkg/agentgo/agent"
+    "github.com/jholhewres/agent-go/pkg/agentgo/models/openai"
 )
 
 func main() {
@@ -80,8 +80,8 @@ func main() {
 
 ```go
 import (
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/calculator"
-    "github.com/rexleimo/agno-Go/pkg/agentgo/tools/http"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/calculator"
+    "github.com/jholhewres/agent-go/pkg/agentgo/tools/http"
 )
 
 ag, _ := agent.New(agent.Config{
@@ -102,7 +102,7 @@ output, _ := ag.Run(ctx, "Calculate 15 * 23 and fetch https://api.github.com")
 ### 커스텀 메모리
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/memory"
+import "github.com/jholhewres/agent-go/pkg/agentgo/memory"
 
 // 커스텀 제한이 있는 메모리 생성
 mem := memory.NewInMemory(50) // 최근 50개 메시지 유지
@@ -118,7 +118,7 @@ ag, _ := agent.New(agent.Config{
 훅으로 입력 및 출력 검증:
 
 ```go
-import "github.com/rexleimo/agno-Go/pkg/agentgo/guardrails"
+import "github.com/jholhewres/agent-go/pkg/agentgo/guardrails"
 
 // 내장 프롬프트 인젝션 가드
 promptGuard := guardrails.NewPromptInjectionGuardrail()
@@ -297,10 +297,10 @@ for i := 0; i < 100; i++ {
 
 실제 예제를 확인하세요:
 
-- [Simple Agent](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/simple_agent)
-- [Claude Agent](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/claude_agent)
-- [Ollama Agent](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/ollama_agent)
-- [Agent with Guardrails](https://github.com/rexleimo/agno-Go/tree/main/cmd/examples/agent_with_guardrails)
+- [Simple Agent](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/simple_agent)
+- [Claude Agent](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/claude_agent)
+- [Ollama Agent](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/ollama_agent)
+- [Agent with Guardrails](https://github.com/jholhewres/agent-go/tree/main/cmd/examples/agent_with_guardrails)
 
 ## API 레퍼런스
 

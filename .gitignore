@@ -44,3 +44,6 @@ Thumbs.db
 node_modules/
 website/.vitepress/dist/
 website/.vitepress/cache/
+
+.omc/
+.omx/

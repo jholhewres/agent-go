@@ -1,6 +1,6 @@
 # Gemini Provider
 
-Google Gemini API integration for Agno-Go.
+Google Gemini API integration for AgentGo.
 
 ## Features
 

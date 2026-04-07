@@ -1,6 +1,6 @@
 # Knowledge API 示例
 
-本示例演示如何使用 agno-Go 的知识库 API 进行向量搜索。
+本示例演示如何使用 AgentGo 的知识库 API 进行向量搜索。
 
 ## 前置条件
 
@@ -35,7 +35,7 @@ export CHROMADB_URL=http://localhost:8000
 ### 启动服务器
 
 ```bash
-cd /Users/molei/codes/aiagent/agno-Go
+cd /Users/molei/codes/aiagent/AgentGo
 go run cmd/examples/knowledge_api/main.go
 ```
 
@@ -106,7 +106,7 @@ curl -X POST http://localhost:8080/api/v1/knowledge/search \
   "results": [
     {
       "id": "doc_123",
-      "content": "To create an Agent in agno-Go, use the agent.New() function...",
+      "content": "To create an Agent in AgentGo, use the agent.New() function...",
       "metadata": {
         "source": "documentation",
         "page": 5
@@ -168,14 +168,14 @@ client = chromadb.HttpClient(host="localhost", port=8000)
 # 获取或创建集合
 collection = client.get_or_create_collection(
     name="agno_knowledge",
-    metadata={"description": "Agno-Go knowledge base"}
+    metadata={"description": "AgentGo knowledge base"}
 )
 
 # 添加文档
 documents = [
-    "To create an Agent in agno-Go, use the agent.New() function with a configuration.",
+    "To create an Agent in AgentGo, use the agent.New() function with a configuration.",
     "Agents can use tools like Calculator, HTTP, and File operations.",
-    "Memory management in agno-Go uses the memory.Memory interface.",
+    "Memory management in AgentGo uses the memory.Memory interface.",
 ]
 
 metadatas = [

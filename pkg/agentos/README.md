@@ -1,17 +1,17 @@
 # AgentOS - Production-Ready Agent Server
 
-AgentOS is a production-ready HTTP server for managing and running AI agents built with Agno-Go.
+AgentOS is a production-ready HTTP server for managing and running AI agents built with AgentGo.
 
 ## Features
 
-- 🚀 **RESTful API** - Clean, intuitive API design
-- 💬 **Session Management** - Multi-turn conversation support
-- 🤖 **Agent Registry** - Dynamic agent registration and execution
-- 🔧 **Tool Support** - Agents can use tools for extended capabilities
-- 💾 **Memory Management** - Automatic conversation history management
-- 📊 **Structured Logging** - Built-in request logging with slog
-- ⚡ **High Performance** - Built on Gin framework for speed
-- 🔒 **Thread-Safe** - Concurrent request handling
+- **RESTful API** - Clean, intuitive API design
+- **Session Management** - Multi-turn conversation support
+- **Agent Registry** - Dynamic agent registration and execution
+- **Tool Support** - Agents can use tools for extended capabilities
+- **Memory Management** - Automatic conversation history management
+- **Structured Logging** - Built-in request logging with slog
+- **High Performance** - Built on Gin framework for speed
+- **Thread-Safe** - Concurrent request handling
 
 ## Quick Start
 
@@ -104,7 +104,7 @@ AgentOS supports Server-Sent Events (SSE) for monitoring agent execution in real
 POST /api/v1/agents/{agent_id}/run/stream
 ```
 
-Query parameter `types` can be used to filter event categories (e.g. `types=token,complete,reasoning`).  
+Query parameter `types` can be used to filter event categories (e.g. `types=token,complete,reasoning`).
 Each event is delivered in the following structure:
 
 - `run_start`: Input payload and session metadata.
@@ -114,7 +114,7 @@ Each event is delivered in the following structure:
 - `complete`: Final response content, elapsed duration, aggregated token usage (including reasoning token estimates).
 - `error`: Rich error payload when execution fails.
 
-📦 需要将事件转发到 Logfire 或其他可观测性平台？请参考 [`cmd/examples/logfire_observability`](../../cmd/examples/logfire_observability) 示例（使用 `go run -tags logfire .`）以及文档 [`docs/release/logfire_observability.md`](../../docs/release/logfire_observability.md)。
+To forward events to Logfire or another observability platform, see the [`cmd/examples/logfire_observability`](../../cmd/examples/logfire_observability) example (run with `go run -tags logfire .`) and the documentation at [`docs/release/logfire_observability.md`](../../docs/release/logfire_observability.md).
 
 Refer to `pkg/agentos/events.go` for the latest schema definitions.
 
@@ -386,7 +386,7 @@ go tool cover -html=coverage.out
                    ▼
               ┌─────────┐
               │  Agent  │
-              │ (Agno)  │
+              │(AgentGo)│
               └────┬────┘
                    │
         ┌──────────┼──────────┐
@@ -507,11 +507,11 @@ MIT License - See [LICENSE](../../LICENSE) for details.
 
 ## Related Projects
 
-- [Agno-Go](https://github.com/jholhewres/agent-go) - Core agent framework
+- [AgentGo](https://github.com/jholhewres/agent-go) - Core agent framework
 - [Agno](https://github.com/agno-agi/agno) - Python implementation
 
 ## Support
 
-- 📚 [Documentation](https://docs.agno.com)
-- 💬 [Discussions](https://github.com/jholhewres/agent-go/discussions)
-- 🐛 [Issues](https://github.com/jholhewres/agent-go/issues)
+- [Documentation](https://docs.agno.com)
+- [Discussions](https://github.com/jholhewres/agent-go/discussions)
+- [Issues](https://github.com/jholhewres/agent-go/issues)

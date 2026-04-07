@@ -1,18 +1,16 @@
-# MCP Implementation Summary / MCP 实施摘要
+# MCP Implementation Summary
 
-## 实施摘要 / Implementation Summary
+## Implementation Summary
 
-Successfully implemented the Model Context Protocol (MCP) feature for agno-Go, enabling seamless integration with MCP servers as toolkits for agents.
+Successfully implemented the Model Context Protocol (MCP) feature for AgentGo, enabling seamless integration with MCP servers as toolkits for agents.
 
-成功为 agno-Go 实现了模型上下文协议（MCP）功能，使 MCP 服务器能够无缝集成为 agent 的工具包。
+**Status**: Phase 1-3 Complete (Foundation + Security + Toolkit Integration)
 
-**Status / 状态**: ✅ Phase 1-3 Complete (Foundation + Security + Toolkit Integration)
+**Test Coverage**: >80% across all packages
 
-**Test Coverage / 测试覆盖率**: >80% across all packages
+## Files Created/Modified
 
-## 已创建/修改的文件 / Files Created/Modified
-
-### Core Protocol / 核心协议
+### Core Protocol
 - `pkg/agentgo/mcp/protocol/jsonrpc.go` - JSON-RPC 2.0 implementation
 - `pkg/agentgo/mcp/protocol/messages.go` - MCP protocol messages
 - `pkg/agentgo/mcp/protocol/jsonrpc_test.go` - Protocol tests
@@ -20,7 +18,7 @@ Successfully implemented the Model Context Protocol (MCP) feature for agno-Go, e
 
 **Lines**: ~600 | **Coverage**: 85.7%
 
-### Client & Transport / 客户端和传输
+### Client & Transport
 - `pkg/agentgo/mcp/client/transport.go` - Transport interface
 - `pkg/agentgo/mcp/client/stdio_transport.go` - Stdio transport implementation
 - `pkg/agentgo/mcp/client/client.go` - MCP client core
@@ -31,171 +29,169 @@ Successfully implemented the Model Context Protocol (MCP) feature for agno-Go, e
 
 **Lines**: ~1200 | **Coverage**: 69.0%
 
-### Security / 安全
+### Security
 - `pkg/agentgo/mcp/security/validator.go` - Command validator
 - `pkg/agentgo/mcp/security/validator_test.go` - Security tests
 
 **Lines**: ~600 | **Coverage**: 97.6%
 
-**Features / 功能**:
+**Features**:
 - Command whitelist (python, node, npm, npx, uvx, docker)
 - Shell metacharacter blocking
 - Path normalization
 - Custom validator support
 
-### Content Handling / 内容处理
+### Content Handling
 - `pkg/agentgo/mcp/content/handler.go` - Content type handler
 - `pkg/agentgo/mcp/content/handler_test.go` - Content tests
 
 **Lines**: ~500 | **Coverage**: 98.1%
 
-**Features / 功能**:
+**Features**:
 - Text extraction and formatting
 - Image base64 encoding/decoding
 - Resource handling
 - Content validation
 - Type filtering and merging
 
-### Toolkit Integration / 工具包集成
+### Toolkit Integration
 - `pkg/agentgo/mcp/toolkit/mcp_toolkit.go` - MCP toolkit
 - `pkg/agentgo/mcp/toolkit/mcp_toolkit_test.go` - Toolkit tests
 
 **Lines**: ~500 | **Coverage**: 77.4%
 
-**Features / 功能**:
+**Features**:
 - Automatic tool discovery
-- Schema conversion (MCP → agno)
+- Schema conversion (MCP to AgentGo)
 - Tool filtering (include/exclude)
 - Agent integration
 
-### Examples & Documentation / 示例和文档
+### Examples & Documentation
 - `cmd/examples/mcp_demo/main.go` - Complete MCP demo
 - `pkg/agentgo/mcp/README.md` - User documentation
 - `pkg/agentgo/mcp/IMPLEMENTATION.md` - This file
 
 **Lines**: ~400
 
-## 测试结果 / Test Results
+## Test Results
 
-### Test Coverage by Package / 按包的测试覆盖率
+### Test Coverage by Package
 
 ```
 Package                               Coverage
 ---------------------------------------------------
-pkg/agentgo/mcp/client                   69.0%  ✅
-pkg/agentgo/mcp/content                  98.1%  ⭐
-pkg/agentgo/mcp/protocol                 85.7%  ✅
-pkg/agentgo/mcp/security                 97.6%  ⭐
-pkg/agentgo/mcp/toolkit                  77.4%  ✅
+pkg/agentgo/mcp/client                   69.0%
+pkg/agentgo/mcp/content                  98.1%
+pkg/agentgo/mcp/protocol                 85.7%
+pkg/agentgo/mcp/security                 97.6%
+pkg/agentgo/mcp/toolkit                  77.4%
 ---------------------------------------------------
-Overall                               >80%   ✅
+Overall                               >80%
 ```
 
-### Test Statistics / 测试统计
+### Test Statistics
 
 - **Total Test Files**: 6
 - **Total Tests**: 70+
-- **All Tests**: ✅ PASSING
-- **Race Conditions**: ✅ NONE DETECTED
+- **All Tests**: PASSING
+- **Race Conditions**: NONE DETECTED
 
-## 遇到的挑战 / Challenges Encountered
+## Challenges Encountered
 
-### 1. Transport Testing / 传输测试
+### 1. Transport Testing
 
-**Challenge / 挑战**: Testing stdio transport with real subprocess communication is complex and timing-dependent.
+**Challenge**: Testing stdio transport with real subprocess communication is complex and timing-dependent.
 
-**Solution / 解决方案**: Created MockTransport for unit tests, marked integration test as skip, documented requirement for real MCP server.
+**Solution**: Created MockTransport for unit tests, marked integration test as skip, documented requirement for real MCP server.
 
-### 2. Schema Conversion / 模式转换
+### 2. Schema Conversion
 
-**Challenge / 挑战**: Converting JSON Schema (MCP) to agno toolkit parameters requires dynamic type handling.
+**Challenge**: Converting JSON Schema (MCP) to AgentGo toolkit parameters requires dynamic type handling.
 
-**Solution / 解决方案**: Implemented type-safe conversion with proper error handling, supporting object schemas with nested properties.
+**Solution**: Implemented type-safe conversion with proper error handling, supporting object schemas with nested properties.
 
-### 3. Security Balance / 安全平衡
+### 3. Security Balance
 
-**Challenge / 挑战**: Need to be secure without being overly restrictive.
+**Challenge**: Need to be secure without being overly restrictive.
 
-**Solution / 解决方案**: Implemented whitelist approach with clear defaults, provided customization options for advanced users.
+**Solution**: Implemented whitelist approach with clear defaults, provided customization options for advanced users.
 
-## 做出的决策 / Decisions Made
+## Decisions Made
 
-### 1. Transport Architecture / 传输架构
+### 1. Transport Architecture
 
-**Decision / 决策**: Implement Transport interface with stdio first, prepare for SSE/HTTP later.
+**Decision**: Implement Transport interface with stdio first, prepare for SSE/HTTP later.
 
-**Rationale / 理由**:
+**Rationale**:
 - Stdio is most common for MCP servers
 - Interface allows easy addition of new transports
 - YAGNI principle - implement what's needed now
 
-### 2. Security Approach / 安全方法
+### 2. Security Approach
 
-**Decision / 决策**: Use command whitelist + character blacklist combination.
+**Decision**: Use command whitelist + character blacklist combination.
 
-**Rationale / 理由**:
+**Rationale**:
 - Defense in depth
-- Follows Python agno's approach
+- Follows Python Agno's approach
 - Easy to understand and customize
 
-### 3. Content Handling / 内容处理
+### 3. Content Handling
 
-**Decision / 决策**: Create dedicated content handler package.
+**Decision**: Create dedicated content handler package.
 
-**Rationale / 理由**:
+**Rationale**:
 - Separation of concerns
 - Reusable across client and toolkit
 - Easier to test and maintain
 
-### 4. Toolkit Integration / 工具包集成
+### 4. Toolkit Integration
 
-**Decision / 决策**: Auto-discover tools and convert to agno functions.
+**Decision**: Auto-discover tools and convert to AgentGo functions.
 
-**Rationale / 理由**:
+**Rationale**:
 - Zero-configuration for simple cases
 - Filtering options for advanced use
 - Seamless integration with existing agent system
 
-### 5. Error Handling / 错误处理
+### 5. Error Handling
 
-**Decision / 决策**: Use wrapped errors with context (`fmt.Errorf("...: %w", err)`).
+**Decision**: Use wrapped errors with context (`fmt.Errorf("...: %w", err)`).
 
-**Rationale / 理由**:
+**Rationale**:
 - Follows Go 1.13+ best practices
 - Enables error inspection
 - Provides clear error chains
 
-## 性能指标 / Performance Metrics
+## Performance Metrics
 
-### Achieved / 已实现
+### Achieved
 
-- ✅ **MCP Client Init**: <100μs (target met)
-- ✅ **Tool Discovery**: <50μs per server (target met)
-- ✅ **Memory**: <10KB per connection (target met)
-- ✅ **Test Coverage**: >80% (target met)
+- **MCP Client Init**: <100us (target met)
+- **Tool Discovery**: <50us per server (target met)
+- **Memory**: <10KB per connection (target met)
+- **Test Coverage**: >80% (target met)
 
-### Benchmarks / 基准测试
+### Benchmarks
 
 Client operations are lightweight and fast:
-客户端操作轻量且快速:
 
 - JSON-RPC request creation: ~500ns
-- Response parsing: ~1μs
+- Response parsing: ~1us
 - Content extraction: ~100ns per item
-- Schema conversion: ~2μs per tool
+- Schema conversion: ~2us per tool
 
-## 代码质量 / Code Quality
+## Code Quality
 
-### Adherence to Guidelines / 遵循指南
+### Adherence to Guidelines
 
-- ✅ Bilingual comments (English/中文)
-- ✅ Idiomatic Go code
-- ✅ Comprehensive error handling
-- ✅ Context-aware methods
-- ✅ Table-driven tests
-- ✅ No race conditions
+- Idiomatic Go code
+- Comprehensive error handling
+- Context-aware methods
+- Table-driven tests
+- No race conditions
 
-### Code Organization / 代码组织
+### Code Organization
 
 ```
 pkg/agentgo/mcp/
@@ -206,28 +202,28 @@ pkg/agentgo/mcp/
 └── toolkit/       # Integration point
 ```
 
-## 未来工作 / Future Work
+## Future Work
 
 ### Phase 4: Advanced Transports (Not Implemented)
 
-- ⏳ SSE transport
-- ⏳ HTTP transport
-- ⏳ Configuration management
+- SSE transport
+- HTTP transport
+- Configuration management
 
-**Reason / 原因**: Stdio transport covers 90% of use cases. Additional transports can be added when needed.
+**Reason**: Stdio transport covers 90% of use cases. Additional transports can be added when needed.
 
 ### Phase 5: Additional Features (Not Implemented)
 
-- ⏳ Connection pooling
-- ⏳ Automatic reconnection
-- ⏳ Server health checks
-- ⏳ Metrics and monitoring
+- Connection pooling
+- Automatic reconnection
+- Server health checks
+- Metrics and monitoring
 
-**Reason / 原因**: KISS principle - start simple, add complexity when proven necessary.
+**Reason**: KISS principle - start simple, add complexity when proven necessary.
 
-## 使用示例 / Usage Examples
+## Usage Examples
 
-### Basic Usage / 基本用法
+### Basic Usage
 
 ```go
 // 1. Create client
@@ -256,7 +252,7 @@ agent, _ := agent.New(&agent.Config{
 })
 ```
 
-### With Security / 使用安全功能
+### With Security
 
 ```go
 // Validate before creating transport
@@ -272,7 +268,7 @@ transport, _ := client.NewStdioTransport(client.StdioConfig{
 })
 ```
 
-### With Filtering / 使用过滤
+### With Filtering
 
 ```go
 // Include only specific tools
@@ -288,48 +284,43 @@ toolkit, _ := mcptoolkit.New(ctx, mcptoolkit.Config{
 })
 ```
 
-## 文档 / Documentation
+## Documentation
 
-### User Documentation / 用户文档
-- ✅ README.md with quick start
-- ✅ Code examples
-- ✅ Security guidelines
-- ✅ Bilingual documentation
+### User Documentation
+- README.md with quick start
+- Code examples
+- Security guidelines
 
-### Developer Documentation / 开发者文档
-- ✅ Inline code comments (bilingual)
-- ✅ Test cases as documentation
-- ✅ This implementation summary
+### Developer Documentation
+- Inline code comments
+- Test cases as documentation
+- This implementation summary
 
-## 结论 / Conclusion
+## Conclusion
 
-The MCP implementation for agno-Go is **production-ready** for stdio-based MCP servers, with:
+The MCP implementation for AgentGo is **production-ready** for stdio-based MCP servers, with:
 
-agno-Go 的 MCP 实现已经**可用于生产环境**，适用于基于 stdio 的 MCP 服务器，具有:
-
-- ✅ Solid foundation (Protocol + Client + Transport)
-- ✅ Security-first design
-- ✅ Comprehensive testing (>80% coverage)
-- ✅ Clean integration with existing agent system
-- ✅ Extensible architecture for future enhancements
-- ✅ Production-quality code and documentation
+- Solid foundation (Protocol + Client + Transport)
+- Security-first design
+- Comprehensive testing (>80% coverage)
+- Clean integration with existing agent system
+- Extensible architecture for future enhancements
+- Production-quality code and documentation
 
 **Total Implementation Time**: ~4 hours
 **Total Lines of Code**: ~3,400
 **Total Tests**: 70+
-**Quality**: Production-ready ⭐
+**Quality**: Production-ready
 
-## 下一步 / Next Steps
+## Next Steps
 
 For users wanting to use MCP:
-想要使用 MCP 的用户:
 
 1. Install an MCP server (e.g., `uvx mcp install @modelcontextprotocol/server-calculator`)
 2. See `cmd/examples/mcp_demo/main.go` for usage
 3. Read `pkg/agentgo/mcp/README.md` for details
 
 For developers wanting to extend:
-想要扩展的开发者:
 
 1. Review the architecture in this document
 2. Add new transports by implementing `Transport` interface
@@ -340,4 +331,4 @@ For developers wanting to extend:
 
 Generated: 2025-10-05
 Version: 0.1.0
-Status: ✅ Complete (Phase 1-3)
+Status: Complete (Phase 1-3)

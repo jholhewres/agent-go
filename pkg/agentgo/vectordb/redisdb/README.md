@@ -1,6 +1,6 @@
 # Redis VectorDB Provider (Optional)
 
-This is a minimal Redis-backed `VectorDB` provider for Agno-Go.
+This is a minimal Redis-backed `VectorDB` provider for AgentGo.
 
 - Optional build: compile with `-tags redis`
 - No hard dependency when unused

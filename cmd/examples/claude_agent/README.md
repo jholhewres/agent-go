@@ -1,6 +1,6 @@
 # Claude Agent Example
 
-This example demonstrates how to use Anthropic's Claude models with the Agno-Go framework.
+This example demonstrates how to use Anthropic's Claude models with the AgentGo framework.
 
 ## Features
 

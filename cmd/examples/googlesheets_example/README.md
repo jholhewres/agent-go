@@ -1,8 +1,8 @@
 # Google Sheets 工具包示例 / Google Sheets Toolkit Example
 
-本示例演示如何在 Agno-Go Agent 中使用 Google Sheets 工具包来操作 Google 电子表格。
+本示例演示如何在 AgentGo Agent 中使用 Google Sheets 工具包来操作 Google 电子表格。
 
-This example demonstrates how to use the Google Sheets toolkit in an Agno-Go Agent to manipulate Google Spreadsheets.
+This example demonstrates how to use the Google Sheets toolkit in an AgentGo Agent to manipulate Google Spreadsheets.
 
 ## 前置要求 / Prerequisites
 
@@ -201,4 +201,4 @@ export GOOGLE_SHEETS_CREDENTIALS='{"type":"service_account","project_id":"your-p
 
 - [Google Sheets API 文档](https://developers.google.com/sheets/api)
 - [服务账号认证指南](https://cloud.google.com/iam/docs/service-accounts)
-- [Agno-Go 工具包文档](https://github.com/jholhewres/agent-go)
+- [AgentGo 工具包文档](https://github.com/jholhewres/agent-go)

@@ -1,6 +1,6 @@
 # DeepSeek Provider
 
-DeepSeek API integration for Agno-Go, providing access to DeepSeek-V3 and DeepSeek-R1 models.
+DeepSeek API integration for AgentGo, providing access to DeepSeek-V3 and DeepSeek-R1 models.
 
 ## Features
 

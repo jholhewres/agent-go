@@ -1,6 +1,6 @@
 # Models Package
 
-This package provides common utilities for implementing model providers in Agno-Go.
+This package provides common utilities for implementing model providers in AgentGo.
 
 ## Common Utilities (common.go)
 

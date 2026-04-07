@@ -1,6 +1,6 @@
 # Models - LLM 提供商
 
-Agno-Go 通过统一接口支持多个 LLM 提供商。
+AgentGo 通过统一接口支持多个 LLM 提供商。
 
 ---
 
@@ -282,7 +282,7 @@ GLM 使用 JWT (JSON Web Token) 认证：
 
 1. 安装 Ollama: https://ollama.ai
 2. 拉取模型: `ollama pull llama2`
-3. 在 Agno-Go 中使用:
+3. 在 AgentGo 中使用:
 
 ```go
 import "github.com/jholhewres/agent-go/pkg/agentgo/models/ollama"
@@ -597,7 +597,7 @@ func init() {
 
 ## 推理模型支持 ⭐ 新增
 
-Agno-Go v1.2.1 为高级模型添加了推理支持：
+AgentGo v1.2.1 为高级模型添加了推理支持：
 
 ### 支持的模型
 - **Gemini** - 高级推理能力
