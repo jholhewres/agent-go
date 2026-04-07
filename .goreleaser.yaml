@@ -31,13 +31,16 @@ snapshot:
 
 changelog:
   sort: asc
-  use: conventional-commits
+  # use: git (default) — goreleaser pulls commits from git history.
+  # "conventional-commits" is NOT a valid value for this field in
+  # goreleaser v2; conventional-commits style is expressed here via
+  # the `groups` regexps + `filters.exclude` list below.
   groups:
     - title: Features
-      regexp: "^feat"
+      regexp: '^.*?feat(\(.+\))??!?:.+$'
       order: 0
     - title: Bug Fixes
-      regexp: "^fix"
+      regexp: '^.*?fix(\(.+\))??!?:.+$'
       order: 1
     - title: Other Changes
       order: 999
@@ -45,6 +48,11 @@ changelog:
     exclude:
       - "^chore: update"
       - "^docs:"
+      - "^ci:"
+      - "^test:"
+      - "^style:"
+      - "Merge pull request"
+      - "Merge branch"
 
 release:
   github:
@@ -54,4 +62,6 @@ release:
   header: |
     ## AgentGo {{ .Tag }}
 
-    Full documentation: https://agent-go.dev
+    Full documentation: https://github.com/jholhewres/agent-go
+
+    Install: `go get github.com/jholhewres/agent-go@{{ .Tag }}`
