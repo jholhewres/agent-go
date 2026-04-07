@@ -202,6 +202,7 @@ make coverage
 |----------|------|
 | **Full Docs** | [website/](website/) |
 | **API Reference** | [pkg.go.dev/github.com/jholhewres/agent-go](https://pkg.go.dev/github.com/jholhewres/agent-go) |
+| **Production Deployment** | [website/advanced/production-deployment.md](website/advanced/production-deployment.md) |
 | **AgentOS** | [pkg/agentos/](pkg/agentos/) |
 | **Examples** | [cmd/examples/](cmd/examples/) |
 | **Development** | [docs/DEVELOPMENT.md](docs/DEVELOPMENT.md) |
