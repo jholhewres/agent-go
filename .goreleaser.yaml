@@ -1,0 +1,57 @@
+version: 2
+
+builds:
+  - id: simple_agent
+    main: ./cmd/examples/simple_agent
+    binary: simple_agent
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    env:
+      - CGO_ENABLED=0
+    ldflags:
+      - -s -w -X main.version={{.Version}} -X main.commit={{.Commit}} -X main.date={{.Date}}
+
+archives:
+  - id: default
+    name_template: "{{ .ProjectName }}_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
+    format_overrides:
+      - goos: windows
+        formats:
+          - zip
+    formats:
+      - tar.gz
+
+snapshot:
+  version_template: "{{ incpatch .Version }}-next"
+
+changelog:
+  sort: asc
+  use: conventional-commits
+  groups:
+    - title: Features
+      regexp: "^feat"
+      order: 0
+    - title: Bug Fixes
+      regexp: "^fix"
+      order: 1
+    - title: Other Changes
+      order: 999
+  filters:
+    exclude:
+      - "^chore: update"
+      - "^docs:"
+
+release:
+  github:
+    owner: jholhewres
+    name: agent-go
+  mode: append
+  header: |
+    ## AgentGo {{ .Tag }}
+
+    Full documentation: https://agent-go.dev
