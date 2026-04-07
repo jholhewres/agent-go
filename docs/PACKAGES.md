@@ -12,7 +12,8 @@ All top-level packages under `pkg/agentgo/`. Status legend: ✅ stable / 🚧 be
 | `experimental` | Packages with unstable APIs — see sub-directories | 🧪 experimental |
 | `experimental/cloud` | Minimal `Deployer` interface for publishing agent artifacts | 🧪 experimental |
 | `experimental/culture` | Tagged cultural-knowledge store for per-org agent configuration | 🧪 experimental |
-| `experimental/eval` | LLM evaluation harness: scenarios, metrics, model comparison | 🧪 experimental |
+| `eval` | Agent evaluation framework: accuracy, performance, reliability, LLM-as-judge evaluators with JSON/JUnit reporting | ✅ stable |
+| `experimental/eval` | LLM evaluation harness: scenarios, metrics, model comparison (superseded by `eval`) | 🧪 experimental |
 | `experimental/integrations` | Thread-safe registry for third-party service integrations with health checks | 🧪 experimental |
 | `guardrails` | Input/output guardrail hooks for safety and policy enforcement | ✅ stable |
 | `hooks` | Tool execution lifecycle hooks (pre/post) | ✅ stable |
