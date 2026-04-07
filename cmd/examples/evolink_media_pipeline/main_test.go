@@ -9,10 +9,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
 	evolinkimg "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/image"
 	evolinktxt "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/text"
 	evolinkvid "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/video"
-	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
 	"github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 )
 

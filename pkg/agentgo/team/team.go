@@ -533,11 +533,12 @@ Consider the previous outputs and provide your refined answer. If you agree with
 			return nil, <-errors
 		}
 
-		// Collect round outputs
-		roundOutputs := make([]*AgentOutput, 0, len(t.Agents))
+		// Collect round outputs. Note: per-round outputs are currently
+		// aggregated only via `allOutputs` + `previousOutputs`. A future
+		// consensus heuristic may need a per-round slice; reintroduce
+		// `roundOutputs` then.
 		previousOutputs = ""
 		for output := range results {
-			roundOutputs = append(roundOutputs, output)
 			allOutputs = append(allOutputs, output)
 			previousOutputs += fmt.Sprintf("\n[%s]: %s", output.AgentID, output.Content)
 		}

@@ -7,10 +7,10 @@ import (
 	"os"
 
 	"github.com/jholhewres/agent-go/pkg/agentgo/agent"
+	"github.com/jholhewres/agent-go/pkg/agentgo/models"
 	evolinkimg "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/image"
 	evolinktxt "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/text"
 	evolinkvid "github.com/jholhewres/agent-go/pkg/agentgo/models/evolink/video"
-	"github.com/jholhewres/agent-go/pkg/agentgo/models"
 	"github.com/jholhewres/agent-go/pkg/agentgo/types"
 	"github.com/jholhewres/agent-go/pkg/agentgo/workflow"
 )
@@ -21,7 +21,7 @@ type imageNode struct {
 	model *evolinkimg.Image
 }
 
-func (n *imageNode) GetID() string             { return "image-generation" }
+func (n *imageNode) GetID() string              { return "image-generation" }
 func (n *imageNode) GetType() workflow.NodeType { return workflow.NodeTypeStep }
 func (n *imageNode) Execute(ctx context.Context, execCtx *workflow.ExecutionContext) (*workflow.ExecutionContext, error) {
 	prompt := execCtx.Output
@@ -56,7 +56,7 @@ type videoNode struct {
 	model *evolinkvid.Video
 }
 
-func (n *videoNode) GetID() string             { return "video-generation" }
+func (n *videoNode) GetID() string              { return "video-generation" }
 func (n *videoNode) GetType() workflow.NodeType { return workflow.NodeTypeStep }
 func (n *videoNode) Execute(ctx context.Context, execCtx *workflow.ExecutionContext) (*workflow.ExecutionContext, error) {
 	prompt := execCtx.Input // original user prompt

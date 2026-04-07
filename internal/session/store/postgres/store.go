@@ -286,7 +286,6 @@ func (s *Store) ListSessions(ctx context.Context, opts store.ListSessionsOptions
 		offset := (page - 1) * limit
 		builder.WriteString(fmt.Sprintf("OFFSET $%d\n", argIndex))
 		args = append(args, offset)
-		argIndex++
 	}
 
 	rows, err := s.pool.Query(ctx, builder.String(), args...)

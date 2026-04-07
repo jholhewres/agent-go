@@ -17,17 +17,6 @@ func convertToChromaEmbeddings(embeddings [][]float32) []*types.Embedding {
 	return types.NewEmbeddingsFromFloat32(embeddings)
 }
 
-// convertFromChromaEmbeddings converts []*types.Embedding to [][]float32
-func convertFromChromaEmbeddings(embeddings []*types.Embedding) [][]float32 {
-	result := make([][]float32, len(embeddings))
-	for i, emb := range embeddings {
-		if emb != nil && emb.ArrayOfFloat32 != nil {
-			result[i] = *emb.ArrayOfFloat32
-		}
-	}
-	return result
-}
-
 // ChromaDB implements the VectorDB interface using ChromaDB
 type ChromaDB struct {
 	client         *chroma.Client

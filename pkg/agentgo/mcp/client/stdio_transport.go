@@ -190,7 +190,7 @@ func (t *StdioTransport) Stop() error {
 		// Force kill if not exited
 		// 如果未退出则强制杀死
 		if t.cmd.Process != nil {
-			t.cmd.Process.Kill()
+			_ = t.cmd.Process.Kill()
 		}
 		return fmt.Errorf("process did not exit gracefully, killed")
 	case err := <-done:

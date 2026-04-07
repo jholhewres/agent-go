@@ -40,7 +40,6 @@ type PromptSection struct {
 // PromptComposer 将多个提示部分组合成最终提示
 type PromptComposer struct {
 	sections []PromptSection
-	template *template.Template
 }
 
 // NewPromptComposer creates a new prompt composer

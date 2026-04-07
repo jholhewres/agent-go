@@ -109,7 +109,7 @@ func TestClient_Connect(t *testing.T) {
 	}
 
 	// Cleanup
-	client.Disconnect()
+	_ = client.Disconnect()
 }
 
 func TestClient_Connect_TransportError(t *testing.T) {
@@ -329,7 +329,7 @@ func TestClient_ListTools(t *testing.T) {
 	if err := client.Connect(ctx); err != nil {
 		t.Fatalf("Failed to connect: %v", err)
 	}
-	defer client.Disconnect()
+	defer func() { _ = client.Disconnect() }()
 
 	tools, err := client.ListTools(ctx)
 	if err != nil {
@@ -402,7 +402,7 @@ func TestClient_CallTool(t *testing.T) {
 	if err := client.Connect(ctx); err != nil {
 		t.Fatalf("Failed to connect: %v", err)
 	}
-	defer client.Disconnect()
+	defer func() { _ = client.Disconnect() }()
 
 	result, err := client.CallTool(ctx, "add", map[string]interface{}{
 		"a": 1,
@@ -464,7 +464,7 @@ func TestClient_CallTool_Error(t *testing.T) {
 	if err := client.Connect(ctx); err != nil {
 		t.Fatalf("Failed to connect: %v", err)
 	}
-	defer client.Disconnect()
+	defer func() { _ = client.Disconnect() }()
 
 	_, err = client.CallTool(ctx, "failing_tool", nil)
 	if err == nil {

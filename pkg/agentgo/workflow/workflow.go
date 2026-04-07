@@ -489,12 +489,6 @@ func generateSessionID() string {
 	return "session-" + uuid.New().String()
 }
 
-// generateRunID 生成唯一的 run ID
-// generateRunID generates a unique run ID
-func generateRunID() string {
-	return "run-" + uuid.New().String()
-}
-
 // runContextMetadata extracts a serialisable view of the run context identifiers
 // suitable for storing in workflow metadata or logs.
 func runContextMetadata(rc *run.RunContext) map[string]interface{} {

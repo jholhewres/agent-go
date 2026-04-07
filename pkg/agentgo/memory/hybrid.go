@@ -133,12 +133,13 @@ func NewHybridMemory(config HybridMemoryConfig) (*HybridMemory, error) {
 		config.CollectionName = "agent_memory"
 	}
 
-	// Create collection if needed
+	// Create collection if needed. The collection may already exist
+	// from a previous run; we discard the error intentionally because
+	// a duplicate-collection error and a real failure both surface as
+	// generic errors here, and the first real query will re-raise any
+	// persistent problem in a more actionable form.
 	ctx := context.Background()
-	if err := config.VectorDB.CreateCollection(ctx, config.CollectionName, nil); err != nil {
-		// Collection might already exist, log but continue
-		// 集合可能已存在，记录日志但继续
-	}
+	_ = config.VectorDB.CreateCollection(ctx, config.CollectionName, nil)
 
 	return &HybridMemory{
 		shortTerm: NewInMemory(config.MaxShortTermMessages),

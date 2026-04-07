@@ -163,7 +163,7 @@ func TestStdioTransport_DoubleStart(t *testing.T) {
 	if err := transport.Start(ctx); err != nil {
 		t.Fatalf("Failed to start transport: %v", err)
 	}
-	defer transport.Stop()
+	defer func() { _ = transport.Stop() }()
 
 	// Second start should fail
 	if err := transport.Start(ctx); err == nil {

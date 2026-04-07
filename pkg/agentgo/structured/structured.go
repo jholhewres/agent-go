@@ -84,11 +84,6 @@ func ParseResponse(resp *types.ModelResponse, target interface{}) error {
 
 var timeType = reflect.TypeOf(time.Time{})
 
-// typeToSchema is the public-facing wrapper (used by tests via SchemaFromType).
-func typeToSchema(t reflect.Type) map[string]interface{} {
-	return typeToSchemaGuarded(t, make(map[reflect.Type]bool))
-}
-
 func typeToSchemaGuarded(t reflect.Type, seen map[reflect.Type]bool) map[string]interface{} {
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()

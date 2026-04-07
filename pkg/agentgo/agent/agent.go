@@ -301,17 +301,6 @@ func New(config Config) (*Agent, error) {
 		finalSystemPrompt = finalInstructions
 	}
 
-	// Set memory search defaults
-	// 设置内存搜索默认值
-	memorySearchLimit := config.MemorySearchLimit
-	if memorySearchLimit <= 0 {
-		memorySearchLimit = 5
-	}
-	memorySearchMinScore := config.MemorySearchMinScore
-	if memorySearchMinScore <= 0 {
-		memorySearchMinScore = 0.1
-	}
-
 	// Set history injection defaults
 	historyMaxRuns := config.HistoryMaxRuns
 	if historyMaxRuns <= 0 {
@@ -398,16 +387,6 @@ type RunStreamDone struct {
 type RunStreamResult struct {
 	Events <-chan run.BaseRunOutputEvent
 	Done   <-chan RunStreamDone
-}
-
-// singleDoneChannel constructs a buffered Done channel carrying a single value.
-func singleDoneChannel(output *RunOutput, err error) <-chan RunStreamDone {
-	ch := make(chan RunStreamDone, 1)
-	ch <- RunStreamDone{
-		Output: output,
-		Err:    err,
-	}
-	return ch
 }
 
 // Run executes the agent with the given input
@@ -613,7 +592,6 @@ func (a *Agent) Run(ctx context.Context, input string) (*RunOutput, error) {
 	sequence := len(output.Events)
 	if finalResponse.Content != "" {
 		output.appendEvent(run.NewRunContentEvent(runID, a.ID, string(types.RoleAssistant), finalResponse.Content, sequence))
-		sequence++
 	}
 	output.appendEvent(run.NewRunCompletedEvent(runID, a.ID, "", string(output.Status), finalResponse.Content))
 

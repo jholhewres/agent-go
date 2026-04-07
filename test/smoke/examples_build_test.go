@@ -99,13 +99,13 @@ func TestExamplesBuild(t *testing.T) {
 // verified without external credentials.
 func cleanEnv() []string {
 	drop := map[string]bool{
-		"OPENAI_API_KEY":    true,
-		"ANTHROPIC_API_KEY": true,
-		"GROQ_API_KEY":      true,
-		"ZHIPUAI_API_KEY":   true,
-		"GEMINI_API_KEY":    true,
-		"DEEPSEEK_API_KEY":  true,
-		"DASHSCOPE_API_KEY": true,
+		"OPENAI_API_KEY":      true,
+		"ANTHROPIC_API_KEY":   true,
+		"GROQ_API_KEY":        true,
+		"ZHIPUAI_API_KEY":     true,
+		"GEMINI_API_KEY":      true,
+		"DEEPSEEK_API_KEY":    true,
+		"DASHSCOPE_API_KEY":   true,
 		"LOGFIRE_WRITE_TOKEN": true,
 	}
 	var env []string
