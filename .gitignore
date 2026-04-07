@@ -12,6 +12,10 @@ dist/
 /structured_output
 /subagent_demo
 /evolink_media_pipeline
+/eval_demo
+/otlp_tracing_agent
+/postgres_storage
+/summarizing_memory_agent
 
 # Test binary, built with `go test -c`
 *.test
